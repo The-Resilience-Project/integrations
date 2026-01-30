@@ -245,7 +245,7 @@ if (!empty($schoolName) && $postData['status'] == 'processing') {
                 }
                 try{
                     putlogwebhook("Attempting to update deal.");
-                    $queryDeal = sprintf("SELECT * FROM Potentials WHERE related_to='%s' AND potentialname='2025 Early Years Partnership Program'; ", addslashes( $accountId ) );
+                    $queryDeal = sprintf("SELECT * FROM Potentials WHERE related_to='%s' AND potentialname='2026 Early Years Partnership Program'; ", addslashes( $accountId ) );
                     $resultDeal = $vtod->query($queryDeal)[0];
                     putlogwebhook($queryDeal);
                     putlogwebhook($resultDeal);
