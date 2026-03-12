@@ -66,7 +66,8 @@ class ShipStationOrder {
 
         
         // $authKey = base64_encode("384c7039e4914a31935861a6e52b4974:fed4f771714b48919e7cdfa2d94411db"); // Shipstation API Key:API Secret
-        $authKey = base64_encode("cec687e3607445c9b939f2fa6f114cd3:70d7a032e6b04821837f41fd325f6949"); // Shipstation API Key:API Secret
+        // $authKey = base64_encode("cec687e3607445c9b939f2fa6f114cd3:70d7a032e6b04821837f41fd325f6949"); // Shipstation API Key:API Secret
+        $authKey = base64_encode("ee461e28fa134604913ce39bf4d9806c:a28ed173ae0449029c83ebba9623e254"); // Shipstation API Key:API Secret
         $this->shipstation = new shipstation($authKey);
         $this->shipstation->decode=true;
         $this->shipstation->print=false;
