@@ -68,9 +68,8 @@ class TrpDates{
             "'Teacher Wellbeing Workshop 1 - Looking after Yourself'", 
             "'Teacher Wellbeing Workshop 2 - Looking After Each Other'",
             "'Teacher Wellbeing Workshop 3 - Sharing Success'",
-            // "'Staff Authentic Connection Presentation'",
             "'Building Resilience at Home for Parents and Carers'",
-            "'Parent/Carer Authentic Connection'",
+            "'Parenting with ACE'"
             "'Connected Parenting'",
             "'Digital Wellbeing for Families'"
         );
@@ -132,7 +131,7 @@ class TrpDates{
                 "Webinar" => array(13, "Building Resilience at Home for Parents/Carers", "parents"), 
                 "In person" => array(14, "Building Resilience at Home for Parents/Carers", "parents")
             ),
-            "Parent/Carer Authentic Connection" => array(
+            "Parenting with ACE" => array(
                 "Webinar" => array(15, "Parenting with ACE - Authenticity, Connection & Self Esteem", "parents")
             ),
             "Connected Parenting" => array(
