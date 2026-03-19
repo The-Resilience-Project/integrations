@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__).'/base.php';
+require_once dirname(__FILE__).'/AssigneeResolver.php';
 
 require_once dirname(__FILE__).'/traits/enquiry.php';
 
@@ -9,6 +10,14 @@ class GeneralVTController extends VTController
     use Enquiry;
 
     protected $enquiry_type = 'General';
+
+    private AssigneeResolver $assigneeResolver;
+
+    public function __construct($data, ?VtApiClient $api = null)
+    {
+        parent::__construct($data, $api);
+        $this->assigneeResolver = new AssigneeResolver();
+    }
 
     public function submit_enquiry(): bool
     {
@@ -39,17 +48,17 @@ class GeneralVTController extends VTController
 
     protected function get_enquiry_assignee()
     {
-        return self::ASHLEE;
+        return $this->assigneeResolver->resolveGeneralEnquiryAssignee();
     }
 
     protected function get_contact_assignee()
     {
-        return self::MADDIE;
+        return $this->assigneeResolver->resolveGeneralContactAssignee();
     }
 
     protected function get_org_assignee()
     {
-        return self::MADDIE;
+        return $this->assigneeResolver->resolveGeneralOrgAssignee();
     }
 
     // Overrides the full capture_customer_info() (not just the _in_vt hook)

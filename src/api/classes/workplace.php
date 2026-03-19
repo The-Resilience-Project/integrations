@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__).'/base.php';
+require_once dirname(__FILE__).'/AssigneeResolver.php';
 
 require_once dirname(__FILE__).'/traits/enquiry.php';
 require_once dirname(__FILE__).'/traits/registration.php';
@@ -22,29 +23,31 @@ class WorkplaceVTController extends VTController
     protected $deal_org_type = 'Workplace - New';
     protected $enquiry_type = 'Workplace';
 
+    private AssigneeResolver $assigneeResolver;
+
+    public function __construct($data, ?VtApiClient $api = null)
+    {
+        parent::__construct($data, $api);
+        $this->assigneeResolver = new AssigneeResolver();
+    }
 
     protected function get_enquiry_assignee()
     {
-        return self::LAURA;
-    }
-
-    private function get_assignee_or_default()
-    {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        if ($org_assignee != self::MADDIE) {
-            return $org_assignee;
-        }
-        return self::LAURA;
+        return $this->assigneeResolver->resolveWorkplaceEnquiryAssignee();
     }
 
     protected function get_contact_assignee()
     {
-        return $this->get_assignee_or_default();
+        return $this->assigneeResolver->resolveWorkplaceContactAssignee(
+            $this->organisation_details['assigned_user_id']
+        );
     }
 
     protected function get_org_assignee()
     {
-        return $this->get_assignee_or_default();
+        return $this->assigneeResolver->resolveWorkplaceOrgAssignee(
+            $this->organisation_details['assigned_user_id']
+        );
     }
 
     public function submit_enquiry(): bool

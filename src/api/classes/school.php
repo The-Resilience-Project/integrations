@@ -1,6 +1,8 @@
 <?php
 
 require_once dirname(__FILE__).'/base.php';
+require_once dirname(__FILE__).'/AssigneeResolver.php';
+require_once dirname(__FILE__).'/LineItemCalculator.php';
 
 require_once dirname(__FILE__).'/traits/enquiry.php';
 require_once dirname(__FILE__).'/traits/confirmation.php';
@@ -43,7 +45,15 @@ class SchoolVTController extends VTController
     protected $extend = [];
     protected $billing_note = '';
 
+    protected AssigneeResolver $assigneeResolver;
+    protected LineItemCalculator $lineItemCalculator;
 
+    public function __construct($data, ?VtApiClient $api = null)
+    {
+        parent::__construct($data, $api);
+        $this->assigneeResolver = new AssigneeResolver();
+        $this->lineItemCalculator = new LineItemCalculator();
+    }
 
     protected function capture_customer_info_in_vt($customer_data)
     {
@@ -64,54 +74,42 @@ class SchoolVTController extends VTController
     }
 
 
-    private function get_assignee_by_state()
-    {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        if ($org_assignee != self::MADDIE) {
-            return $org_assignee;
-        }
-
-        $state = $this->data['state'];
-        if (in_array($state, self::BRENDAN_STATES)) {
-            return self::BRENDAN;
-        }
-        return self::LAURA;
-    }
-
     protected function get_enquiry_assignee()
     {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        if (is_null($org_assignee)) {
-            return self::LAURA;
-        }
-        return $this->get_assignee_by_state();
+        return $this->assigneeResolver->resolveSchoolEnquiryAssignee(
+            $this->organisation_details['assigned_user_id'],
+            $this->data['state']
+        );
     }
 
     protected function get_contact_assignee()
     {
-        return $this->get_assignee_by_state();
+        return $this->assigneeResolver->resolveSchoolContactAssignee(
+            $this->organisation_details['assigned_user_id'],
+            $this->data['state']
+        );
     }
 
     protected function get_org_assignee()
     {
-        return $this->get_assignee_by_state();
+        return $this->assigneeResolver->resolveSchoolOrgAssignee(
+            $this->organisation_details['assigned_user_id'],
+            $this->data['state']
+        );
     }
 
     protected function is_new_school()
     {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        $not_spms = [self::MADDIE, self::LAURA, self::VICTOR, self::HELENOR, self::BRENDAN];
-        return in_array($org_assignee, $not_spms);
+        return $this->assigneeResolver->isNewSchool(
+            $this->organisation_details['assigned_user_id']
+        );
     }
 
     protected function get_registration_reply_to()
     {
-
-        $state = $this->data['state'];
-        if (in_array($state, self::BRENDAN_STATES)) {
-            return self::BRENDAN;
-        }
-        return self::LAURA;
+        return $this->assigneeResolver->resolveSchoolRegistrationReplyTo(
+            $this->data['state']
+        );
     }
 
 
@@ -352,42 +350,9 @@ class SchoolVTController extends VTController
 
     protected function get_line_items()
     {
-        $engage_code = 'SER12';
-
-        $this->inspire = 'Inspire 1';
-
-
-        $inspire_code = 'SER157';
-        $using_mhf = $this->isset_data('mental_health_funding') ? $this->data['mental_health_funding'] === 'Yes' : false;
-        $is_small_school = $this->isset_data('num_of_students') ? $this->data['num_of_students'] <= 200 : false;
-
-        if ((!$using_mhf) and $is_small_school) {
-            if ($this->data['num_of_students'] > 100) {
-                // 101 - 200 students
-                $inspire_code = 'SER158';
-            } else {
-                // 0 - 100 students
-                $inspire_code = 'SER159';
-            }
-        }
-
-        $items = [
-            [
-                'qty' => 1,
-                'code' => $inspire_code,
-                'duration' => 1,
-                'section_name' => 'Display on Invoice',
-                'section_no' => 1,
-            ],
-            [
-                'qty' => $this->data['participating_num_of_students'],
-                'code' => $engage_code,
-                'duration' => 1,
-                'section_name' => 'Display on Invoice',
-                'section_no' => 1,
-            ],
-        ];
-
+        $result = $this->lineItemCalculator->calculateNewSchoolItems($this->data);
+        $this->inspire = $result['inspire'];
+        $items = $result['items'];
 
         $services = $this->get_services(array_column($items, 'code'));
         $line_items = [];
@@ -396,7 +361,7 @@ class SchoolVTController extends VTController
             $code = $item['code'];
             $service = $this->find_service_by_code($services, $code);
 
-            $line_item = [
+            $line_items[] = [
                 'productid' => $service->id,
                 'quantity' => $item['qty'],
                 'listprice' => $service->unit_price,
@@ -406,8 +371,6 @@ class SchoolVTController extends VTController
                 'section_name' => $item['section_name'],
                 'section_no' => $item['section_no'],
             ];
-
-            array_push($line_items, $line_item);
         }
         return $line_items;
     }
@@ -513,166 +476,19 @@ class ExistingSchoolVTController extends SchoolVTController
     protected $deal_org_type = 'School - Existing';
     protected $quote_type = 'School - Existing';
 
-    protected const extend_payload_options = [
-        'teacher_wellbeing_program',
-        'twb_1_online_only',
-        'twb_1_workshop_paid',
-        'twb_1_workshop_free',
-        'twb_2_online_only',
-        'twb_2_workshop_paid',
-        'twb_2_workshop_free',
-        'twb_3_online_only',
-        'twb_3_workshop_paid',
-        'twb_3_workshop_free',
-        'dwf_online_only',
-        'dwf_workshop_paid',
-        'dwf_workshop_free',
-        'brh_online_only',
-        'brh_workshop_paid',
-        'brh_workshop_free',
-        'feeling_ace',
-        'connected_parenting',
-    ];
-
-    protected const extend_code_map = [
-        'Teacher Wellbeing Program' => 'SER23',
-        'Wellbeing Webinar 1 (Self)' => 'SER26',
-        'Wellbeing Workshop 1 (Self)' => 'SER24',
-        'Wellbeing Webinar 2 (Others)' => 'SER27',
-        'Wellbeing Workshop 2 (Others)' => 'SER25',
-        'Wellbeing Webinar 3 (Success)' => 'SER117',
-        'Wellbeing Workshop 3 (Success)' => 'SER118',
-        'Family Digital Wellbeing Webinar' => 'SER120',
-        'Family Digital Wellbeing Workshop' => 'SER119',
-        'Building Resilience at Home Webinar' => 'SER30',
-        'Building Resilience at Home Workshop' => 'SER104',
-        'Hugh Parent Webinar' => 'SER160', // change this to new Feeling ACE line item if needed
-        'Martin Parent Webinar' => 'SER161', // change this to new Feeling ACE line item if needed
-        'Connected Parenting Webinar' => 'SER32',
-    ];
-
     public function get_line_items()
     {
-        $journal_qty = 0;
-        $planner_qty = 0;
-        if ($this->data['school_type'] === 'Primary') {
-            $journal_qty = $this->data['participating_num_of_students'];
-        } elseif ($this->data['school_type'] === 'Secondary') {
-            if ($this->data['secondary_engage'] === 'Journals') {
-                $journal_qty = $this->data['participating_num_of_students'];
-            } else {
-                $planner_qty = $this->data['participating_num_of_students'];
-            }
-        } else {
-            if ($this->data['secondary_engage'] === 'Journals') {
-                $journal_qty = $this->data['participating_num_of_students'];
-            } else {
-                $journal_qty = $this->data['participating_journal_students'];
-                $planner_qty = $this->data['participating_planner_students'];
-            }
+        $result = $this->lineItemCalculator->calculateExistingSchoolItems(
+            $this->data,
+            $this->organisation_details
+        );
 
-        }
+        $this->inspire = $result['inspire'];
+        $this->engage = $result['engage'];
+        $this->extend = $result['extend'];
+        $this->billing_note = $result['billing_note'];
 
-        $items = [];
-        $engage = [];
-
-        if ($journal_qty) {
-            array_push($items, [
-                'qty' => $journal_qty,
-                'code' => 'SER12',
-                'duration' => 1,
-                'section_name' => 'Display on Invoice',
-                'section_no' => 1,
-            ]);
-            array_push($engage, 'Journals');
-        }
-        if ($planner_qty) {
-            array_push($items, [
-                'qty' => $planner_qty,
-                'code' => 'SER65',
-                'duration' => 1,
-                'section_name' => 'Display on Invoice',
-                'section_no' => 1,
-            ]);
-            array_push($engage, 'Planners');
-        }
-        $this->engage = $engage;
-
-        if ($this->data['inspire_added'] === 'Yes') {
-            $this->inspire = 'Inspire 2';
-            if ($this->organisation_details['cf_accounts_2025inspire'] === 'Inspire 3') {
-                $this->inspire = 'Inspire 3';
-            } elseif ($this->organisation_details['cf_accounts_2025inspire'] === 'Inspire 4') {
-                $this->inspire = 'Inspire 4';
-            }
-            $inspire_code = 'SER147';
-            $using_mhf = $this->isset_data('mental_health_funding') ? $this->data['mental_health_funding'] === 'Yes' : false;
-            $num_of_students_provided = false;
-            $num_of_students = 0;
-            if ($this->isset_data('num_of_students_1')) {
-                $num_of_students_provided = true;
-                $num_of_students = $this->data['num_of_students_1'];
-            } elseif ($this->isset_data('num_of_students_2')) {
-                $num_of_students_provided = true;
-                $num_of_students = $this->data['num_of_students_2'];
-            }
-            $is_small_school = $num_of_students_provided && $num_of_students <= 200;
-            if ($using_mhf) {
-                $inspire_code = 'SER146';
-            } elseif ((!$using_mhf) and $is_small_school) {
-                if ($num_of_students > 100) {
-                    // 101 - 200 students
-                    $inspire_code = 'SER148';
-                } elseif ($num_of_students <= 100) {
-                    // 0 - 100 students
-                    $inspire_code = 'SER149';
-                }
-            }
-            $additional = 0;
-            if (!$using_mhf && $this->isset_data('inspire_year_levels') && $this->data['inspire_year_levels'] === 'Primary and Secondary') {
-                $additional = 1000;
-                $this->billing_note = 'Additional $1000 for P-12 Inspire';
-            }
-            array_push($items, [
-                'qty' => 1,
-                'code' => $inspire_code,
-                'duration' => 1,
-                'section_name' => 'Display on Invoice',
-                'section_no' => 1,
-                'additional' => $additional,
-            ]);
-        } else {
-            $this->inspire = '';
-        }
-
-        $extend_options = [];
-
-        foreach (self::extend_payload_options as $extend_payload_option) {
-            if ($this->isset_data($extend_payload_option)) {
-                $current_selected_extends = explode(', ', $this->data[$extend_payload_option]);
-                foreach ($current_selected_extends as $current_extend) {
-                    $formatted_extend = str_replace('One', '1', $current_extend);
-                    $formatted_extend = str_replace('Two', '2', $formatted_extend);
-                    $formatted_extend = str_replace('Three', '3', $formatted_extend);
-                    $formatted_extend = substr($formatted_extend, 0, strpos($formatted_extend, '$'));
-
-                    array_push($extend_options, $formatted_extend);
-
-                    array_push($items, [
-                        'qty' => 1,
-                        'code' => self::extend_code_map[$formatted_extend],
-                        'duration' => 1,
-                        'section_name' => 'Display on Invoice',
-                        'section_no' => 1,
-                    ]);
-
-                }
-            }
-        }
-
-        $this->extend = $extend_options;
-
-
+        $items = $result['items'];
         $services = $this->get_services(array_column($items, 'code'));
         $line_items = [];
 
@@ -680,18 +496,16 @@ class ExistingSchoolVTController extends SchoolVTController
             $code = $item['code'];
             $service = $this->find_service_by_code($services, $code);
 
-            $line_item = [
+            $line_items[] = [
                 'productid' => $service->id,
                 'quantity' => $item['qty'],
-                'listprice' => (int)$service->unit_price + (isset($item['additional']) ? $item['additional'] : 0),
+                'listprice' => (int) $service->unit_price + (isset($item['additional']) ? $item['additional'] : 0),
                 'tax5' => '10',
                 'cf_quotes_xerocode' => $service->cf_services_xerocode,
                 'duration' => $item['duration'],
                 'section_name' => $item['section_name'],
                 'section_no' => $item['section_no'],
             ];
-
-            array_push($line_items, $line_item);
         }
         return $line_items;
     }

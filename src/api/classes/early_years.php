@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__).'/base.php';
+require_once dirname(__FILE__).'/AssigneeResolver.php';
 
 require_once dirname(__FILE__).'/traits/enquiry.php';
 require_once dirname(__FILE__).'/traits/lead.php';
@@ -27,28 +28,31 @@ class EarlyYearsVTController extends VTController
     protected $quote_type = 'Early Years';
     protected $quote_program = 'Early Years';
 
-    protected function get_enquiry_assignee()
+    private AssigneeResolver $assigneeResolver;
+
+    public function __construct($data, ?VtApiClient $api = null)
     {
-        return self::BRENDAN;
+        parent::__construct($data, $api);
+        $this->assigneeResolver = new AssigneeResolver();
     }
 
-    private function get_assignee_or_default()
+    protected function get_enquiry_assignee()
     {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        if ($org_assignee != self::MADDIE) {
-            return $org_assignee;
-        }
-        return self::BRENDAN;
+        return $this->assigneeResolver->resolveEarlyYearsEnquiryAssignee();
     }
 
     protected function get_contact_assignee()
     {
-        return $this->get_assignee_or_default();
+        return $this->assigneeResolver->resolveEarlyYearsContactAssignee(
+            $this->organisation_details['assigned_user_id']
+        );
     }
 
     protected function get_org_assignee()
     {
-        return $this->get_assignee_or_default();
+        return $this->assigneeResolver->resolveEarlyYearsOrgAssignee(
+            $this->organisation_details['assigned_user_id']
+        );
     }
 
     protected function capture_customer_info_in_vt($customer_data)
