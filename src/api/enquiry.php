@@ -26,30 +26,22 @@ if ($method === 'POST') {
     log_debug("Enquiry data received", ['data' => $data]);
 
     try {
-        $data_controller;
+        $controllers = [
+            'School'      => SchoolVTController::class,
+            'Workplace'   => WorkplaceVTController::class,
+            'Early Years' => EarlyYearsVTController::class,
+            'Imperfects'  => ImperfectsVTController::class,
+        ];
 
-        if($data["service_type"] === "School"){
-            log_debug("Creating SchoolVTController for enquiry");
-            $data_controller = new SchoolVTController($data);
-        }
-        elseif($data["service_type"] === "Workplace"){
-            log_debug("Creating WorkplaceVTController for enquiry");
-            $data_controller = new WorkplaceVTController($data);
-        }
-        elseif($data["service_type"] === "Early Years"){
-            log_debug("Creating EarlyYearsVTController for enquiry");
-            $data_controller = new EarlyYearsVTController($data);
-        }
-        elseif($data["service_type"] === "Imperfects"){
-            log_debug("Creating ImperfectsVTController for enquiry");
-            $data_controller = new ImperfectsVTController($data);
-        }
-        else{
-            log_debug("Creating GeneralVTController for enquiry", [
-                'service_type' => $data["service_type"] ?? 'not provided'
-            ]);
-            $data_controller = new GeneralVTController($data);
-        }
+        $service_type = $data["service_type"] ?? null;
+        $controller_class = $controllers[$service_type] ?? GeneralVTController::class;
+
+        log_debug("Creating controller for enquiry", [
+            'controller' => $controller_class,
+            'service_type' => $service_type ?? 'not provided'
+        ]);
+
+        $data_controller = new $controller_class($data);
 
         log_info("Calling submit_enquiry() to process enquiry");
         $success = $data_controller->submit_enquiry();
