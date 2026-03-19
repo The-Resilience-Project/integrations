@@ -50,16 +50,6 @@ class EarlyYearsVTController extends VTController
         return self::BRENDAN;
     }
 
-    // protected function capture_customer_info_in_vt($customer_data){
-    //     $this->deactivate_contacts($customer_data["contact_email"]);
-
-    //     $request_body = $this->format_customer_info_payload($customer_data);
-    //     $response = $this->post_request_to_vt("captureCustomerInfo", $request_body);
-    //     $response_data = $response->result[0];
-
-    //     return $response_data;
-
-    // }
     protected function capture_customer_info_in_vt($customer_data)
     {
         log_info('Capturing Early Years customer info in VTiger', [
