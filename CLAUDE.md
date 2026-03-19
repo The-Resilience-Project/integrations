@@ -24,7 +24,15 @@ serverless logs -f <function-name> -t
 
 # Local testing (no serverless)
 php -S localhost:8000 -t src/
+
+# Lint (format check only)
+vendor/bin/php-cs-fixer fix --dry-run --diff
+
+# Lint (apply fixes)
+vendor/bin/php-cs-fixer fix
 ```
+
+A pre-commit hook runs PHP-CS-Fixer automatically on staged `.php` files.
 
 ## Architecture
 
