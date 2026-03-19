@@ -3,3 +3,4 @@ vendor/
 .serverless/
 composer.phar
 .env
+.php-cs-fixer.cache
