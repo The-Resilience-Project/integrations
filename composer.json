@@ -3,6 +3,7 @@
         "bref/bref": "^2.4"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.94"
+        "friendsofphp/php-cs-fixer": "^3.94",
+        "phpunit/phpunit": "^13.0"
     }
 }

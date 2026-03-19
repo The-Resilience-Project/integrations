@@ -25,6 +25,9 @@ serverless logs -f <function-name> -t
 # Local testing (no serverless)
 php -S localhost:8000 -t src/
 
+# Run tests
+vendor/bin/phpunit
+
 # Lint (format check only)
 vendor/bin/php-cs-fixer fix --dry-run --diff
 
