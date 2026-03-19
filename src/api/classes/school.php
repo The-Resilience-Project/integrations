@@ -136,6 +136,11 @@ class SchoolVTController extends VTController {
             return true;
         }
         catch(Exception $e){
+            log_exception($e, [
+                'method' => 'submit_enquiry',
+                'service_type' => 'School',
+                'organisation' => $this->data['school_name_other'] ?? $this->data['school_account_no'] ?? 'unknown'
+            ]);
             return false;
         }
     }

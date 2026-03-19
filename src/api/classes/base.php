@@ -51,6 +51,7 @@ class VTController{
         "createOrUpdateSEIP" => "3fcJ9sPNZ91zfozuMVLii6yu",
     );
     
+    // Staff Vtiger user IDs (format: 19xN)
     protected const MADDIE = "19x1";
     protected const LAURA = "19x8";
     protected const VICTOR = "19x33";

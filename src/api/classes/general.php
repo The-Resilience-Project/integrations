@@ -15,6 +15,10 @@ class GeneralVTController extends VTController {
             return true;
         }
         catch(Exception $e){
+            log_exception($e, [
+                'method' => 'submit_enquiry',
+                'service_type' => $this->enquiry_type,
+            ]);
             return false;
         }
     }
