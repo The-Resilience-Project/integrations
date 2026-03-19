@@ -35,6 +35,9 @@ class GeneralVTController extends VTController {
         return self::MADDIE;
     }
 
+    // Overrides the full capture_customer_info() (not just the _in_vt hook)
+    // because General/Imperfects only need a contact lookup — no org capture,
+    // deactivation, or assignee updates.
     protected function capture_customer_info(){
         $request_body = array(
             "contactEmail" => $this->data["contact_email"], 

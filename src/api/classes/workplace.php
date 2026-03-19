@@ -79,7 +79,6 @@ class WorkplaceVTController extends VTController {
         
     	$request_body = $this->format_customer_info_payload($customer_data);
 
-    	$response;
     	if($this->isset_data("organisation_name")){
     	    $request_body["organisationName"] = $this->data["organisation_name"];
     	    $response = $this->post_request_to_vt("captureCustomerInfo", $request_body);

@@ -68,8 +68,6 @@ class EarlyYearsVTController extends VTController {
 
     	$request_body = $this->format_customer_info_payload($customer_data);
 
-    	$response;
-
         if($this->data["service_name_other_selected"]){
             $request_body["organisationName"] = $this->data["earlyyears_name_other"];
             log_info("Creating new Early Years organisation", [
@@ -269,8 +267,6 @@ class EarlyYearsVTController extends VTController {
             'deal_name' => $this->deal_name
         ]);
 
-        $deal_response;
-        // $org_response;
         $request_body = array(
             "dealName"=> $this->deal_name
         );

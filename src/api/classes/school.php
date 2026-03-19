@@ -49,8 +49,6 @@ class SchoolVTController extends VTController {
         
     	$request_body = $this->format_customer_info_payload($customer_data);
 
-    	$response;
-    	
         if($this->isset_data("school_name_other_selected")){
             $request_body["organisationName"] = $this->data["school_name_other"];
             $response = $this->post_request_to_vt("captureCustomerInfo", $request_body);
@@ -146,8 +144,6 @@ class SchoolVTController extends VTController {
     }
 
     public function get_info_for_confirmation_form($account_no=null, $accountname=null){
-        $deal_response;
-        $org_response;
         $request_body = array(
             "dealName"=> $this->deal_name
         );
@@ -160,7 +156,7 @@ class SchoolVTController extends VTController {
             $org_response = $this->post_request_to_vt("getOrgWithName", $request_body, true);
             $deal_response = $this->post_request_to_vt("getDealDetails", $request_body, true);
         }
-        
+
         $deal_status = "";
         $deal_org_type = "";
         $engage = "";
@@ -203,9 +199,6 @@ class SchoolVTController extends VTController {
     }
     
     public function get_info_for_curric_ordering_form($account_no, $for_2026){
-        $deal_response;
-        $invoice_response;
-        $org_response;
         $request_body = null;
         
         if(!$for_2026){
