@@ -83,16 +83,20 @@ class TrpSingleDates{
             "Teacher Wellbeing Workshop 2 - Looking After Each Other" => array("Teacher Wellbeing 2: Looking After Each Other", "Staff"),
             "Teacher Wellbeing Workshop 3 - Sharing Success" => array("Teacher Wellbeing 3: Sharing Success", "Staff"), 
             "Staff Authentic Connection Presentation" => array("Authentic Connection for Staff", "Staff"),
+            "Resilience Network" => array("Resilience Network", "Staff"),
+            "Embedding TRP" => array("Embedding TRP", "Staff"), 
+            "TRP in Practice" => array("TRP in Practice", "Staff"), 
+            "Teaching TRP" => array("Teaching TRP", "Staff"), 
             "Building Resilience at Home for Parents and Carers" => array("Building Resilience at Home for Parents/Carers", "Parents / Carers"), 
             "Parent/Carer Authentic Connection" => array("Authentic Connection for Parents/Carers", "Parents / Carers"),
             "Connected Parenting" => array("Connected Parenting with Lael Stone", "Parents / Carers"),
             "Digital Wellbeing for Families" => array("Digital Wellbeing for Families", "Parents / Carers"),
+            "Parenting with ACE" => array("Parenting with ACE", "Parents / Carers"), 
         );
 
 
         $delivery = $this->event["activitytype"];
-        
-        $field_data = $id_lookup[$this->event["cf_events_presentationworkshoptype"]];
+        $field_data = isset($id_lookup[$this->event["cf_events_presentationworkshoptype"]]) ? $id_lookup[$this->event["cf_events_presentationworkshoptype"]] : array($this->event["cf_events_presentationworkshoptype"], "");
         $name = $field_data[0];
         $audience = $field_data[1];
         
