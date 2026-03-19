@@ -141,6 +141,18 @@ vendor/bin/phpunit tests/SchoolAssigneeTest.php
 vendor/bin/phpunit --filter test_enquiry_assignee_returns_brendan_for_nsw_when_maddie
 ```
 
+### Code Coverage
+
+Coverage reports require [PCOV](https://github.com/krakjoe/pcov) (`pecl install pcov`).
+
+```bash
+# Terminal summary
+vendor/bin/phpunit --coverage-text
+
+# Detailed HTML report (open coverage-report/index.html in browser)
+vendor/bin/phpunit --coverage-html coverage-report
+```
+
 ### Linting
 
 Code style is enforced with [PHP-CS-Fixer](https://cs.symfony.com/) using PSR-12 rules. A pre-commit hook automatically formats staged `.php` files on commit.

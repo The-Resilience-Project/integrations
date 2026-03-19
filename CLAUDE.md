@@ -51,10 +51,13 @@ All API endpoints under `src/api/` follow this pattern:
 
 **Endpoint file** → includes `utils.php`, `api_helpers.php`, `init.php` → instantiates controller by `service_type` → calls controller method → returns JSON via `send_response()`.
 
+Service types: `School`, `Workplace`, `Early Years`, `Imperfects`, `General` (fallback).
+
 **Controller hierarchy:**
 - `VTController` (base) uses traits `ContactAndOrg` and `Deal` for shared CRM operations
 - `SchoolVTController` / `ExistingSchoolVTController` — use traits: `Enquiry`, `Confirmation`, `Lead`, `Registration`, `OrderResources`, `AcceptDates`, `Assess`
 - `WorkplaceVTController`, `EarlyYearsVTController`, `GeneralVTController` — each mix in relevant traits
+- `ImperfectsVTController` extends `GeneralVTController` with enquiry type override
 
 Traits live in `src/api/classes/traits/` and encapsulate business logic (enquiry submission, order processing, confirmation, etc.).
 
@@ -65,6 +68,7 @@ Endpoints outside `src/api/` use the `$vtod` REST client directly rather than co
 - `src/Potentials/` — CRM deal operations
 - `src/Events/` — Event invitations
 - `src/Webhooks/` — WooCommerce order webhook
+- `docs/` — Flow documentation (e.g., `enquiry-flow.md`)
 
 ### Initialisation (`src/init.php`)
 
@@ -85,6 +89,7 @@ Every endpoint includes `init.php` which provides:
 Tests live in `tests/` and use PHPUnit. The `tests/bootstrap.php` stubs logging functions and loads controller classes directly, avoiding `init.php` and any CRM/DB connections. This means tests can only cover pure logic (assignee routing, payload formatting, date calculations) — anything calling `post_request_to_vt()` requires a real CRM connection and is not currently testable.
 
 To run a single test file: `vendor/bin/phpunit tests/SchoolAssigneeTest.php`
+To run a single test method: `vendor/bin/phpunit --filter test_method_name`
 
 ### Code Style
 

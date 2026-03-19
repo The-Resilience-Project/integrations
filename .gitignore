@@ -5,3 +5,4 @@ composer.phar
 .env
 .php-cs-fixer.cache
 .phpunit.cache
+coverage-report/
