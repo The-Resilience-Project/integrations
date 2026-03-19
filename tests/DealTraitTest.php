@@ -98,6 +98,7 @@ class DealTraitTest extends TestCase
         $controller = $this->makeController([
             'num_of_students' => '300',
             'num_of_employees' => '50',
+            'state' => 'VIC',
         ]);
 
         $method = new ReflectionMethod($controller, 'build_deal_payload');
