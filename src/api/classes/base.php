@@ -1,5 +1,7 @@
 <?php
 
+require dirname(__FILE__).'/VtApiClient.php';
+require dirname(__FILE__).'/CurlVtApiClient.php';
 require dirname(__FILE__).'/traits/contact_and_org.php';
 require dirname(__FILE__).'/traits/deal.php';
 
@@ -10,6 +12,7 @@ class VTController
     use Deal;
 
     protected $baseUrl = 'https://theresilienceproject.od2.vtiger.com/restapi/vtap/webhook/';
+    protected VtApiClient $api;
     protected $data;
     protected $organisation_name;
     protected $enquiry_type;
@@ -76,10 +79,12 @@ class VTController
     protected $quote_id;
     protected $contact_name;
 
-    public function __construct($data)
+    public function __construct($data, ?VtApiClient $api = null)
     {
         $this->data = $data;
+        $this->api = $api ?? new CurlVtApiClient($this->baseUrl);
     }
+
     protected function get_token($endpoint)
     {
         return self::tokens[$endpoint];
@@ -87,68 +92,12 @@ class VTController
 
     protected function post_request_to_vt($endpoint, $request_body, $get = false)
     {
-        $request_header = [];
-        $request_header[] = 'token: '.$this->get_token($endpoint);
-        $request_header[] = 'Content-Type: application/json';
-
-        $request_method = $get ? 'GET' : 'POST';
-
-
-        $request_handle = curl_init($this->baseUrl.$endpoint);
-        curl_setopt_array($request_handle, [
-            CURLOPT_CUSTOMREQUEST => $request_method,
-            CURLOPT_POSTFIELDS => json_encode($request_body),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
-            CURLOPT_HTTPHEADER => $request_header,
-        ]);
-
-        $response = curl_exec($request_handle);
-        if ($response === false) {
-            $curl_error = curl_error($request_handle);
-            log_error('cURL request failed', [
-                'error' => $curl_error,
-                'endpoint' => $endpoint,
-            ]);
-        }
-        $json_response = json_decode($response);
-        curl_close($request_handle);
-        return $json_response;
+        return $this->api->request($endpoint, $this->get_token($endpoint), $request_body, $get);
     }
 
     protected function post_request_with_line_items($endpoint, $request_body, $line_items)
     {
-        $request_string = '';
-        foreach ($request_body as $key => $value) {
-            if (is_array($value)) {
-                foreach ($value as $array_item) {
-                    $request_string .= $key.'[]='.$array_item.'&';
-                }
-            } else {
-                $request_string .= $key.'='.$value.'&';
-            }
-        }
-        $request_string .= 'lineItems='.json_encode($line_items);
-
-        $request_header = [];
-        $request_header[] = 'token: '.$this->get_token($endpoint);
-        $request_header[] = 'Content-Type: application/x-www-form-urlencoded';
-
-
-        $request_handle = curl_init($this->baseUrl.$endpoint);
-        curl_setopt_array($request_handle, [
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $request_string,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
-            CURLOPT_HTTPHEADER => $request_header,
-        ]);
-
-        $response = curl_exec($request_handle);
-
-        $json_response = json_decode($response);
-        curl_close($request_handle);
-        return $json_response;
+        return $this->api->requestWithLineItems($endpoint, $this->get_token($endpoint), $request_body, $line_items);
     }
 
     protected function isset_data($key)
