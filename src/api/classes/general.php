@@ -24,7 +24,7 @@ class GeneralVTController extends VTController {
     }
     
     protected function get_enquiry_assignee(){
-        return self::ASHLEE; // get Dawns's ID
+        return self::ASHLEE;
     }
     
     protected function get_contact_assignee(){

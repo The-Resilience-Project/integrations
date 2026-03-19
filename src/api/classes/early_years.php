@@ -26,7 +26,7 @@ class EarlyYearsVTController extends VTController {
 	protected $quote_program = "Early Years";
     
     protected function get_enquiry_assignee(){
-        return self::BRENDAN; // get Emma's ID
+        return self::BRENDAN;
     }
     
     protected function get_contact_assignee(){
