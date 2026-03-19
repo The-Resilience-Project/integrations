@@ -1,8 +1,9 @@
-<?php 
-require dirname(__FILE__)."/classes/school.php";
-require dirname(__FILE__)."/classes/workplace.php";
-require dirname(__FILE__)."/classes/early_years.php";
-require dirname(__FILE__)."/classes/general.php";
+<?php
+
+require dirname(__FILE__).'/classes/school.php';
+require dirname(__FILE__).'/classes/workplace.php';
+require dirname(__FILE__).'/classes/early_years.php';
+require dirname(__FILE__).'/classes/general.php';
 
 // class VTController{
 //     protected $baseUrl = "https://theresilienceproject.od2.vtiger.com/restapi/vtap/webhook/";
@@ -30,7 +31,7 @@ require dirname(__FILE__)."/classes/general.php";
 //     protected const set_deal_line_items_token = "QfbZs2azB5yo2ps1yBIDzSp1";
 //     protected const set_quote_line_items_token = "g3j6HqHbKLjANpWSBAYAuA0R";
 //     protected const update_organisation_token = "BP4MhG0zOY0qcY4fEzXnWIFZ";
-    
+
 //     protected const MADDIE = "19x1";
 //     protected const LAURA = "19x8";
 //     protected const VICTOR = "19x33";
@@ -47,19 +48,19 @@ require dirname(__FILE__)."/classes/general.php";
 //     protected $deal_id;
 //     protected $deal_first_info_session_date;
 //     protected $quote_id;
-    
+
 //     public function __construct($data){
 //         $this->data = $data;
 //     }
-    
+
 //     protected function post_request_to_vt($token, $endpoint, $request_body, $get=false){
 //     	$request_header = array();
 //     	$request_header[] = "token: ".$token;
 //         $request_header[] = "Content-Type: application/json";
-        
+
 //         $request_method = $get ? "GET" : "POST";
-    
-    
+
+
 //     	$request_handle = curl_init( $this->baseUrl.$endpoint );
 //     	curl_setopt_array( $request_handle, array(
 //     		CURLOPT_CUSTOMREQUEST => $request_method,
@@ -68,12 +69,12 @@ require dirname(__FILE__)."/classes/general.php";
 //     		CURLOPT_HEADER => false,
 //     		CURLOPT_HTTPHEADER => $request_header,
 //     	));
-    
+
 //     	$response = curl_exec( $request_handle );
 //         $json_response = json_decode($response);
 //         return $json_response;
 //     }
-    
+
 //     private function post_request_with_line_items($token, $endpoint, $request_body, $line_items){
 //         $request_string = "";
 //         foreach($request_body as $key => $value){
@@ -85,8 +86,8 @@ require dirname(__FILE__)."/classes/general.php";
 //     	$request_header = array();
 //     	$request_header[] = "token: ".$token;
 //         $request_header[] = "Content-Type: application/x-www-form-urlencoded";
-        
-    
+
+
 //     	$request_handle = curl_init( $this->baseUrl.$endpoint );
 //     	curl_setopt_array( $request_handle, array(
 //     		CURLOPT_CUSTOMREQUEST => "POST",
@@ -95,55 +96,55 @@ require dirname(__FILE__)."/classes/general.php";
 //     		CURLOPT_HEADER => false,
 //     		CURLOPT_HTTPHEADER => $request_header,
 //     	));
-    
+
 //     	$response = curl_exec( $request_handle );
 //         $json_response = json_decode($response);
 //         return $json_response;
 //     }
-    
+
 //     protected function deactivate_contacts($email){
-        
+
 //         $request_body = array(
 //     		"contactEmail" => $email
 //     	);
-    	
+
 //     	$response = $this->post_request_to_vt(self::deactivate_contacts_token, "setContactsInactive", $request_body);
 //     }
 
 // 	protected function get_contact_by_email(){
 //     	$request_body = array(
-//             "contactEmail" => $this->data["contact_email"], 
-//             "contactFirstName" => $this->data["contact_first_name"], 
+//             "contactEmail" => $this->data["contact_email"],
+//             "contactFirstName" => $this->data["contact_first_name"],
 //             "contactLastName" => $this->data["contact_last_name"],
 //     	);
-    	
+
 //     	if(isset($this->data["contact_phone"])){
 //     	    $request_body["contactPhone"] = $this->data["contact_phone"];
 //     	}
-    	
+
 //     	$response = $this->post_request_to_vt(self::get_contact_by_email_token, "getContactByEmail", $request_body);
 //         $response_data = $response->result[0];
-        
+
 //         $this->contact_id = $response_data->id;
 //     }
-    
+
 // 	protected function get_organisation_details(){
 //     	$request_body = array(
-//             "organisationId" => $this->organisation_id, 
+//             "organisationId" => $this->organisation_id,
 //     	);
-    	
+
 //     	$response = $this->post_request_to_vt(self::get_organisation_details_token, "getOrgDetails", $request_body, true);
 //         $response_data = $response->result[0];
 //         return $response_data;
 //     }
-    
+
 // 	protected function set_organisation_details(){
 //         if($this->organisation_details){
 //             return;
 //         }
 
 //         $org = $this->get_organisation_details();
-        
+
 //         $this->organisation_name = $org->accountname;
 //         $this->organisation_details = array(
 //             "assigned_user_id" => $org->assigned_user_id,
@@ -151,9 +152,9 @@ require dirname(__FILE__)."/classes/general.php";
 //         );
 
 //         $this->update_org_assignee();
-        
+
 //     }
-    
+
 //     protected function update_org_assignee(){
 //         $request_body = array();
 
@@ -166,15 +167,15 @@ require dirname(__FILE__)."/classes/general.php";
 //         if(count($request_body) == 0){
 //             return;
 //         }
-        
+
 //         $request_body["organisationId"] = $this->organisation_id;
-        
+
 //     	$response = $this->post_request_to_vt(self::update_organisation_token, "updateOrganisation", $request_body);
 
 //         $response_data = $response->result[0];
 //         $this->organisation_details["assigned_user_id"] = $response_data->assigned_user_id;
 //     }
-    
+
 //     protected function update_forms_completed_and_assignee($contact){
 //         $request_body = array();
 
@@ -194,30 +195,30 @@ require dirname(__FILE__)."/classes/general.php";
 //         if(count($request_body) == 0){
 //             return;
 //         }
-        
+
 //         $request_body["contactId"] = $contact->id;
-        
+
 //     	$response = $this->post_request_to_vt(self::update_contact_token, "updateContactById", $request_body);
 
 //     }
 
 //     protected function capture_main_customer_info($organisation_status=null){
 // 	    $main_customer_data = array(
-//             "contact_email" => $this->data["contact_email"], 
-//             "contact_first_name" => $this->data["contact_first_name"], 
+//             "contact_email" => $this->data["contact_email"],
+//             "contact_first_name" => $this->data["contact_first_name"],
 //             "contact_last_name" => $this->data["contact_last_name"],
 //             "contact_type" => "Primary"
 //         );
-        
+
 //     	if(isset($this->data["contact_phone"])){
 //     	    $main_customer_data["contact_phone"] = $this->data["contact_phone"];
 //     	}
-        
+
 // 	    $response_data = $this->capture_customer_info_in_vt($main_customer_data, $organisation_status);
-	    
+
 //         $this->contact_id = $response_data->id;
 //         $this->organisation_id = $response_data->account_id;
-        
+
 //         $this->set_organisation_details();
 //         $this->update_forms_completed_and_assignee($response_data);
 
@@ -225,20 +226,20 @@ require dirname(__FILE__)."/classes/general.php";
 
 // 	protected function capture_customer_info($organisation_status=null){
 // 	    $main_customer_data = array(
-//             "contact_email" => $this->data["contact_email"], 
-//             "contact_first_name" => $this->data["contact_first_name"], 
+//             "contact_email" => $this->data["contact_email"],
+//             "contact_first_name" => $this->data["contact_first_name"],
 //             "contact_last_name" => $this->data["contact_last_name"],
 //         );
-        
+
 //     	if(isset($this->data["contact_phone"])){
 //     	    $main_customer_data["contact_phone"] = $this->data["contact_phone"];
 //     	}
-        
+
 // 	    $response_data = $this->capture_customer_info_in_vt($main_customer_data, $organisation_status);
-	    
+
 //         $this->contact_id = $response_data->id;
 //         $this->organisation_id = $response_data->account_id;
-        
+
 //         $this->set_organisation_details();
 //         $this->update_forms_completed_and_assignee($response_data);
 
@@ -250,43 +251,43 @@ require dirname(__FILE__)."/classes/general.php";
 //             $this->billing_contact_email = $this->data["contact_email"];
 //             return;
 //         }
-                
+
 // 	    $billing_customer_data = array(
-//             "contact_email" => $this->data["billing_contact_email"], 
-//             "contact_first_name" => $this->data["billing_contact_first_name"], 
+//             "contact_email" => $this->data["billing_contact_email"],
+//             "contact_first_name" => $this->data["billing_contact_first_name"],
 //             "contact_last_name" => $this->data["billing_contact_last_name"],
 //             "contact_type" => "Billing"
 
 //         );
-        
+
 //     	if(isset($this->data["billing_contact_phone"])){
 //     	    $main_customer_data["billing_contact_phone"] = $this->data["billing_contact_phone"];
 //     	}
-        
+
 // 	    $response_data = $this->capture_customer_info_in_vt($billing_customer_data, $organisation_status);
 //         $this->set_organisation_details();
 //         $this->update_forms_completed_and_assignee($response_data);
-	    
+
 //         $this->billing_contact_id = $response_data->id;
 //         $this->billing_contact_email = $this->data["billing_contact_email"];
 // 	}
 
 //     protected function format_customer_info_payload($customer_data, $organisation_status){
 //         $request_body = array(
-//             "contactEmail" => $customer_data["contact_email"], 
-//             "contactFirstName" => $customer_data["contact_first_name"], 
+//             "contactEmail" => $customer_data["contact_email"],
+//             "contactFirstName" => $customer_data["contact_first_name"],
 //             "contactLastName" => $customer_data["contact_last_name"],
 //             "organisationType"=> $this->organisation_type,
 //     	);
-    	
+
 //     	if($organisation_status){
 //     	    $request_body["organisationStatus"] = $organisation_status;
 //     	}
-    	
+
 //     	if($this->organisation_name){
 //     	    $request_body["organisationName"] = $this->organisation_name;
 //     	}
-    	
+
 //         if(isset($this->data["state"])){
 //     	    $request_body["state"] = $this->data["state"];
 //     	}
@@ -298,7 +299,7 @@ require dirname(__FILE__)."/classes/general.php";
 //     	if(isset($customer_data["contact_phone"])){
 //     	    $request_body["contactPhone"] = $customer_data["contact_phone"];
 //     	}
-    	
+
 //     	if(isset($this->data["contact_lead_source"])){
 //     	    $request_body["contactLeadSource"] = $this->data["contact_lead_source"];
 //     	}
@@ -310,11 +311,11 @@ require dirname(__FILE__)."/classes/general.php";
 //         if(isset($this->data["num_of_ey_children"])){
 //     	    $request_body["organisationNumOfStudents"] = (int)$this->data["num_of_ey_children"];
 //     	}
-    	
+
 //     	if(isset($this->data["num_of_employees"])){
 //     	    $request_body["organisationNumOfEmployees"] = (int)$this->data["num_of_employees"];
 //     	}
-    	
+
 //     	if(isset($this->data["contact_lead_source"])){
 //     	    $request_body["contactLeadSource"] = $this->data["contact_lead_source"];
 //     	}
@@ -328,11 +329,11 @@ require dirname(__FILE__)."/classes/general.php";
 //         $request_body = $this->format_customer_info_payload($customer_data, $organisation_status);
 //     	$response = $this->post_request_to_vt(self::capture_customer_info_token, "captureCustomerInfo", $request_body);
 //         $response_data = $response->result[0];
-        
+
 //         return $response_data;
 
 //     }
-    
+
 //     protected function update_or_create_deal($deal_stage, $deal_close_date){
 //     	$request_body = array(
 //     		"dealName" => $this->deal_name,
@@ -344,47 +345,47 @@ require dirname(__FILE__)."/classes/general.php";
 //     		"organisationId" => $this->organisation_id,
 //     		"assignee" => $this->get_contact_assignee(),
 //     	);
-    	
+
 //         if(isset($this->data["participating_num_of_students"])){
 //     	    $request_body["dealNumOfParticipants"] = (int)$this->data["participating_num_of_students"];
 //     	}
 //         else if(isset($this->data["num_of_students"])){
 //     	    $request_body["dealNumOfParticipants"] = (int)$this->data["num_of_students"];
 //     	}
-    	
+
 //     	if(isset($this->data["num_of_ey_children"])){
 //     	    $request_body["dealNumOfParticipants"] = (int)$this->data["num_of_ey_children"];
 //     	}
-    	
+
 //     	if(isset($this->data["num_of_employees"])){
 //     	    $request_body["dealNumOfParticipants"] = (int)$this->data["num_of_employees"];
 //     	}
-    	
-    	
+
+
 //     	$response = $this->post_request_to_vt(self::update_or_create_deal_token, "getOrCreateDeal", $request_body);
 //         $response_data = $response->result[0];
-        
+
 //         $this->deal_id = $response_data->id;
 //         $this->deal_first_info_session_date = $response_data->cf_potentials_firstinfosessiondate;
 //     }
-    
+
 //     protected function update_deal_with_registration($info_session, $close_date){
 //     	$request_body = array(
 //     		"dealId" => $this->deal_id,
 //     		"firstInfoSessionDate" => $info_session,
 //     		"dealCloseDate" => $close_date,
 //     	);
-    	
+
 //     	$response = $this->post_request_to_vt(self::update_deal_token, "updateDeal", $request_body);
 //         $response_data = $response->result[0];
 //     }
-    
+
 //     protected function get_services($codes){
 //         $request_body = array("serviceNumbers" => $codes);
 //     	$response = $this->post_request_to_vt(self::get_services_token, "getServices", $request_body, true);
 //         return $response->result;
 //     }
-    
+
 //     protected function get_line_items(){
 //         $engage_code = "SER12";
 
@@ -392,13 +393,13 @@ require dirname(__FILE__)."/classes/general.php";
 //         if(isset($this->data["inspire"])){
 //             $inspire = $this->data["inspire"];
 //         }
-        
+
 //         $inspire_price_map = array(
 //             "Hugh Digital" => array("SER18", "SER29", "SER144"),
 //             "Martin Digital" => array("SER19", "SER21", "SER145")
 //         );
 
-        
+
 //         $inspire_code = $inspire_price_map[$inspire][0];
 //         $not_using_mhf = isset($this->data["mental_health_funding"]) ? $this->data["mental_health_funding"] === "No" : true;
 //         $is_small_school = isset($this->data["num_of_students"]) ? $this->data["num_of_students"] <= 200 : false;
@@ -410,8 +411,8 @@ require dirname(__FILE__)."/classes/general.php";
 //                 // 0 - 100 students
 //                 $inspire_code = $inspire_price_map[$this->data["inspire"]][2];
 //             }
-//         } 
-        
+//         }
+
 //         $items = array(
 //             array(
 //                 "qty" => 1,
@@ -428,15 +429,15 @@ require dirname(__FILE__)."/classes/general.php";
 //                 "section_no" => 1,
 //             ),
 //         );
-        
-        
+
+
 //         $services = $this->get_services(array_column($items, "code"));
 //         $line_items = array();
-        
+
 //         foreach($items as $item){
 //             $code = $item["code"];
 //             $service = $services[array_search($code, array_column($services, 'service_no'))];
-            
+
 //             $line_item = array(
 //                 "productid" => $service->id,
 //                 "quantity" => $item["qty"],
@@ -446,17 +447,17 @@ require dirname(__FILE__)."/classes/general.php";
 //                 "section_name" => $item["section_name"],
 //                 "section_no" => $item["section_no"],
 //             );
-            
+
 //             array_push($line_items, $line_item);
 //         }
 //         return $line_items;
 //     }
-    
+
 //     protected function set_deal_line_items($line_items){
 //         $request_body = array("dealId" => $this->deal_id);
 //     	$response = $this->post_request_with_line_items(self::set_deal_line_items_token, "setDealLineItems", $request_body, $line_items);
 //     }
-    
+
 //     protected function update_deal_with_confirmation($total){
 //     	$request_body = array(
 //     		"dealId" => $this->deal_id,
@@ -470,20 +471,20 @@ require dirname(__FILE__)."/classes/general.php";
 //     		"state" => $this->data["state"],
 //             "total" => $total,
 //     	);
-    	
+
 //     	if(isset($this->data["mental_health_funding"])){
 //     	    $request_body["mentalHealthFunding"] = $this->data["mental_health_funding"];
 //     	}
-    	
+
 //     	$response = $this->post_request_to_vt(self::update_deal_token, "updateDeal", $request_body);
 //     }
-    
+
 //     protected function create_enquiry(){
 // 		$enquiry_subject = $this->data["contact_first_name"]." ". $this->data["contact_last_name"];
 // 		if(!is_null($this->organisation_name)){
 // 			$enquiry_subject .= " | ".$this->organisation_name;
 // 		}
-		
+
 //     	$request_body = array(
 //     		"enquirySubject" => $enquiry_subject,
 //     		"enquiryBody"=> $this->data["enquiry"] ? $this->data["enquiry"] : "Conference Enquiry",
@@ -491,40 +492,40 @@ require dirname(__FILE__)."/classes/general.php";
 //     		"assignee" => $this->get_enquiry_assignee(),
 //     		"enquiryType" => $this->enquiry_type,
 //     	);
-    	
+
 //     	$response = $this->post_request_to_vt(self::create_enquiry_token, "createEnquiry", $request_body);
-    
+
 //     }
-    
+
 //     protected function get_event_details($event_id){
 //         $request_body = array(
-//             "eventId" => $event_id    
+//             "eventId" => $event_id
 //         );
-        
+
 //         $response = $this->post_request_to_vt(self::get_event_details_token, "getEventDetails", $request_body, true);
-        
+
 //         return $response->result[0];
 //     }
-    
+
 //     protected function is_contact_registered_for_event($event_no){
 //     	$request_body = array(
 //     		"eventNo" => $event_no,
 //     		"contactId" => $this->contact_id,
 //     	);
-    	
+
 //     	$response = $this->post_request_to_vt(self::check_contact_registered_for_event_token, "checkContactRegisteredForEvent", $request_body);
-        
+
 //         return !empty($response->result);
 //     }
-    
+
 //     protected function register_contact_for_event($event){
 //         if ($this->is_contact_registered_for_event($event->event_no)){
 //             return;
 //         }
-        
+
 //     	$event_start_date = $event->date_start;
 //     	$event_start_datetime = $event_start_date." ".$event->time_start;
-        	
+
 //     	$request_body = array(
 //     		"eventId" => $this->data["event_id"],
 //     		"eventNo" => $event->event_no,
@@ -536,14 +537,14 @@ require dirname(__FILE__)."/classes/general.php";
 //     		"dealId" => $this->deal_id,
 //     		"source" => $this->data["source_form"],
 //     	);
-    	
+
 //     	$response = $this->post_request_to_vt(self::register_contact_token, "registerContact", $request_body);
 //     }
-    
+
 //     protected function create_quote($line_items){
 //     	$request_body = array(
 //     		"dealId" => $this->deal_id,
-//     		"subject" => $this->quote_name,    		
+//     		"subject" => $this->quote_name,
 //     		"type" => $this->quote_type,
 //     		"program" => $this->quote_program,
 //     		"stage" => $this->quote_stage,
@@ -557,18 +558,18 @@ require dirname(__FILE__)."/classes/general.php";
 //     		"suburb" => $this->data["suburb"],
 //     		"postcode" => $this->data["postcode"],
 //     		"state" => $this->data["state"],
-    		
+
 //     	);
 //         $response = $this->post_request_with_line_items(self::create_quote_token, "createQuote", $request_body, $line_items);
-    	
+
 //         $response_data = $response;
 //         $this->quote_id = $response_data->id;
 //     }
-    
+
 //     public function submit_enquiry(){
 //         try{
 //             $deal_close_date = date("d/m/Y", strtotime("+2 Weeks"));
-            
+
 //             $this->capture_customer_info();
 //             $this->update_or_create_deal("New", $deal_close_date);
 //             $this->create_enquiry();
@@ -578,13 +579,13 @@ require dirname(__FILE__)."/classes/general.php";
 //             return false;
 //         }
 //     }
-    
+
 //     private function add_one_day($date_string){
 //             $date = new DateTime($date_string);
 //             $date->add(new DateInterval('P1D'));
 //             return $date->format('d/m/Y');
 //     }
-    
+
 //     public function _submit_event_registration($deal_stage){
 //         try{
 //             $event = $this->get_event_details($this->data['event_id']);
@@ -592,7 +593,7 @@ require dirname(__FILE__)."/classes/general.php";
 //         	$event_start_datetime = $event_start_date." ".$event->time_start;
 
 //             $deal_close_date = $this->add_one_day($event_start_date);
-            
+
 //             $this->capture_customer_info();
 //             $this->update_or_create_deal($deal_stage, $deal_close_date);
 //             $this->register_contact_for_event($event);
@@ -601,7 +602,7 @@ require dirname(__FILE__)."/classes/general.php";
 //             if(empty($this->deal_first_info_session_date) or strcmp($event_start_datetime, $this->deal_first_info_session_date) == -1){
 //                 $first_info_session_date = $event_start_datetime;
 //             }
-            
+
 //             $this->update_deal_with_registration($first_info_session_date, $this->add_one_day($first_info_session_date));
 //             return true;
 //         }
@@ -609,7 +610,7 @@ require dirname(__FILE__)."/classes/general.php";
 //             return false;
 //         }
 //     }
-    
+
 //     public function submit_prize_pack_entry(){
 //         try{
 //             $this->capture_customer_info("Lead");
@@ -619,7 +620,7 @@ require dirname(__FILE__)."/classes/general.php";
 //             return false;
 //         }
 //     }
-    
+
 //     public function submit_seminar_registration($event_no, $date_start, $time_start, $cf_events_shorteventname, $cf_events_zoomlink){
 //         $event = (object)[
 //             "event_no" => $event_no,
@@ -637,7 +638,7 @@ require dirname(__FILE__)."/classes/general.php";
 //             return false;
 //         }
 //     }
-    
+
 //     public function confirm_program(){
 //         try{
 //             $deal_stage = "Deal Won";
@@ -645,20 +646,20 @@ require dirname(__FILE__)."/classes/general.php";
 //             $this->capture_main_customer_info();
 //             $this->update_or_create_deal($deal_stage, $deal_close_date);
 //             $this->capture_billing_contact_info();
-            
+
 //             $line_items = $this->get_line_items();
-//             $total = array_sum(array_map(function($item) { 
-//                 return $item['listprice'] * $item['quantity']; 
+//             $total = array_sum(array_map(function($item) {
+//                 return $item['listprice'] * $item['quantity'];
 //             }, $line_items));
-            
+
 //             $this->update_deal_with_confirmation($total);
 //             $this->set_deal_line_items($line_items);
-            
+
 //             $this->create_quote($line_items);
 //         }
 //         catch(Exception $e){
 //             return false;
-//         }        
+//         }
 //     }
 // }
 
@@ -672,16 +673,16 @@ require dirname(__FILE__)."/classes/general.php";
 // 	protected $quote_type = "School - New";
 // 	protected $quote_program = "School";
 // 	protected $quote_stage = "Delivered";
-	
 
-    
+
+
 //     protected function capture_customer_info_in_vt($customer_data, $organisation_status=null){
 //         $this->deactivate_contacts($customer_data["contact_email"]);
-        
+
 //     	$request_body = $this->format_customer_info_payload($customer_data, $organisation_status);
 
 //     	$response;
-    	
+
 //         if($this->data["school_name_other_selected"]){
 //             $request_body["organisationName"] = $this->data["school_name_other"];
 //             $response = $this->post_request_to_vt(self::capture_customer_info_token, "captureCustomerInfo", $request_body);
@@ -689,37 +690,37 @@ require dirname(__FILE__)."/classes/general.php";
 //             $request_body["organisationAccountNo"] = $this->data["school_account_no"];
 //             $response = $this->post_request_to_vt(self::capture_customer_info_with_account_no_token, "captureCustomerInfoWithAccountNo", $request_body);
 //         }
-    	
+
 //         $response_data = $response->result[0];
 //         return $response_data;
 //     }
-    
-    
+
+
 //     protected function get_enquiry_assignee(){
 //         $org_assignee = $this->organisation_details["assigned_user_id"];
 //         if($org_assignee != self::MADDIE){
 //             return $org_assignee;
 //         }
-        
+
 //         $state = $this->data["state"];
 //         if($state == "NSW" or $state == "QLD"){
 //             return self::VICTOR;
 //         }
 //         return self::LAURA;
 //     }
-    
+
 //     protected function get_contact_assignee(){
 //         $org_assignee = $this->organisation_details["assigned_user_id"];
 //         if($org_assignee != self::MADDIE){
 //             return $org_assignee;
 //         }
-        
+
 //         $state = $this->data["state"];
 //         if($state == "NSW" or $state == "QLD"){
 //             return self::VICTOR;
 //         }
-//         return self::LAURA;    
-        
+//         return self::LAURA;
+
 //     }
 
 //     protected function get_org_assignee(){
@@ -727,24 +728,24 @@ require dirname(__FILE__)."/classes/general.php";
 //         if($org_assignee != self::MADDIE){
 //             return $org_assignee;
 //         }
-        
+
 //         $state = $this->data["state"];
 //         if($state == "NSW" or $state == "QLD"){
 //             return self::VICTOR;
 //         }
 //         return self::LAURA;
 //     }
-    
+
 //     protected function is_new_school(){
 //         $org_assignee = $this->organisation_details["assigned_user_id"];
 //         $not_spms = array(self::MADDIE, self::LAURA, self::VICTOR, self::HELENOR);
 //         return in_array($org_assignee, $not_spms);
 //     }
-    
+
 //     public function submit_event_registration(){
 //         return $this->_submit_event_registration("Considering");
 //     }
-    
+
 //     public function get_info_for_confirmation_form($account_no=null, $accountname=null){
 //         $deal_response;
 //         $request_body = array(
@@ -760,16 +761,16 @@ require dirname(__FILE__)."/classes/general.php";
 //         if(empty($deal_response) or empty($deal_response->result) or empty($deal_response->result[0])){
 //             return array(
 //                 "deal_status" => ""
-//             ); 
+//             );
 //         }
 //         $deal_details = $deal_response->result[0];
-        
+
 //         $deal_status = $deal_details->sales_stage;
-        
+
 //         return array(
 //             "deal_status" => $deal_status
 //         );
-        
+
 //     }
 
 //     protected function update_org_assignee(){
@@ -791,9 +792,9 @@ require dirname(__FILE__)."/classes/general.php";
 //         if(count($request_body) == 0){
 //             return;
 //         }
-        
+
 //         $request_body["organisationId"] = $this->organisation_id;
-        
+
 //     	$response = $this->post_request_to_vt(self::update_organisation_token, "updateOrganisation", $request_body);
 
 //         $response_data = $response->result[0];
@@ -804,7 +805,7 @@ require dirname(__FILE__)."/classes/general.php";
 //     public function submit_enquiry(){
 //         try{
 //             $deal_close_date = date("d/m/Y", strtotime("+2 Weeks"));
-            
+
 //             $this->capture_customer_info();
 //             if($this->is_new_school()){
 //                 $this->update_or_create_deal("New", $deal_close_date);
@@ -825,16 +826,16 @@ require dirname(__FILE__)."/classes/general.php";
 // 	protected $deal_type = "Workplace";
 // 	protected $deal_org_type = "Workplace";
 // 	protected $enquiry_type = "Workplace";
-	
+
 //     public function __construct($data){
 //         parent::__construct($data);
 //         $this->organisation_name = $data["organisation_name"];
 //     }
-    
+
 //     protected function get_enquiry_assignee(){
 //         return self::LAURA;
 //     }
-    
+
 //     protected function get_contact_assignee(){
 //         return self::LAURA;
 //     }
@@ -842,7 +843,7 @@ require dirname(__FILE__)."/classes/general.php";
 //     protected function get_org_assignee(){
 //         return self::LAURA;
 //     }
-    
+
 //     public function submit_event_registration(){
 //         return $this->_submit_event_registration("In Campaign");
 //     }
@@ -850,7 +851,7 @@ require dirname(__FILE__)."/classes/general.php";
 
 // class GeneralVTController extends VTController {
 //     protected $enquiry_type = "General";
-    
+
 //     public function submit_enquiry(){
 //         try{
 //             $this->get_contact_by_email();
@@ -861,11 +862,11 @@ require dirname(__FILE__)."/classes/general.php";
 //             return false;
 //         }
 //     }
-    
+
 //     protected function get_enquiry_assignee(){
 //         return self::DAWN; // get Dawns's ID
 //     }
-    
+
 //     protected function get_contact_assignee(){
 //         return self::MADDIE;
 //     }
@@ -877,16 +878,16 @@ require dirname(__FILE__)."/classes/general.php";
 // 	protected $deal_type = "Early Years";
 // 	protected $deal_org_type = "Early Years";
 // 	protected $enquiry_type = "Early Years";
-	
+
 //     public function __construct($data){
 //         parent::__construct($data);
 //         $this->organisation_name = $data["earlyyears_name"];
 //     }
-    
+
 //     protected function get_enquiry_assignee(){
 //         return self::EMMA; // get Emma's ID
 //     }
-    
+
 //     protected function get_contact_assignee(){
 //         return self::EMMA;
 //     }

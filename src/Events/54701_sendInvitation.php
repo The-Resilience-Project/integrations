@@ -1,19 +1,20 @@
 <?php
+
 /**
  * Created by BORU
  * Team: IN
  * Date: 14/10/22 1:54 PM
  */
 chdir(dirname(__FILE__));
-require "../init.php";
+require '../init.php';
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: PUT, GET, POST");
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: PUT, GET, POST');
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
-$result = array('success' => false);
-if($_SERVER['REQUEST_METHOD'] != "POST") {
-    echo json_encode(array('success'=>false));
+$result = ['success' => false];
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    echo json_encode(['success' => false]);
     exit;
 }
 if (!empty($_REQUEST['list'])) {
@@ -22,12 +23,12 @@ if (!empty($_REQUEST['list'])) {
     $mailSubject = $_REQUEST['mailSubject'];
     $mailBody = $_REQUEST['mailBody'];
     $eventid = $_REQUEST['eventid'];
-    $result = preg_match_all("/\\$(?:[a-zA-Z0-9]+)-(?:[a-zA-Z0-9]+)(?:_[a-zA-Z0-9]+)?(?:_[a-zA-Z0-9]+)?(?::[a-zA-Z0-9]+)?(?:_[a-zA-Z0-9]+)*\\$/", $mailBody, $matches);
-    $mergeFieldsList = array();
-    foreach($matches[0] as $matche){
-        $matche = str_replace('$','',$matche);
+    $result = preg_match_all('/\$(?:[a-zA-Z0-9]+)-(?:[a-zA-Z0-9]+)(?:_[a-zA-Z0-9]+)?(?:_[a-zA-Z0-9]+)?(?::[a-zA-Z0-9]+)?(?:_[a-zA-Z0-9]+)*\$/', $mailBody, $matches);
+    $mergeFieldsList = [];
+    foreach ($matches[0] as $matche) {
+        $matche = str_replace('$', '', $matche);
         $explodeMatch = explode('-', $matche);
-        if(strpos($explodeMatch[1], ":") !== false){
+        if (strpos($explodeMatch[1], ':') !== false) {
             $referenceField = explode(':', $explodeMatch[1]);
             $mergeFieldsList[$explodeMatch[0]][$referenceField[0]][] = $referenceField[1];
         }
@@ -49,68 +50,76 @@ if (!empty($_REQUEST['list'])) {
             $to_email      = $contactFields['email'];
             try {
                 if (!empty($selectedEmailTemplateId)) {
-                    if(empty($mailBody) || empty($mailSubject)){
+                    if (empty($mailBody) || empty($mailSubject)) {
                         $query   = "SELECT * FROM EmailTemplates where templatename = '" . $selectedEmailTemplateId . "' LIMIT 1;";
                         $data    = $vtod->query($query);
                         $subject = $data[0]['subject'];
                         $body    = $data[0]['body'];
-                    }else{
+                    } else {
                         $subject = $mailSubject;
                         $body    = $mailBody;
                     }
-                    if(strpos($body,'@@eventid@@') != -1){
+                    if (strpos($body, '@@eventid@@') != -1) {
                         $body = str_replace('@@eventid@@', $eventid, $body);
                     }
 
                     foreach ($contactFields as $fieldName => $fieldVal) {
                         $needle = '$contacts-' . $fieldName . '$';
-                        if($fieldName == 'id'){
+                        if ($fieldName == 'id') {
                             $fieldName = 'contactid';
                             $fieldVal = $contactFields['firstname'] .' '.$contactFields['lastname'];
                             $needle = '$events-' . $fieldName . '$';
                         }
 
-                        if ($fieldName == 'id') $fieldVal = ltrim($fieldVal, '4x');
-                        if ($fieldName == 'account_id') $fieldVal = ltrim($fieldVal, '3x');
+                        if ($fieldName == 'id') {
+                            $fieldVal = ltrim($fieldVal, '4x');
+                        }
+                        if ($fieldName == 'account_id') {
+                            $fieldVal = ltrim($fieldVal, '3x');
+                        }
 
                         $subject = str_replace($needle, $fieldVal, $subject);
                         $body    = str_replace($needle, $fieldVal, $body);
 
                     }
-                    $body    = str_replace('$contacts-id$', ltrim($contactFields['id'],'4x'), $body);
+                    $body    = str_replace('$contacts-id$', ltrim($contactFields['id'], '4x'), $body);
 
                     foreach ($eventDataFields as $fieldName => $fieldVal) {
                         $needle = '$events-' . $fieldName . '$';
 
-                        if ($fieldName == 'assigned_user_id') $fieldVal = ltrim($fieldVal, '4x');
-                        if ($fieldName == 'account_id') $fieldVal = ltrim($fieldVal, '3x');
+                        if ($fieldName == 'assigned_user_id') {
+                            $fieldVal = ltrim($fieldVal, '4x');
+                        }
+                        if ($fieldName == 'account_id') {
+                            $fieldVal = ltrim($fieldVal, '3x');
+                        }
 
                         $subject = str_replace($needle, $fieldVal, $subject);
                         $body    = str_replace($needle, $fieldVal, $body);
                     }
 
-                    if(strpos($body,"$custom-currentyear$") > 0){
+                    if (strpos($body, "$custom-currentyear$") > 0) {
                         $year = date('Y');
-                        $body    = str_replace('$custom-currentyear$',$year , $body);
+                        $body    = str_replace('$custom-currentyear$', $year, $body);
                     }
-                    if(strpos($body,"$custom-currentmonth$") > 0){
+                    if (strpos($body, "$custom-currentmonth$") > 0) {
                         $month = date('m');
-                        $body    = str_replace('$custom-currentmonth$',$month , $body);
+                        $body    = str_replace('$custom-currentmonth$', $month, $body);
                     }
-                    if(strpos($body,"$custom-currentdate$") > 0){
+                    if (strpos($body, "$custom-currentdate$") > 0) {
                         $date = date('d');
-                        $body    = str_replace('$custom-currentdate$',$date , $body);
+                        $body    = str_replace('$custom-currentdate$', $date, $body);
                     }
 
-                    foreach($mergeFieldsList as $module => $mergeFields){
-                        foreach($mergeFields as $reference=>$mergeFieldss){
-                            foreach($mergeFieldss as $mergeField){
+                    foreach ($mergeFieldsList as $module => $mergeFields) {
+                        foreach ($mergeFields as $reference => $mergeFieldss) {
+                            foreach ($mergeFieldss as $mergeField) {
                                 $refereceneedle = "$$module-$reference:$mergeField$";
-                                if($reference == 'contactid'){
+                                if ($reference == 'contactid') {
                                     $value = $contactFields[$mergeField];
-                                }elseif($reference == 'smownerid'){
+                                } elseif ($reference == 'smownerid') {
                                     $value = $userData[$mergeField];
-                                }else{
+                                } else {
                                     $value = '';
                                 }
                                 $body    = str_replace($refereceneedle, $value, $body);
@@ -127,40 +136,40 @@ if (!empty($_REQUEST['list'])) {
                     $arrEmail['parent_id']        = $contactid;
 
                     try {
-                        $data_prod = $vtod->create("Emails", $arrEmail);
+                        $data_prod = $vtod->create('Emails', $arrEmail);
                         if (!empty($data_prod['id'])) {
                             $data = sendMail($from, '', [$to_email], $subject, $body);
-                            if($data === true){
-                                $result = array('success' => true,'data_prod'=>$data_prod);
-                            }else{
-                                $result = array(
+                            if ($data === true) {
+                                $result = ['success' => true,'data_prod' => $data_prod];
+                            } else {
+                                $result = [
                                     'success'   => false,
                                     'error'     => 'Error while Sending Email.',
                                     'errorDesc' => $data,
-                                );
+                                ];
                             }
-                        }else{
-                            $result = array(
+                        } else {
+                            $result = [
                                 'success'   => false,
                                 'error'     => 'Error while saving record.',
                                 'errorDesc' => '',
-                            );
+                            ];
                         }
                     } catch (Exception $e) {
-                        $result = array(
+                        $result = [
                             'success'   => false,
                             'error'     => 'Error while Send mail.',
                             'errorDesc' => $e->getMessage(),
-                        );
+                        ];
                     }
                 }
 
             } catch (Exception $e) {
-                $result = array(
+                $result = [
                     'success'   => false,
                     'error'     => 'Error while saving record.',
                     'errorDesc' => $e->getMessage(),
-                );
+                ];
             }
         }
     }

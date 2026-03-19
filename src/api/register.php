@@ -1,12 +1,12 @@
 <?php
 
-require dirname(__FILE__)."/utils.php";
-require dirname(__FILE__)."/api_helpers.php";
-require dirname(__FILE__)."/../init.php";
+require dirname(__FILE__).'/utils.php';
+require dirname(__FILE__).'/api_helpers.php';
+require dirname(__FILE__).'/../init.php';
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: PUT, GET, POST");
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: PUT, GET, POST');
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
 $method = get_method();
 $data = get_request_data();
@@ -15,24 +15,22 @@ $data = get_request_data();
 // Store some data or something
 if ($method === 'POST') {
     $data_controller;
-    
-    if($data["service_type"] === "School"){
+
+    if ($data['service_type'] === 'School') {
         $data_controller = new SchoolVTController($data);
-    }
-    elseif($data["service_type"] === "Workplace"){
+    } elseif ($data['service_type'] === 'Workplace') {
         $data_controller = new WorkplaceVTController($data);
-    }
-    elseif($data["service_type"] === "Early Years"){
+    } elseif ($data['service_type'] === 'Early Years') {
         $data_controller = new EarlyYearsVTController($data);
     }
-    
-    $success = $data_controller->submit_event_registration();
-	
 
-	// Then, respond with a success
-	send_response([
-		'status' => $success ? 'success' : 'fail',
-	]);
-	exit;
+    $success = $data_controller->submit_event_registration();
+
+
+    // Then, respond with a success
+    send_response([
+        'status' => $success ? 'success' : 'fail',
+    ]);
+    exit;
 
 }
