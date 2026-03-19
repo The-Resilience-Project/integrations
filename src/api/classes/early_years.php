@@ -95,7 +95,7 @@ class EarlyYearsVTController extends VTController
         ]);
 
         try {
-            $deal_close_date = date('d/m/Y', strtotime('+2 Weeks'));
+            $deal_close_date = $this->calculate_close_date('+2 Weeks');
             log_debug('Calculated deal close date', ['close_date' => $deal_close_date]);
 
             log_debug('Capturing customer information');
@@ -224,7 +224,7 @@ class EarlyYearsVTController extends VTController
 
         foreach ($items as $item) {
             $code = $item['code'];
-            $service = $services[array_search($code, array_column($services, 'service_no'))];
+            $service = $this->find_service_by_code($services, $code);
 
             $line_item = [
                 'productid' => $service->id,

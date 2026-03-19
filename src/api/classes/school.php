@@ -73,7 +73,7 @@ class SchoolVTController extends VTController
         }
 
         $state = $this->data['state'];
-        if ($state == 'NSW' or $state == 'QLD') {
+        if (in_array($state, self::BRENDAN_STATES)) {
             return self::BRENDAN;
         }
         return self::LAURA;
@@ -109,7 +109,7 @@ class SchoolVTController extends VTController
     {
 
         $state = $this->data['state'];
-        if ($state == 'NSW' or $state == 'QLD') {
+        if (in_array($state, self::BRENDAN_STATES)) {
             return self::BRENDAN;
         }
         return self::LAURA;
@@ -125,7 +125,7 @@ class SchoolVTController extends VTController
         ]);
 
         try {
-            $deal_close_date = date('d/m/Y', strtotime('+2 Weeks'));
+            $deal_close_date = $this->calculate_close_date('+2 Weeks');
             log_debug('Calculated deal close date', ['close_date' => $deal_close_date]);
 
             log_debug('Capturing school customer info');
@@ -395,7 +395,7 @@ class SchoolVTController extends VTController
 
         foreach ($items as $item) {
             $code = $item['code'];
-            $service = $services[array_search($code, array_column($services, 'service_no'))];
+            $service = $this->find_service_by_code($services, $code);
 
             $line_item = [
                 'productid' => $service->id,
@@ -450,7 +450,7 @@ class SchoolVTController extends VTController
             if ($this->data['source_form'] === 'Info Session Recording') {
                 $this->capture_customer_info();
                 if ($this->is_new_school()) {
-                    $deal_close_date = date('d/m/Y', strtotime('+4 Weeks'));
+                    $deal_close_date = $this->calculate_close_date('+4 Weeks');
 
                     $this->update_or_create_deal('Considering', $deal_close_date);
                     $this->update_deal_with_registration(null, $deal_close_date);
@@ -711,7 +711,7 @@ class ExistingSchoolVTController extends SchoolVTController
 
         foreach ($items as $item) {
             $code = $item['code'];
-            $service = $services[array_search($code, array_column($services, 'service_no'))];
+            $service = $this->find_service_by_code($services, $code);
 
             $line_item = [
                 'productid' => $service->id,

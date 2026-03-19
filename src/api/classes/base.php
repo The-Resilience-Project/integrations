@@ -64,6 +64,8 @@ class VTController
     protected const ED_TEAM = '20x47';
     protected const HELENOR = '19x24';
 
+    protected const BRENDAN_STATES = ['NSW', 'QLD'];
+
     protected $contact_id;
     protected $billing_contact_id;
     protected $billing_contact_email;
@@ -152,6 +154,16 @@ class VTController
     protected function isset_data($key)
     {
         return isset($this->data[$key]) and !empty($this->data[$key]);
+    }
+
+    protected function find_service_by_code($services, $code)
+    {
+        return $services[array_search($code, array_column($services, 'service_no'))];
+    }
+
+    protected function calculate_close_date($offset = '+2 Weeks')
+    {
+        return date('d/m/Y', strtotime($offset));
     }
 
     protected function get_services($codes, $ids = [])

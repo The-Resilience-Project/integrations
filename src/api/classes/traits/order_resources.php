@@ -372,7 +372,7 @@ trait OrderResources
         $services = $this->get_services(array_column($service_items, 'code'));
         foreach ($service_items as $item) {
             $code = $item['code'];
-            $service = $services[array_search($code, array_column($services, 'service_no'))];
+            $service = $this->find_service_by_code($services, $code);
 
             $invoice_item = [
                 'productid' => $service->id,

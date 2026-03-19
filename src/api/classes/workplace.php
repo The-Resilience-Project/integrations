@@ -52,7 +52,7 @@ class WorkplaceVTController extends VTController
         log_info('Starting workplace enquiry submission');
 
         try {
-            $deal_close_date = date('d/m/Y', strtotime('+10 Days'));
+            $deal_close_date = $this->calculate_close_date('+10 Days');
             log_debug('Calculated deal close date', ['close_date' => $deal_close_date]);
 
             log_debug('Capturing workplace customer info');
@@ -138,7 +138,7 @@ class WorkplaceVTController extends VTController
                 ]);
 
                 if ($this->organisation_details['cf_accounts_2025confirmationstatus'] === '' and in_array($this->data['organisation_sub_type'], ['Professional Services', 'Healthcare','Government','Not for Profit','Retail/Wholesale'])) {
-                    $deal_close_date = date('d/m/Y', strtotime('+10 Days'));
+                    $deal_close_date = $this->calculate_close_date('+10 Days');
                     log_info('Creating workplace deal for webinar recording', [
                         'status' => 'In Campaign',
                         'close_date' => $deal_close_date,

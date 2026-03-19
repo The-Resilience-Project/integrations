@@ -38,7 +38,7 @@ trait Qualify
     public function submit_qualifier()
     {
         try {
-            $deal_close_date = date('d/m/Y', strtotime('+2 Weeks'));
+            $deal_close_date = $this->calculate_close_date('+2 Weeks');
 
             $this->capture_customer_info();
             $deal_status = $this->data['deal_status'];

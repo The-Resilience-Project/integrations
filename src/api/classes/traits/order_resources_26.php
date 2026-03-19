@@ -348,7 +348,7 @@ trait OrderResources
             if (array_key_exists('code', $item)) {
                 $code = $item['code'];
                 log_debug('Processing service by code', ['code' => $code]);
-                $service = $services[array_search($code, array_column($services, 'service_no'))];
+                $service = $this->find_service_by_code($services, $code);
             } else {
                 $service_id = $item['service_id'];
                 log_debug('Processing service by ID', ['service_id' => $service_id]);
