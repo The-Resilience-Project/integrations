@@ -11,8 +11,6 @@ header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 $method = get_method();
 $data = get_request_data();
 
-// POST request
-// Store some data or something
 if ($method === 'POST') {
     log_info('Enquiry request started', [
         'endpoint' => 'enquiry',
@@ -60,7 +58,6 @@ if ($method === 'POST') {
             ]);
         }
 
-        // Then, respond with a success
         send_response([
             'status' => $success ? 'success' : 'fail',
         ]);

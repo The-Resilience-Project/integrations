@@ -6,7 +6,6 @@ require_once dirname(__FILE__).'/traits/enquiry.php';
 require_once dirname(__FILE__).'/traits/confirmation.php';
 require_once dirname(__FILE__).'/traits/lead.php';
 require_once dirname(__FILE__).'/traits/registration.php';
-// require_once dirname(__FILE__)."/traits/order_resources.php";
 require_once dirname(__FILE__).'/traits/order_resources_26.php';
 require_once dirname(__FILE__).'/traits/accept_dates.php';
 require_once dirname(__FILE__).'/traits/assess.php';
@@ -117,7 +116,7 @@ class SchoolVTController extends VTController
 
 
 
-    public function submit_enquiry()
+    public function submit_enquiry(): bool
     {
         log_info('Starting school enquiry submission', [
             'organisation' => $this->data['school_name_other'] ?? $this->data['school_account_no'] ?? 'unknown',
@@ -525,7 +524,6 @@ class ExistingSchoolVTController extends SchoolVTController
         'twb_3_online_only',
         'twb_3_workshop_paid',
         'twb_3_workshop_free',
-        // "authentic_connection_staff",
         'dwf_online_only',
         'dwf_workshop_paid',
         'dwf_workshop_free',
@@ -533,7 +531,6 @@ class ExistingSchoolVTController extends SchoolVTController
         'brh_workshop_paid',
         'brh_workshop_free',
         'feeling_ace',
-        // "authentic_connection_parents",
         'connected_parenting',
     ];
 
@@ -545,8 +542,6 @@ class ExistingSchoolVTController extends SchoolVTController
         'Wellbeing Workshop 2 (Others)' => 'SER25',
         'Wellbeing Webinar 3 (Success)' => 'SER117',
         'Wellbeing Workshop 3 (Success)' => 'SER118',
-        // "Hugh Staff AC Webinar" => "SER131",
-        // "Martin Staff AC Webinar" => "SER132",
         'Family Digital Wellbeing Webinar' => 'SER120',
         'Family Digital Wellbeing Workshop' => 'SER119',
         'Building Resilience at Home Webinar' => 'SER30',
@@ -555,15 +550,6 @@ class ExistingSchoolVTController extends SchoolVTController
         'Martin Parent Webinar' => 'SER161', // change this to new Feeling ACE line item if needed
         'Connected Parenting Webinar' => 'SER32',
     ];
-
-    // protected const comp_extend_code_map = array(
-    //     "Hugh Staff AC Webinar" => "SER125",
-    //     "Martin Staff AC Webinar" => "SER126",
-    //     "Building Resilience at Home Webinar" => "SER124",
-    //     "Hugh Parent Webinar" => "SER127",
-    //     "Martin Parent Webinar" => "SER128",
-    //     "Connected Parenting Webinar" => "SER123",
-    // );
 
     public function get_line_items()
     {
@@ -586,10 +572,6 @@ class ExistingSchoolVTController extends SchoolVTController
             }
 
         }
-
-        // if($this->isset_data("engage") and $this->data["engage"] === "Planners"){
-        //     $engage_code = "SER65";
-        // }
 
         $items = [];
         $engage = [];
@@ -663,22 +645,7 @@ class ExistingSchoolVTController extends SchoolVTController
             $this->inspire = '';
         }
 
-        // extend options
         $extend_options = [];
-        // comp
-        // if($this->isset_data("comp_extend")){
-        //     $comp_extend = $this->data["comp_extend"];
-        //     $comp_extend = substr($comp_extend, 0, strpos($comp_extend, "$"));
-        //     array_push($extend_options, $comp_extend);
-
-        //     array_push($items, array(
-        //         "qty" => 1,
-        //         "code" => self::comp_extend_code_map[$comp_extend],
-        //         "duration" => 1,
-        //         "section_name" => "Display on Invoice",
-        //         "section_no" => 1,
-        //     ));
-        // }
 
         foreach (self::extend_payload_options as $extend_payload_option) {
             if ($this->isset_data($extend_payload_option)) {

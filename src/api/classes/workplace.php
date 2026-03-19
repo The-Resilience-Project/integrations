@@ -47,7 +47,7 @@ class WorkplaceVTController extends VTController
         return $this->get_assignee_or_default();
     }
 
-    public function submit_enquiry()
+    public function submit_enquiry(): bool
     {
         log_info('Starting workplace enquiry submission');
 

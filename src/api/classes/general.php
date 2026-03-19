@@ -10,7 +10,7 @@ class GeneralVTController extends VTController
 
     protected $enquiry_type = 'General';
 
-    public function submit_enquiry()
+    public function submit_enquiry(): bool
     {
         log_info('Starting general enquiry submission', [
             'enquiry_type' => $this->enquiry_type,

@@ -457,8 +457,6 @@ trait OrderResources
 
     protected function is_first_invoice()
     {
-        $invoice_response;
-
         $request_body = [
             'invoiceName' => $this->previous_invoice_name,
         ];
@@ -480,13 +478,7 @@ trait OrderResources
         $quote = $this->get_quote();
         $deal = $this->get_deal();
         $org = $this->get_org();
-        $quote_id;
-        $deal_id;
-        $billing_contact;
-        $org_id;
-        $contact;
         $assignee = $org->assigned_user_id;
-        $line_items;
 
         if ($quote) {
             log_info('Using quote data for invoice', [
@@ -619,7 +611,7 @@ trait OrderResources
             'school' => $school_identifier,
         ]);
 
-        $response;
+        $response = null;
         $request_body = [
             'name' => $this->previous_quote_name,
         ];
@@ -650,7 +642,7 @@ trait OrderResources
             'school' => $school_identifier,
         ]);
 
-        $response;
+        $response = null;
         $request_body = [
             'dealName' => $this->previous_deal_name,
         ];
@@ -679,7 +671,7 @@ trait OrderResources
         $school_identifier = $this->isset_data('school_account_no') ? $this->data['school_account_no'] : $this->data['school_name_other'];
         log_debug('Looking up organization in VTiger', ['school' => $school_identifier]);
 
-        $response;
+        $response = null;
         if ($this->isset_data('school_account_no')) {
             $request_body['organisationAccountNo'] = $this->data['school_account_no'];
             $response = $this->post_request_to_vt('getOrgWithAccountNo', $request_body, true);

@@ -87,7 +87,7 @@ class EarlyYearsVTController extends VTController
         return $response_data;
     }
 
-    public function submit_enquiry()
+    public function submit_enquiry(): bool
     {
         log_info('Starting Early Years enquiry submission', [
             'organisation' => $this->data['earlyyears_name_other'] ?? $this->data['earlyyears_account_no'] ?? 'unknown',
@@ -290,14 +290,10 @@ class EarlyYearsVTController extends VTController
 
         $deal_status = '';
         $deal_id = '';
-        // $deal_org_type = "";
-        // $engage = "";
         if (!empty($deal_response) and !empty($deal_response->result) and !empty($deal_response->result[0])) {
             $deal_details = $deal_response->result[0];
             $deal_status = $deal_details->sales_stage;
             $deal_id = $deal_details->id;
-            // $deal_org_type = $deal_details->cf_potentials_orgtype;
-            // $engage = $deal_details->cf_potentials_curriculum;
 
             log_info('Early Years deal found', [
                 'deal_id' => $deal_id,
@@ -309,20 +305,6 @@ class EarlyYearsVTController extends VTController
                 'account_name' => $accountname ?? 'null',
             ]);
         }
-
-        // $free_travel = "";
-        // $priority = "";
-        // $funded_years = "";
-        // $org_state = "";
-        // $org_leading_trp = "";
-        // if(!empty($org_response) and !empty($org_response->result) and !empty($org_response->result[0])){
-        //     $org_details = $org_response->result[0];
-        //     $free_travel = $org_details->cf_accounts_freetravel;
-        //     $priority = $org_details->cf_accounts_priority;
-        //     $funded_years = $org_details->cf_accounts_fundedyears;
-        //     $org_state = $org_details->cf_accounts_statenew;
-        //     $org_leading_trp = $org_details->cf_accounts_leadingtrp;
-        // }
 
         return [
             'deal_status' => $deal_status,

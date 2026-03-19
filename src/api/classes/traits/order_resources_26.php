@@ -439,8 +439,6 @@ trait OrderResources
 
     protected function is_first_invoice()
     {
-        $invoice_response;
-
         $request_body = [
             'invoiceName' => $this->isset_data('order_for_2026') ? $this->invoice_name : $this->previous_invoice_name,
         ];
@@ -460,13 +458,7 @@ trait OrderResources
         $quote = $this->get_quote();
         $deal = $this->get_deal();
         $org = $this->get_org();
-        $quote_id;
-        $deal_id;
-        $billing_contact;
-        $org_id;
-        $contact;
         $assignee = $org->assigned_user_id;
-        $line_items;
         $seip_id = null;
 
         if ($quote) {
@@ -580,7 +572,7 @@ trait OrderResources
 
     protected function get_quote()
     {
-        $response;
+        $response = null;
         $request_body = [
             'name' => $this->isset_data('order_for_2026') ? $this->quote_name : $this->previous_quote_name,
         ];
@@ -600,8 +592,7 @@ trait OrderResources
 
     protected function get_deal()
     {
-
-        $response;
+        $response = null;
         $request_body = [
             'dealName' => $this->isset_data('order_for_2026') ? $this->deal_name : $this->previous_deal_name,
         ];
@@ -621,7 +612,7 @@ trait OrderResources
 
     protected function get_org()
     {
-        $response;
+        $response = null;
         if ($this->isset_data('school_account_no')) {
             $request_body['organisationAccountNo'] = $this->data['school_account_no'];
             $response = $this->post_request_to_vt('getOrgWithAccountNo', $request_body, true);
