@@ -12,9 +12,21 @@ class GeneralVTController extends VTController
 
     public function submit_enquiry()
     {
+        log_info('Starting general enquiry submission', [
+            'enquiry_type' => $this->enquiry_type,
+            'contact_email' => $this->data['contact_email'] ?? 'unknown',
+        ]);
+
         try {
+            log_debug('Capturing customer info');
             $this->capture_customer_info();
+
+            log_debug('Creating enquiry record');
             $this->create_enquiry();
+
+            log_info('General enquiry submitted successfully', [
+                'enquiry_type' => $this->enquiry_type,
+            ]);
             return true;
         } catch (Exception $e) {
             log_exception($e, [

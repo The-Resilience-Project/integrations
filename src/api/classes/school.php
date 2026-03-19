@@ -65,50 +65,37 @@ class SchoolVTController extends VTController
     }
 
 
+    private function get_assignee_by_state()
+    {
+        $org_assignee = $this->organisation_details['assigned_user_id'];
+        if ($org_assignee != self::MADDIE) {
+            return $org_assignee;
+        }
+
+        $state = $this->data['state'];
+        if ($state == 'NSW' or $state == 'QLD') {
+            return self::BRENDAN;
+        }
+        return self::LAURA;
+    }
+
     protected function get_enquiry_assignee()
     {
         $org_assignee = $this->organisation_details['assigned_user_id'];
         if (is_null($org_assignee)) {
             return self::LAURA;
         }
-        if ($org_assignee != self::MADDIE) {
-            return $org_assignee;
-        }
-
-        $state = $this->data['state'];
-        if ($state == 'NSW' or $state == 'QLD') {
-            return self::BRENDAN;
-        }
-        return self::LAURA;
+        return $this->get_assignee_by_state();
     }
 
     protected function get_contact_assignee()
     {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        if ($org_assignee != self::MADDIE) {
-            return $org_assignee;
-        }
-
-        $state = $this->data['state'];
-        if ($state == 'NSW' or $state == 'QLD') {
-            return self::BRENDAN;
-        }
-        return self::LAURA;
-
+        return $this->get_assignee_by_state();
     }
 
     protected function get_org_assignee()
     {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        if ($org_assignee != self::MADDIE) {
-            return $org_assignee;
-        }
-
-        $state = $this->data['state'];
-        if ($state == 'NSW' or $state == 'QLD') {
-            return self::BRENDAN;
-        }
-        return self::LAURA;
+        return $this->get_assignee_by_state();
     }
 
     protected function is_new_school()
@@ -132,14 +119,30 @@ class SchoolVTController extends VTController
 
     public function submit_enquiry()
     {
+        log_info('Starting school enquiry submission', [
+            'organisation' => $this->data['school_name_other'] ?? $this->data['school_account_no'] ?? 'unknown',
+            'contact_email' => $this->data['contact_email'] ?? 'unknown',
+        ]);
+
         try {
             $deal_close_date = date('d/m/Y', strtotime('+2 Weeks'));
+            log_debug('Calculated deal close date', ['close_date' => $deal_close_date]);
 
+            log_debug('Capturing school customer info');
             $this->capture_customer_info();
+
             if ($this->is_new_school()) {
+                log_info('New school detected, creating deal', [
+                    'stage' => 'New',
+                    'close_date' => $deal_close_date,
+                ]);
                 $this->update_or_create_deal('New', $deal_close_date);
             }
+
+            log_debug('Creating school enquiry record');
             $this->create_enquiry();
+
+            log_info('School enquiry submitted successfully');
             return true;
         } catch (Exception $e) {
             log_exception($e, [

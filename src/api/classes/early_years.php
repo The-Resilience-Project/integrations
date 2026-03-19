@@ -32,7 +32,7 @@ class EarlyYearsVTController extends VTController
         return self::BRENDAN;
     }
 
-    protected function get_contact_assignee()
+    private function get_assignee_or_default()
     {
         $org_assignee = $this->organisation_details['assigned_user_id'];
         if ($org_assignee != self::MADDIE) {
@@ -41,13 +41,14 @@ class EarlyYearsVTController extends VTController
         return self::BRENDAN;
     }
 
+    protected function get_contact_assignee()
+    {
+        return $this->get_assignee_or_default();
+    }
+
     protected function get_org_assignee()
     {
-        $org_assignee = $this->organisation_details['assigned_user_id'];
-        if ($org_assignee != self::MADDIE) {
-            return $org_assignee;
-        }
-        return self::BRENDAN;
+        return $this->get_assignee_or_default();
     }
 
     protected function capture_customer_info_in_vt($customer_data)
