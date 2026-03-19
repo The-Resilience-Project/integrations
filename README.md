@@ -126,6 +126,33 @@ Example:
 serverless logs -f enquiry -t
 ```
 
+### Running Tests
+
+Unit tests use [PHPUnit](https://phpunit.de/) and cover controller logic (assignee routing, payload formatting, date calculations) without requiring CRM or database connections.
+
+```bash
+# Run all tests
+vendor/bin/phpunit
+
+# Run a single test file
+vendor/bin/phpunit tests/SchoolAssigneeTest.php
+
+# Run a specific test method
+vendor/bin/phpunit --filter test_enquiry_assignee_returns_brendan_for_nsw_when_maddie
+```
+
+### Linting
+
+Code style is enforced with [PHP-CS-Fixer](https://cs.symfony.com/) using PSR-12 rules. A pre-commit hook automatically formats staged `.php` files on commit.
+
+```bash
+# Check for style issues (no changes applied)
+vendor/bin/php-cs-fixer fix --dry-run --diff
+
+# Auto-fix style issues
+vendor/bin/php-cs-fixer fix
+```
+
 ### Install New Dependencies
 
 ```bash

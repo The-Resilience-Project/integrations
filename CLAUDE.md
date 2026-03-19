@@ -35,8 +35,6 @@ vendor/bin/php-cs-fixer fix --dry-run --diff
 vendor/bin/php-cs-fixer fix
 ```
 
-A pre-commit hook runs PHP-CS-Fixer automatically on staged `.php` files.
-
 ## Architecture
 
 ### Two CRM Integration Paths
@@ -81,6 +79,16 @@ Every endpoint includes `init.php` which provides:
 - `get_method()` — returns HTTP method
 - `get_request_data()` — merges POST, JSON body, and GET params
 - `send_response($response, $code)` — sends JSON response and exits
+
+### Testing
+
+Tests live in `tests/` and use PHPUnit. The `tests/bootstrap.php` stubs logging functions and loads controller classes directly, avoiding `init.php` and any CRM/DB connections. This means tests can only cover pure logic (assignee routing, payload formatting, date calculations) — anything calling `post_request_to_vt()` requires a real CRM connection and is not currently testable.
+
+To run a single test file: `vendor/bin/phpunit tests/SchoolAssigneeTest.php`
+
+### Code Style
+
+PSR-12 via PHP-CS-Fixer (`.php-cs-fixer.dist.php`). Single quotes, short array syntax, trailing commas. A pre-commit hook auto-formats staged `.php` files.
 
 ## Adding a New Endpoint
 

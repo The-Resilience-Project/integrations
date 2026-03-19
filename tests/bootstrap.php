@@ -44,3 +44,6 @@ require dirname(__DIR__).'/src/api/classes/school.php';
 require dirname(__DIR__).'/src/api/classes/workplace.php';
 require dirname(__DIR__).'/src/api/classes/early_years.php';
 require dirname(__DIR__).'/src/api/classes/general.php';
+
+// Global helper functions
+require dirname(__DIR__).'/src/functions.php';
