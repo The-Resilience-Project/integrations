@@ -9,10 +9,6 @@
  * Time: 12:21 PM
  */
 
-
-// die("Remove this when push to prod.");
-//Remove above die when need to run webhook
-
 chdir(dirname(__FILE__));
 require_once '../init.php';
 
@@ -22,17 +18,12 @@ header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 
 //========Debugging=============
 error_reporting(0);
-//ini_set('display_errors', 'on');
-//error_reporting(E_ALL); // STRICT DEVELOPMENT
-//echo "<pre>";
-
 // Log this webhook call
 if (function_exists('log_call')) {
     log_call(__FILE__, ['webhook' => 'Order']);
 }
 
 $vtod = init_vtod();
-// global $dbh;
 
 putlogwebhook('========== START ==========');
 
@@ -47,84 +38,7 @@ $schoolName = '';
 putlogwebhook('New order to process, process data:');
 putlogwebhook($postData);
 
-/*(
-    [id] => 1052
-    [parent_id] => 0
-    [status] => processing
-    [currency] => AUD
-    [version] => 7.5.1
-    [prices_include_tax] =>
-    [date_created] => 2023-05-08T10:42:35
-    [date_modified] => 2023-05-08T14:56:25
-    [discount_total] => 0.00
-    [discount_tax] => 0.00
-    [shipping_total] => 0.00
-    [shipping_tax] => 0.00
-    [cart_tax] => 197.20
-    [total] => 2169.20
-    [total_tax] => 197.20
-    [customer_id] => 0
-    [order_key] => wc_order_vVWttL5UaC74Q
-    [billing] => Array
-        (
-            [first_name] => Navneet
-            [last_name] => Kaur
-            [company] => Nido Early School Wyndham Vale
-            [address_1] => 9 Welcome Parade
-            [address_2] =>
-            [city] => Wyndhamvale
-            [state] => VIC
-            [postcode] => 3024
-            [country] => AU
-            [email] => esm.wyndhamvale@nido.edu.au
-            [phone] => 0370199398
-        )
-
-    [shipping] => Array
-        (
-            [first_name] => Navneet
-            [last_name] => Kaur
-            [company] => Nido Early School Wyndham Vale
-            [address_1] => 9 Welcome Parade
-            [address_2] =>
-            [city] => Wyndhamvale
-            [state] => VIC
-            [postcode] => 3024
-            [country] => AU
-            [phone] =>
-        )
-
-    [payment_method] => bacs
-    [line_items] => Array
-        (
-            [0] => Array
-                (
-                    [id] => 3609
-                    [name] => Engage: Early Years Teaching and Learning Program
-                    [product_id] => 58
-                    [variation_id] => 0
-                    [quantity] => 1
-                    [tax_class] =>
-                    [subtotal] => 0.00
-                    [subtotal_tax] => 0.00
-                    [total] => 0.00
-                    [total_tax] => 0.00
-                    [taxes] => Array
-                        (
-                            [0] => Array
-                                (
-                                    [id] => 1
-                                    [total] => 0
-                                    [subtotal] => 0
-                                )
-
-                        )
-
-[payment_url] => https://curriculum.theresilienceproject.com.au/checkout/order-pay/688/?pay_for_order=true&key=wc_order_WUjddTmpbWezA
-*/
-
 $woocommerce_id = $postData['id'];
-// exit;
 
 $tmpDates = explode('T', $postData['date_created']);
 $curriculum_ordered_date = $tmpDates[0];
@@ -139,18 +53,7 @@ if (empty($schoolName)) {
     }
 
 }
-// check payment_url
-// $url = $postData['payment_url'];
-// $array=parse_url($url);
-// $array['host']=explode('.', $array['host']);
-// $buildname = $array['host'][0]; // returns 'sub'
-
-
-// $early_years = false;
 $qty_early_year = null;
-// if (strpos($postData['payment_url'], 'early-years.theresilienceproject') !== false) {
-//     $early_years = TRUE;
-// }
 foreach ($postData['line_items'] as $lineItem) {
     if (strpos($lineItem['name'], 'Early Years Children’s Portfolio') !== false) {
         $qty_early_year = $lineItem['quantity'] ;
@@ -159,21 +62,6 @@ foreach ($postData['line_items'] as $lineItem) {
 
 if (!empty($schoolName) && $postData['status'] == 'processing') {
     putlogwebhook('Order have processing status, doing process');
-    // check by buildname first
-    // $sqlGet = "SELECT * FROM boru_woocommerce_order WHERE woocommerce_id = ? and buildname = ?";
-    // $dataCheck = $dbh->getSingle($sqlGet, array($woocommerce_id,$buildname));
-    // if (empty($dataCheck) && $buildname == 'curriculum' ){
-    //     $sqlGet = "SELECT * FROM boru_woocommerce_order WHERE woocommerce_id = ?";
-    //     $dataCheck = $dbh->getSingle($sqlGet, array($woocommerce_id));
-    // }
-
-
-    // if (!empty($dataCheck['crm_id'])){
-    //     putlogwebhook("Order already processed with result:");
-    //     putlogwebhook($dataCheck);
-    //     putlogwebhook("========== END==========");
-    //     die();
-    // }
     $accountId = '';
 
     try {
@@ -214,7 +102,6 @@ if (!empty($schoolName) && $postData['status'] == 'processing') {
             } catch (Exception $e) {
                 putlogwebhook('Error while creating new Other school Account in CRM. error = ' . $e->getMessage());
             }
-            /**/
         }
 
         if (!empty($accountId)) {
@@ -236,9 +123,6 @@ if (!empty($schoolName) && $postData['status'] == 'processing') {
                 try {
                     $resUpdate = $vtod->revise($newOrg);
 
-                    // $sql = "INSERT INTO boru_woocommerce_order (woocommerce_id, crm_id, buildname, sync_date) VALUES (?, ?, ?,NOW())";
-                    // $dbh->run($sql, array($postData['id'], $resUpdate['id'],$buildname));
-
                     putlogwebhook('Success, account updated.');
 
                 } catch (Exception $e) {
@@ -258,8 +142,6 @@ if (!empty($schoolName) && $postData['status'] == 'processing') {
                     putlogwebhook($deal_items);
                     $deal_found_key = array_search('25x95211', $deal_items);
                     putlogwebhook($deal_found_key);
-
-                    // $new_line_items = $resultDeal['lineItems'];
 
                     $new_line_items = [];
                     foreach ($resultDeal['lineItems'] as $item) {
@@ -305,7 +187,6 @@ if (!empty($schoolName) && $postData['status'] == 'processing') {
             } else {
                 putlogwebhook('Account already has curric ordered date. Update not required.' . $resultOrg[0]['cf_accounts_curriculum_ordered_date']);
             }
-            /**/
         } else {
             putlogwebhook('No Account found for name and no new accout created = ' . $schoolName);
         }

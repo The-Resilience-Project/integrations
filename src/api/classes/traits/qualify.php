@@ -60,7 +60,6 @@ trait Qualify
 
             }
 
-            // $this->update_qualifier_info();
             $this->create_qualifier_enquiry();
             return true;
         } catch (Exception $e) {

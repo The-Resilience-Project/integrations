@@ -23,22 +23,8 @@ function get_last_update($date)
 }
 function str_limit($value, $limit = 100, $end = '...')
 {
-    /*
-        $str = $value;
-        $len = $limit;
-        $tail = max(0, $len-10);
-        $trunk = substr($str, 0, $tail);
-        $trunk .= strrev(preg_replace('~^..+?[\s,:]\b|^...~', $end, strrev(substr($str, $tail$len-$tail))));
-        return $trunk;
-        /*$string = $value;
-        $max = $limit;
-        $leave = $max - strlen ($rep);
-
-        return substr_replace($string, $rep, $leave);*/
-
     // Take into account $end string into the limit
     $valuelen = strlen($value);
-    //echo substr($value, 0, 20);
     if ($limit < $valuelen) {
         return substr($value, 0, $limit) . $end;
     }
@@ -91,10 +77,8 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
                         $arr_quotes['cf_quotes_blllingorg'] = $opty_detail['cf_potentials_prime'];
                     }
                 }
-                //                $arr_quotes["account_id"] = $account_id;
             }
             #task_id: 46425
-            //            if($quote['account_id']) $arr_quotes["account_id"] = $quote['account_id'];
             $arr_quotes['quotestage'] = 'Created';
             $arr_quotes['bill_street'] = '123 some ln';
             $arr_quotes['bill_city'] = 'Chicago';
@@ -110,7 +94,6 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
             $qty = '';
             $cos_col = '';
             $lead_time_col = '';
-            //            $mrf_list_price_col = '';
             $margin_percentage = $quote['margin_percentage'];
             for ($i = $quote['header_row'] + 1; $i <= $quote['last_row']; $i++) {
                 if ($quote['mfr_part_number']) {
@@ -128,7 +111,6 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
                 if ($quote['lead_time']) {
                     $lead_time_col = $worksheet->getCell($quote['lead_time'] . $i)->getCalculatedValue();
                 }
-                //                if($quote['mrf_list_price']) $mrf_list_price_col = $worksheet->getCell($quote['mrf_list_price'] . $i)->getCalculatedValue();
                 if ($quote['manufacturer']) {
                     $manufacturer_col = (string)$worksheet->getCell($quote['manufacturer'] . $i)->getCalculatedValue();
                 }
@@ -174,7 +156,6 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
 
                     $lineItem['cf_quotes_partnumber'] = $part_number;
                     $lineItem['cf_quotes_mfrpartno'] = $part_number;
-                    //                    $lineItem['cf_quotes_mfrlistprice'] = $mrf_list_price_col;
                     $lineItem['cf_quotes_manufacturer'] = $manufacturer_col;
                     $lineItem['cf_quotes_vendorpartnumber'] = $vendor_part_number_col;
                     $lineItem['cf_quotes_leadtime'] = $lead_time_col;
@@ -211,7 +192,6 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
             $arr_new_Item = [];
             $part_number = '';
             $unit_sell_col = '';
-            //            $mrf_list_price_col = '';
             $desc = '';
             for ($i = $quote['header_row'] + 1; $i <= $quote['last_row']; $i++) {
                 if ($quote['mfr_part_number']) {
@@ -229,14 +209,12 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
                 if ($quote['lead_time']) {
                     $lead_time_col = $worksheet->getCell(strtoupper($quote['lead_time']) . $i)->getCalculatedValue();
                 }
-                //                if($quote['mrf_list_price']) $mrf_list_price_col = (string)$worksheet->getCell($quote['mrf_list_price'] . $i)->getCalculatedValue();
                 if ($quote['manufacturer']) {
                     $manufacturer_col = (string)$worksheet->getCell($quote['manufacturer'] . $i)->getCalculatedValue();
                 }
                 if ($quote['vendor_part_number']) {
                     $vendor_part_number_col = (string)$worksheet->getCell($quote['vendor_part_number'] . $i)->getCalculatedValue();
                 }
-                //                if($quote['system_phase']) $system_phase_col = $worksheet->getCell($quote['system_phase'] . $i)->getCalculatedValue();
 
                 if ($part_number) {
                     $arr_new_Item[$part_number]['cf_quotes_partnumber'] = $part_number;
@@ -245,7 +223,6 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
                     $arr_new_Item[$part_number]['quantity'] = (int)$qty_col;
                     $arr_new_Item[$part_number]['margin_percentage'] = $quote['margin_percentage'];
                     $arr_new_Item[$part_number]['lead_time'] = $quote['lead_time'];
-                    //                    $arr_new_Item[$part_number]['mrf_list_price_col'] = $mrf_list_price_col;
                     $arr_new_Item[$part_number]['cf_quotes_manufacturer'] = $manufacturer_col;
                     $arr_new_Item[$part_number]['cf_quotes_vendorpartnumber'] = $vendor_part_number_col;
                 }
@@ -258,7 +235,6 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
                     $oldprice = (float)$cItem['listprice'];
 
                     if ($arr_new_Item[$cItem['cf_quotes_partnumber']]) {
-                        //                        $currentLineItem[$key]['cf_quotes_mfrlistprice'] = $arr_new_Item[$cItem['cf_quotes_partnumber']]['mrf_list_price_col'];
                         $currentLineItem[$key]['lead_time'] = $arr_new_Item[$cItem['cf_quotes_partnumber']]['lead_time'];
                         $currentLineItem[$key]['cf_quotes_unitcost'] = (float)$arr_new_Item[$cItem['cf_quotes_partnumber']]['purchase_cost'];
                         $currentLineItem[$key]['quantity'] = (int)$arr_new_Item[$cItem['cf_quotes_partnumber']]['quantity'];
@@ -269,7 +245,6 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
                         $currentLineItem[$key]['purchase_cost'] = (float)$arr_new_Item[$cItem['cf_quotes_partnumber']]['purchase_cost'] * (int)$arr_new_Item[$cItem['cf_quotes_partnumber']]['quantity'];
                         $currentLineItem[$key]['listprice'] = (float)$arr_new_Item[$cItem['cf_quotes_partnumber']]['purchase_cost'] * 100 / (100 - (float)$arr_new_Item[$cItem['cf_quotes_partnumber']]['margin_percentage']);
                         $currentLineItem[$key]['netprice'] = $currentLineItem[$key]['listprice'] * (int)$arr_new_Item[$cItem['cf_quotes_partnumber']]['quantity'];
-                        //                        $currentLineItem[$key]['cf_quotes_systemname'] = $arr_new_Item[$cItem['cf_quotes_partnumber']]['system_phase_col'];
 
                         $newPrice = $currentLineItem[$key]['listprice'];
                         $array_mfr_part_match[] = $cItem['cf_quotes_partnumber'];
@@ -336,18 +311,10 @@ function readExcelFiles($uploads_dir, $quote, $flg_type = 'create', $checkPartNo
                             $product_id = $res_product[0]['id'];
                         }
                         if ($product_id) {
-                            //                            if($vItem['mrf_list_price_col']) {
-                            //                                #task_id: 46425 - update MFR List Price in Product
-                            //                                $productRecord = $vtod->retrieve($product_id, true);
-                            //                                $productRecord['unit_price'] =  $vItem['mrf_list_price_col'];
-                            //                                $vtod->update($productRecord);
-                            //                                sleep(1);
-                            //                            }
                             $arr_Product[$kItem] = $product_id;
                             $lineItem['productid'] = $product_id;
                             $lineItem['cf_quotes_partnumber'] = $kItem;
                             $lineItem['cf_quotes_mfrpartno'] = $kItem;
-                            //                            $lineItem['cf_quotes_mfrlistprice'] = $vItem['mrf_list_price_col'];
                             $lineItem['cf_quotes_manufacturer'] = (string)str_replace('&', '%26', $vItem['cf_quotes_manufacturer']);
                             $lineItem['cf_quotes_vendorpartnumber'] = $vItem['cf_quotes_vendorpartnumber'];
                             $lineItem['cf_quotes_leadtime'] = $vItem['lead_time'];
@@ -411,8 +378,6 @@ function create_vtcmauditrecords($lineItem, $quote_id, $product_id, $oldPrice, $
     $map_projects['fld_vtcmauditrecordsname'] = $fld_vtcmauditrecordsname;
 
 
-    //$map_projects["cf_vtcmauditrecords_vendorname"] = $vendor_id;
-    //$vendor_id
     $map_projects['cf_vtcmauditrecords_vendor'] = $vendor_id;
 
     $map_projects['fld_beforevalue'] = ($oldPrice > 0) ? $oldPrice : '0';
@@ -424,7 +389,6 @@ function create_vtcmauditrecords($lineItem, $quote_id, $product_id, $oldPrice, $
     $map_projects['assigned_user_id'] = $assigned_user_id;
     $map_projects['created_user_id'] = $assigned_user_id;
     $record = [];
-    //$field_ignore = array_keys($map_projects);
 
     foreach ($map_projects as $field => $relfield) {
         if (is_null($relfield)) {
@@ -663,8 +627,6 @@ function sendMail($from, $reply_to, $to_email, $subject, $body, $file_path = '',
     $mail->AltBody = 'This is the body when user views in plain text format';
 
 
-    //echo "<pre>"; print_r($mail); die;
-
     if ($mail->Send()) {
         return true;
     } else {
@@ -768,7 +730,6 @@ function getProductsByDesc($vtod, $mfr_part_no)
 
         if (count($res_products) > 0) {
             foreach ($res_products as $key => $product) {
-                //$arr_products[] = $product['productname'];
                 $arr_products[] = [
                     'label' => $product['productname'],
                     'value' => $product['id'],

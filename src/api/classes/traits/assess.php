@@ -129,16 +129,6 @@ trait Assess
             $school_context .= '<b>Which mental health and wellbeing programs are you planning to run alongside The Resilience Project?</b><br/>' . $this->data['alongside_programs']. '<br/><br/>';
         }
 
-        // $school_context .= "What are your top three concerns?%0A1." . $this->data["concern_1"] . "%0A2. " . $this->data["concern_2"] . "%0A 3." . $this->data["concern_3"] . "%0A%0A";
-        // $school_context .= "How are your classes structured?%0A" . $this->data["class_structure"]. "%0A%0A";
-        // $school_context .= "Who is responsible for wellbeing?%0A" . $this->data["responsible_for_wellbeing"]. "%0A%0A";
-        // if($this->isset_data("past_programs")){
-        //     $school_context .= "Which mental health and wellbeing programs has your school run in the past?%0A" . $this->data["past_programs"]. "%0A%0A";
-        // }
-        // if($this->isset_data("alongside_programs")){
-        //     $school_context .= "Which mental health and wellbeing programs are you planning to run alongside The Resilience Project?%0A" . $this->data["alongside_programs"]. "%0A%0A";
-        // }
-
 
         $request_body = [
             'organisationId' => $this->organisation_id,

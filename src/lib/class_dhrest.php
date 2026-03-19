@@ -6,16 +6,13 @@ class dhrest
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $uri);
-        //curl_setopt($ch, CURLOPT_VERBOSE, true);
         curl_setopt($ch, CURLOPT_ENCODING, '');
-        //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $ssl_verify);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);  // Connection timeout separate from total timeout
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        //curl_setopt($ch, CURLOPT_VERBOSE, true);
         if ($auth !== false) {
             curl_setopt($ch, CURLOPT_USERPWD, $auth);
         }
@@ -51,7 +48,6 @@ class dhrest
             error_log('[ERROR] cURL request failed: ' . $error . ' (errno: ' . $errno . ') to ' . $uri);
         }
 
-        //echo $parms."\n";
         return [
             'status' => $info['http_code'],
             'header' => trim(substr($response, 0, $info['header_size'])),
@@ -79,6 +75,6 @@ class dhrest
     }
     public static function delete($uri, $parms = [], $auth = false, $timeout = 20)
     {
-        return dhrest::call('DELETE',$uri,$parms,$auth,$timeout);
+        return dhrest::call('DELETE', $uri, $parms, $auth, $timeout);
     }
 }

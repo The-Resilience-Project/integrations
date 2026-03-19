@@ -200,7 +200,6 @@ class dhvt
 
     public function comment($comment, $related, $user)
     {
-        //$createcomment =    $wsC->operation("create", array("elementType" => "ModComments", "element" => json_encode($commentelement)), "POST",$file_path);
         $parms = [];
         $parms['operation'] = 'create';
         $parms['sessionName'] = $this->sessionId;

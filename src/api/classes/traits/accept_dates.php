@@ -69,7 +69,6 @@ trait AcceptDates
     {
         try {
             $this->create_date_acceptance_record();
-            // $this->link_documents();
         } catch (Exception $e) {
             return false;
         }

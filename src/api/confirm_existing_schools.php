@@ -15,16 +15,7 @@ if ($method === 'POST') {
     $data_controller = new ExistingSchoolVTController($data);
 
     $success = $data_controller->confirm_program();
-    // error_log("***********");
-    // error_log($data["teacher_wellbeing_program"]);
-    // error_log($data["twb_1_online_only"]);
-    // error_log($data["twb_1_workshop_paid"]);
-    // error_log($data["twb_1_workshop_free"]);
-    // error_log(print_r($data), true);
-    // $success = true;
 
-
-    // Then, respond with a success
     send_response([
         'status' => $success ? 'success' : 'fail',
     ]);

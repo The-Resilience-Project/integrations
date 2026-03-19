@@ -1,8 +1,5 @@
 <?php
 
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL  & ~(E_STRICT|E_NOTICE) );/**/
 chdir(dirname(__FILE__));
 require '../init.php';
 
@@ -52,8 +49,6 @@ if (!$program_start_date) {
     $program_start_date = $_REQUEST['authen_program_start_date3'];
 }
 if ($program_start_date) {
-    //    $dateArr = explode('-',$program_start_date);
-    //    $dateObject = DateTime::createFromFormat('!m', $dateArr[1]);
     $dealArr['cf_potentials_programstartdatenew'] = $program_start_date;
 }
 $dealArr['pipeline'] = 'Standard';

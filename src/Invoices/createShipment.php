@@ -1,10 +1,5 @@
 <?php
 
-/*
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL  & ~(E_STRICT|E_NOTICE) );
-*/
 chdir(dirname(__FILE__));
 require_once('shipstation.php');
 
@@ -34,10 +29,6 @@ if ($invoiceId) {
     pushlog('InvoiceData');
     pushlog($invoiceData);
     if ($invoiceData['id']) {
-        // $sqlBSV = "SELECT * FROM `boru_shipment_invoice` WHERE `invoice_id` = ? LIMIT 1";
-        // $resBSV = $dbh->runFetchAll($sqlBSV, array($invoiceData['id']));
-        // pushlog("BoruShipmentInvoice Table");
-        // pushlog($resBSV);
         $shipAmount = 0;
         #create Order
         $lineItems = $invoiceData['LineItems'];

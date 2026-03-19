@@ -13,13 +13,6 @@ header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 $vtod = init_vtod();
 $vtconfig_url = $vtod_config['url'];
 
-// $serviceNo = 'SER111';
-// $sql  = "SELECT * FROM `boru_services` WHERE `service_no` = ? LIMIT 1";
-// $dataCheck = $dbh->getSingle($sql, array($serviceNo));
-// print_r( $dataCheck );
-// echo 3333;
-// $dataRecord = (array) json_decode($dataCheck['data']);
-// print_r( $dataRecord );exit;
 log_debug('Invoice creation request received', ['request' => $_REQUEST]);
 
 define('SECTION_1', 'Display on Invoice');
@@ -28,34 +21,8 @@ define('SLEEP_ITEM', 0);
 
 $cf_invoice_ponumber1 = $_REQUEST[55];
 $shipping_handling_charge = $_REQUEST[62];
-/*[10] => 33
-    [11] => 1
-    [12] => 2
-    [13] => 3
-    [14] => 4
-    [15] => 5
-    [16] => 6
-    [17] => 7
-    [18] => 8
-    [19] => 9
-    [20] => 10
-    [21] => 44
-
-    [30] => 3333
-    [31] => 11
-    [32] => 12
-    [33] => 13
-    [34] => 14
-    [35] => 15
-    [36] => 16
-    [37] => 17
-    [38] => 18
-    [39] => 19
-    [40] => 20
-    [41] => 222*/
 $address_mapping = [
     'bill_street' => '42_1',
-//     "bill_pobox"=>"",
     'bill_city' => '42_3',
     'bill_state' => '42_4',
     'bill_code' => '42_5',
@@ -63,19 +30,10 @@ $address_mapping = [
 
 
     'ship_street' => '43_1',
-//     "ship_pobox"=>"",
     'ship_city' => '43_3',
     'ship_state' => '43_4',
     'ship_code' => '43_5',
     'ship_country' => '43_6',
-
-// [47] =>
-// [43_1] =>
-// [43_2] =>
-// [43_3] =>
-// [43_4] =>
-// [43_5] =>
-// [43_6] =>
 ];
 $copy_address = ['ship_street' => 'bill_street',
     'ship_city' => 'bill_city',
@@ -115,9 +73,6 @@ $teacher = [30 => 'Foundation Hard Copy Teacher Resource',
     64 => 'Year 12 Hard Copy Teacher Resource',
 ];
 
-
-// section_no	:	2
-// section_name	:	Section 2nd
 
 $student_mapping_service = [10 => 'PRO18',
     11 => 'PRO19',
@@ -206,9 +161,6 @@ foreach ($student as $k => $service) {
 }
 $commentInspire = implode(PHP_EOL, $description) ;
 
-//section_no	:	3
-// section_name	:	Section 3nd
-
 $description = $serviceArr3 = [];
 $total_teacher = 0;
 foreach ($teacher as $k => $service) {
@@ -223,13 +175,9 @@ $commentEngage = implode(PHP_EOL, $description) ;
 $new_service_items = [
     ['serviceNo' => 'SER111' ,  'qty' => 1, 'name' => 'Shipping and handling curriculum'],
     ['serviceNo' => 'SER12', 'name' => 'Engage' ,  'qty' => $total_student ],
-    //$total_student +  $total_teacher
 ];
 $new_product_items = [
     ['serviceNo' => 'PRO44', 'name' => 'Hard Copy Teacher Resources' ,  'qty' => $total_teacher ],
-
-//     array('serviceNo' ,  'qty' ),
-
 ];
 $grandTotal = 0;
 $lineItem = [];
@@ -247,21 +195,12 @@ if ($quoteId) {
 
             $lineItems[$key]['section_name'] = SECTION_1 ;
 
-            //             if(  strpos($value['product_name'], 'Inspire:') !==FALSE ) {
-            //                 $lineItems[$key]['comment'] = $commentInspire;
-            //                 $lineItems[$key]['description'] = $commentInspire;
-
-            //             }
-
             if ($value['productid'] == '25x94901' || strpos($value['product_name'], 'Engage: Teaching and Learning Program') !== false) {
 
-                //                 $lineItems[$key]['comment'] = $commentEngage;
-                //                 $lineItems[$key]['description'] = $commentEngage;
                 $lineItems[$key]['quantity'] = $total_student;
             }
         }
 
-        // add new line items
         $grandTotal = $quoteRecord['hdnGrandTotal'] ;
         $lineItem = $lineItems;
 
@@ -278,18 +217,9 @@ foreach ($new_service_items as $k => $service) {
     }
     $serviceNo = $service['serviceNo'];
 
-    // $sql  = "SELECT * FROM `boru_services` WHERE `service_no` = ? LIMIT 1";
-    // $dataCheck = $dbh->getSingle($sql, array($serviceNo));
-
-
     $query_service  = sprintf("SELECT * FROM Services WHERE service_no='%s' LIMIT 1; ", $serviceNo);
     $dataRecord = $vtod->query($query_service)[0];
 
-    // $dataRecord= array();
-    // if (!empty($dataCheck['serviceid'])){
-    //     $dataRecord = (array) json_decode($dataCheck['data']);
-
-    // }
     if (isset($dataRecord['id'])) {
         $serviceid = $dataRecord['id'];
         if ($serviceNo == 'SER111') {
@@ -304,11 +234,6 @@ foreach ($new_service_items as $k => $service) {
         }
         $tax_GST = 0;
         $unit_price = $price + $tax_GST;
-        // if item = shipping > work for task 58476
-        //                 if (){
-
-        //                 }
-
         if ($serviceid) {
             $lineItem[] = [
                 'section_no' => 1,
@@ -328,14 +253,6 @@ foreach ($new_product_items as $k => $service) {
         continue;
     }
     $serviceNo = $service['serviceNo'];
-
-    // $sql  = "SELECT * FROM `boru_products` WHERE `product_no` = ? LIMIT 1";
-    // $dataCheck = $dbh->getSingle($sql, array($serviceNo));
-    // $dataRecord= array();
-    // if (!empty($dataCheck['productid'])){
-    //     $dataRecord = (array) json_decode($dataCheck['data']);
-
-    // }
 
     $query_service  = sprintf("SELECT * FROM Products WHERE product_no='%s' LIMIT 1; ", $serviceNo);
     $dataRecord = $vtod->query($query_service)[0];
@@ -369,7 +286,6 @@ foreach ($new_product_items as $k => $service) {
 
 sleep(SLEEP_SECTION);
 log_debug('Processing student journals section', ['service_array' => $serviceArr2]);
-// for section 2
 foreach ($serviceArr2 as $k => $service) {
     $qtyS = floatval($service['qty']);
     if ($qtyS == 0) {
@@ -378,14 +294,6 @@ foreach ($serviceArr2 as $k => $service) {
     $serviceNo = $service['serviceNo'];
     $query_service  = sprintf("SELECT * FROM Products WHERE product_no='%s' LIMIT 1; ", $serviceNo);
     $dataRecord = $vtod->query($query_service)[0];
-
-    // $sql  = "SELECT * FROM `boru_products` WHERE `product_no` = ? LIMIT 1";
-    // $dataCheck = $dbh->getSingle($sql, array($serviceNo));
-    // $dataRecord= array();
-    // if (!empty($dataCheck['productid'])){
-    //     $dataRecord = (array) json_decode($dataCheck['data']);
-
-    // }
 
     $service_xerocode = '';
     if (isset($dataRecord['id'])) {
@@ -405,8 +313,6 @@ foreach ($serviceArr2 as $k => $service) {
                 'productid' => $serviceid,
                 'quantity' => $qtyS,
                 'listprice' => $unit_price,
-                //                         'cf_quotes_xerocode' => $service_xerocode,
-            //                         'duration' => '1'
             ];
             $grandTotal += $qtyS * $unit_price;
         }
@@ -415,12 +321,9 @@ foreach ($serviceArr2 as $k => $service) {
 }
 
 sleep(SLEEP_SECTION);
-// for section 3
 foreach ($serviceArr3 as $k => $service) {
     $qtyS = $service['qty'];
     $serviceNo = $service['serviceNo'];
-    //             $query_service  = sprintf("SELECT * FROM Products WHERE product_no='%s' LIMIT 1; ",$serviceNo);
-    //             $res_service = $vtod->query($query_service);
 
     $sql  = 'SELECT * FROM `boru_products` WHERE `product_no` = ? LIMIT 1';
     $dataCheck = get_db()->getSingle($sql, [$serviceNo]);
@@ -483,10 +386,6 @@ if ($quoteId) {
 
         if ($dealRecord['cf_potentials_billingcontact']) {
             $invoiceArr['cf_invoice_billingcontact'] = $dealRecord['cf_potentials_billingcontact'];
-            //                 $contactBillingRecord = $vtod->retrieve($dealRecord['cf_potentials_billingcontact']);
-            //                 if($contactBillingRecord) {
-            //                     $invoiceArr['cf_invoice_billingcontact'] = $contactBillingRecord['id'];
-            //                 }
         }
     }
 
@@ -516,8 +415,6 @@ if ($quoteId) {
     $invoiceArr['invoicestatus'] = 'Pending';
     $invoiceArr['invoicedate'] = '31-01-2024';
     $invoiceArr['duedate'] = '08-02-2024'; // date('d-m-Y', strtotime('+8 days'));
-    //         $invoiceArr["hdnS_H_Amount"] = $shipping_handling_charge;
-    //             $invoiceArr["shipping_&_handling"] = $shipping_handling_charge;
 
     $invoiceArr['cf_invoice_selectedyearlevels']     = implode(' |##| ', $listselectedyearlevels);
 
@@ -545,9 +442,6 @@ if ($quoteId) {
             $orgRecord['cf_accounts_selectedyearlevels']     = implode(' |##| ', $listselectedyearlevels);
         }
 
-        // if (empty($orgRecord['cf_accounts_curriculumordered'])){
-        //     $orgRecord['cf_accounts_curriculumordered'] = date('d-m-Y', time());
-        // }
         $orgRecordJson = json_encode($orgRecord);
         $org_Params = [
             'sessionName' => $vtod->sessionId,
@@ -589,7 +483,6 @@ if ($quoteId) {
             $invoiceArr[$f] = $invoiceArr[$v];
         }
     }
-    //task_id=58907
     $account_id = $_REQUEST[70];
     if (!empty($account_id)) {
         if (strpos($account_id, 'ACC') !== false) {
@@ -612,14 +505,8 @@ if ($quoteId) {
         }
     }
 
-    // $account_id = $_REQUEST[70];
-    // $query_org  = sprintf("SELECT * FROM Accounts WHERE account_no='%s' LIMIT 1; ",$account_id);
-    // $res_org = $vtod->query($query_org);
-    // $id_org = $res_org["id"];
-
     $query_quote  = "SELECT * FROM Quotes WHERE account_id='".$invoiceArr['account_id'] ."' AND subject LIKE '%2024 School Partnership Program%' LIMIT 1; ";
     $res_quote = $vtod->query($query_quote);
-    // $quoteId = $res_quote["id"];
     log_debug('Retrieved quote for invoice', ['quote' => $res_quote[0] ?? null]);
     $invoiceArr['contact_id'] = $res_quote[0]['contact_id'];
     $invoiceArr['cf_invoice_billingcontact'] = $res_quote[0]['cf_quotes_billingcontactname'];
@@ -631,8 +518,6 @@ if ($quoteId) {
     $invoiceArr['invoicestatus'] = 'Pending';
     $invoiceArr['invoicedate'] = date('d-m-Y');
     $invoiceArr['duedate'] = date('d-m-Y', strtotime('+8 days'));
-    //         $invoiceArr["hdnS_H_Amount"] = $shipping_handling_charge;
-    //             $invoiceArr["shipping_&_handling"] = $shipping_handling_charge;
 
     $invoiceArr['cf_invoice_selectedyearlevels']     = implode(' |##| ', $listselectedyearlevels);
 
@@ -658,9 +543,6 @@ if ($quoteId) {
             $orgRecord['cf_accounts_selectedyearlevels']     = implode(' |##| ', $listselectedyearlevels);
         }
 
-        // if (empty($orgRecord['cf_accounts_curriculumordered'])){
-        //     $orgRecord['cf_accounts_curriculumordered'] = date('d-m-Y', time());
-        // }
         $orgRecordJson = json_encode($orgRecord);
         $org_Params = [
             'sessionName' => $vtod->sessionId,

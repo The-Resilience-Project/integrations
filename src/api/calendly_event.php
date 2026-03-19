@@ -8,43 +8,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: PUT, GET, POST');
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
-// log_data(print_r($_SERVER,1));
-
-// $webhook_sig = null;
-// if(array_key_exists("Calendly-Webhook-Signature", $_SERVER)){
-//     $webhook_sig = $_SERVER["Calendly-Webhook-Signature"];
-// } else if(array_key_exists("HTTP_CALENDLY_WEBHOOK_SIGNATURE", $_SERVER)){
-//     $webhook_sig = $_SERVER["HTTP_CALENDLY_WEBHOOK_SIGNATURE"];
-// } else if(array_key_exists("CALENDLY_WEBHOOK_SIGNATURE", $_SERVER)){
-//     $webhook_sig = $_SERVER["CALENDLY_WEBHOOK_SIGNATURE"];
-// } else{
-//     log_data("Cannot find signing key");
-//     send_response([
-//     	'status' => 'false',
-//     	'message' => 'unable to find signing key'
-//     ]);
-//     exit;
-// }
-
 $raw_data = get_request_data();
-
-// $key_components = explode(",", $webhook_sig);
-// $signed_key = explode("=", $key_components[1])[1];
-// $signed_time = explode("=", $key_components[0])[1];
-
-// $expected_signature = hash_hmac('sha256', $signed_time.'.'.print_r($raw_data,1), '0^hWV%VRDv25QRf8');
-
-// log_data(print_r())
-
-// if($signed_key !== $expected_signature){
-//     log_data("Invalid signing key");
-//     send_response([
-//     	'status' => 'false',
-//     	'message' => 'invalid signing key'
-//     ]);
-//     exit;
-// }
-
 
 $calendly_payload = $raw_data['payload'];
 $vic_link = 'https://api.calendly.com/event_types/033a4470-b2f0-4e57-85b4-a2af4383b4f1';
@@ -94,7 +58,6 @@ $data_controller = new WorkplaceVTController($data);
 $success = $data_controller->create_calendly_prospect();
 
 
-// Then, respond with a success
 send_response([
     'status' => $success ? 'success' : 'fail',
 ]);
