@@ -32,6 +32,8 @@ if (!function_exists('log_exception')) {
 // Load value objects, domain services, and controller classes
 require dirname(__DIR__).'/src/api/classes/requests/ContactInfo.php';
 require dirname(__DIR__).'/src/api/classes/requests/EnquiryRequest.php';
+require dirname(__DIR__).'/src/api/classes/requests/EnquiryResult.php';
+require dirname(__DIR__).'/src/api/classes/usecases/SubmitEnquiry.php';
 require dirname(__DIR__).'/src/api/classes/controllers/base.php';
 require dirname(__DIR__).'/src/api/classes/traits/enquiry.php';
 require dirname(__DIR__).'/src/api/classes/traits/confirmation.php';
