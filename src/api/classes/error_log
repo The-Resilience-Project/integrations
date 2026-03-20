@@ -1,8 +1,0 @@
-[09-Jul-2024 03:57:25 Australia/Sydney] PHP Fatal error:  Uncaught Error: Class "VTController" not found in /home/trpstaging/public_html/resilience/api/classes/workplace.php:6
-Stack trace:
-#0 {main}
-  thrown in /home/trpstaging/public_html/resilience/api/classes/workplace.php on line 6
-[10-Jul-2024 22:51:48 Australia/Sydney] PHP Fatal error:  Uncaught Error: Class "VTController" not found in /home/trpstaging/public_html/resilience/api/classes/workplace.php:6
-Stack trace:
-#0 {main}
-  thrown in /home/trpstaging/public_html/resilience/api/classes/workplace.php on line 6

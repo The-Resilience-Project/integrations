@@ -7,13 +7,11 @@ class AssigneeResolver
     public const VICTOR = '19x33';
     public const ASHLEE = '19x29';
     public const BRENDAN = '19x57';
-    public const HELENOR = '19x24';
 
     public const BRENDAN_STATES = ['NSW', 'QLD'];
 
     private const NEW_SCHOOL_ASSIGNEES = [
-        self::MADDIE, self::LAURA, self::VICTOR,
-        self::HELENOR, self::BRENDAN,
+        self::MADDIE, self::LAURA, self::VICTOR, self::BRENDAN,
     ];
 
     // -- School --
