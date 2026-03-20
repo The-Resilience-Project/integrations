@@ -29,7 +29,9 @@ if (!function_exists('log_exception')) {
     }
 }
 
-// Load controller classes (base.php loads its own trait requires)
+// Load value objects and controller classes
+require dirname(__DIR__).'/src/api/classes/ContactInfo.php';
+require dirname(__DIR__).'/src/api/classes/EnquiryRequest.php';
 require dirname(__DIR__).'/src/api/classes/base.php';
 require dirname(__DIR__).'/src/api/classes/traits/enquiry.php';
 require dirname(__DIR__).'/src/api/classes/traits/confirmation.php';

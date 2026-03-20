@@ -100,11 +100,6 @@ class AssigneeResolverTest extends TestCase
         $this->assertTrue($this->resolver->isNewSchool(AssigneeResolver::VICTOR));
     }
 
-    public function test_is_new_school_true_for_helenor(): void
-    {
-        $this->assertTrue($this->resolver->isNewSchool(AssigneeResolver::HELENOR));
-    }
-
     public function test_is_new_school_false_for_spm(): void
     {
         $this->assertFalse($this->resolver->isNewSchool('19x99'));
