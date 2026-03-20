@@ -1,9 +1,9 @@
 <?php
 
 require_once dirname(__FILE__).'/base.php';
-require_once dirname(__FILE__).'/AssigneeResolver.php';
+require_once dirname(__FILE__).'/../domain/AssigneeResolver.php';
 
-require_once dirname(__FILE__).'/traits/enquiry.php';
+require_once dirname(__FILE__).'/../traits/enquiry.php';
 
 class GeneralVTController extends VTController
 {

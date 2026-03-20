@@ -3,8 +3,8 @@
 require dirname(__FILE__).'/utils.php';
 require dirname(__FILE__).'/api_helpers.php';
 require dirname(__FILE__).'/../init.php';
-require dirname(__FILE__).'/classes/ContactInfo.php';
-require dirname(__FILE__).'/classes/EnquiryRequest.php';
+require dirname(__FILE__).'/classes/requests/ContactInfo.php';
+require dirname(__FILE__).'/classes/requests/EnquiryRequest.php';
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: PUT, GET, POST');

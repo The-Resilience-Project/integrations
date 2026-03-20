@@ -1,13 +1,13 @@
 <?php
 
 require_once dirname(__FILE__).'/base.php';
-require_once dirname(__FILE__).'/AssigneeResolver.php';
+require_once dirname(__FILE__).'/../domain/AssigneeResolver.php';
 
-require_once dirname(__FILE__).'/traits/enquiry.php';
-require_once dirname(__FILE__).'/traits/registration.php';
-require_once dirname(__FILE__).'/traits/qualify.php';
-require_once dirname(__FILE__).'/traits/calendly_prospect.php';
-require_once dirname(__FILE__).'/traits/lead.php';
+require_once dirname(__FILE__).'/../traits/enquiry.php';
+require_once dirname(__FILE__).'/../traits/registration.php';
+require_once dirname(__FILE__).'/../traits/qualify.php';
+require_once dirname(__FILE__).'/../traits/calendly_prospect.php';
+require_once dirname(__FILE__).'/../traits/lead.php';
 
 class WorkplaceVTController extends VTController
 {

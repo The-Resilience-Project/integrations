@@ -1,7 +1,7 @@
 <?php
 
 require dirname(__FILE__).'/utils.php';
-require dirname(__FILE__).'/classes/school.php';
+require dirname(__FILE__).'/classes/controllers/school.php';
 require dirname(__FILE__).'/../init.php';
 
 header('Access-Control-Allow-Origin: *');

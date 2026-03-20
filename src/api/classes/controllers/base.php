@@ -1,9 +1,9 @@
 <?php
 
-require dirname(__FILE__).'/VtApiClient.php';
-require dirname(__FILE__).'/CurlVtApiClient.php';
-require dirname(__FILE__).'/traits/contact_and_org.php';
-require dirname(__FILE__).'/traits/deal.php';
+require dirname(__FILE__).'/../infrastructure/VtApiClient.php';
+require dirname(__FILE__).'/../infrastructure/CurlVtApiClient.php';
+require dirname(__FILE__).'/../traits/contact_and_org.php';
+require dirname(__FILE__).'/../traits/deal.php';
 
 
 class VTController

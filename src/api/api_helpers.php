@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/classes/school.php';
-require dirname(__FILE__).'/classes/workplace.php';
-require dirname(__FILE__).'/classes/early_years.php';
-require dirname(__FILE__).'/classes/general.php';
+require dirname(__FILE__).'/classes/controllers/school.php';
+require dirname(__FILE__).'/classes/controllers/workplace.php';
+require dirname(__FILE__).'/classes/controllers/early_years.php';
+require dirname(__FILE__).'/classes/controllers/general.php';
