@@ -30,7 +30,7 @@ class TrpDates{
         
             $response = curl_exec( $request_handle );
             $json_response = json_decode($response, true);
-            curl_close($request_handle);
+
             $this->org_id = $json_response["result"][0]["id"];
             $this->org_name = $json_response["result"][0]["accountname"];
         } else{
@@ -59,7 +59,7 @@ class TrpDates{
     
     	$response = curl_exec( $request_handle );
         $json_response = json_decode($response, true);
-        curl_close($request_handle);
+
         $this->org_name = $json_response["result"][0]["accountname"];
     }
     
@@ -83,8 +83,6 @@ class TrpDates{
         	curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
         	curl_setopt($curl_handle, CURLOPT_HEADER, false);  // don't return headers
         	$response = curl_exec($curl_handle);
-        	
-        	curl_close($curl_handle);
         	
         	$data = json_decode($response, true);
         	if(!isset($data["result"])){

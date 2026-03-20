@@ -421,7 +421,7 @@ class dhvt
         $response = curl_exec($curl);
         $error = curl_error($curl);
         $errno = curl_errno($curl);
-        curl_close($curl);
+
 
         // Log cURL errors
         if ($errno) {

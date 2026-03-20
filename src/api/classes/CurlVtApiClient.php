@@ -36,7 +36,6 @@ class CurlVtApiClient implements VtApiClient
             ]);
         }
         $json_response = json_decode($response);
-        curl_close($request_handle);
         return $json_response;
     }
 
@@ -70,7 +69,6 @@ class CurlVtApiClient implements VtApiClient
 
         $response = curl_exec($request_handle);
         $json_response = json_decode($response);
-        curl_close($request_handle);
         return $json_response;
     }
 }

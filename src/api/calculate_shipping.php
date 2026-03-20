@@ -55,7 +55,7 @@ if ($method === 'POST') {
     ]);
     $response = curl_exec($request_handle);
     $json_response = json_decode($response, true);
-    curl_close($request_handle);
+
     if (!isset($json_response['shipments'])) {
         log_error('Australia Post shipping API error', [
             'request_body' => $request_body,

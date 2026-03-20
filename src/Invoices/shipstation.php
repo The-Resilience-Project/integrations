@@ -76,7 +76,7 @@ class shipstation
 
         $response  = curl_exec($ch);
         $info = curl_getinfo($ch);
-        curl_close($ch);
+
         //echo $parms."\n";
 
         return [
@@ -125,6 +125,6 @@ class shipstation
     }
     public function delete($endpoint, $parms = [])
     {
-        return $this->parseReturn($this->query('DELETE',$endpoint,$parms));
+        return $this->parseReturn($this->query('DELETE', $endpoint, $parms));
     }
 }

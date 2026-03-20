@@ -41,7 +41,7 @@ class dhrest
         $info = curl_getinfo($ch);
         $error = curl_error($ch);
         $errno = curl_errno($ch);
-        curl_close($ch);
+
 
         // Log cURL errors
         if ($errno) {
