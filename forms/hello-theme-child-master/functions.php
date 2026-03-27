@@ -659,8 +659,8 @@ function populate_curric_form_data_2026( $form ) {
     		$description .= "</td></tr>";
 		}
 		
-		$description .= "<tr><td>Last date for deliveries in 2025</td><td>".rgpost("input_106")."</td></tr>";
-		$description .= "<tr><td>First date for deliveries in 2026</td><td>".rgpost("input_107")."</td></tr>";
+		// $description .= "<tr><td>Last date for deliveries in 2025</td><td>".rgpost("input_106")."</td></tr>";
+		// $description .= "<tr><td>First date for deliveries in 2026</td><td>".rgpost("input_107")."</td></tr>";
 		$description .= "<tr><td>PO Number</td><td>".rgpost("input_109")."</td></tr>";
 		
 		$description .= "</table><br/>";
@@ -802,7 +802,7 @@ function populate_curric_form_data_2026( $form ) {
         }
 		$description .= "<h4>Shipping</h4>";
 		if($shipping_price == 0){
-		    $description.= "<p><i>Great news! Since you placed this order early, an additional order will qualify for free shipping!</i></p>";
+		    $description.= "<p><i>Great news! Since you placed your first order early, this order qualifies for free shipping!</i></p>";
 		}
 	    $description .= "<table><tr><th>Description</th><th>Unit Price (excl GST)</th></tr>";
 	    if (rgpost("input_158") === "YES"){
