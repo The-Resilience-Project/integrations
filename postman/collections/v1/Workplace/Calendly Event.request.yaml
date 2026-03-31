@@ -1,0 +1,33 @@
+$kind: http-request
+name: Calendly Event
+url: "{{base_url}}/api/calendly_event.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "event": "invitee.created",
+        "payload": {
+            "email": "hr@acmecorp.com.au",
+            "first_name": "Sarah",
+            "last_name": "Johnson",
+            "questions_and_answers": [
+                {
+                    "question": "Organisation Name",
+                    "answer": "ACME Corporation"
+                },
+                {
+                    "question": "Number of Employees",
+                    "answer": "250"
+                }
+            ],
+            "scheduled_event": {
+                "start_time": "2026-04-15T09:00:00.000000Z",
+                "end_time": "2026-04-15T09:30:00.000000Z"
+            }
+        }
+    }
+order: 2

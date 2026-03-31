@@ -1,0 +1,20 @@
+$kind: http-request
+name: Seminar Registration
+url: "{{base_url}}/api/seminar_registration.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "{{test_school_2_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Two",
+        "contact_phone": "0400000000",
+        "job_title": "Head of Wellbeing",
+        "school_account_no": "{{test_school_2_account_no}}",
+        "state": "NSW"
+    }
+order: 4

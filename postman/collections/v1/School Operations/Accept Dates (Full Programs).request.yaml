@@ -1,0 +1,29 @@
+$kind: http-request
+name: Accept Dates (Full Programs)
+url: "{{base_url}}/api/accept_dates.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "email": "{{test_school_2_contact_primary}}",
+        "school_id": "{{test_school_2_id}}",
+        "event_nos": "EVT201,EVT202,EVT203,EVT204,EVT205",
+        "twb_1_web": "2026-05-12",
+        "twb_1_inp": "2026-05-19",
+        "twb_2_web": "2026-06-09",
+        "twb_2_inp": "2026-06-16",
+        "twb_3_web": "2026-07-14",
+        "twb_3_inp": "2026-07-21",
+        "ac_staff": "2026-08-11",
+        "brh_web": "2026-09-08",
+        "brh_inp": "2026-09-15",
+        "ac_parents": "2026-10-13",
+        "cp": "2026-10-20",
+        "dwf_web": "2026-11-10",
+        "dwf_inp": "2026-11-17"
+    }
+order: 8

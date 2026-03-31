@@ -1,0 +1,24 @@
+$kind: http-request
+name: School Enquiry (Existing School)
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "job_title": "Wellbeing Coordinator",
+        "school_account_no": "{{test_school_1_account_no}}",
+        "state": "VIC",
+        "source_form": "School Enquiry",
+        "enquiry": "We are interested in the School Partnership Program for 2026.",
+        "num_of_students": "320"
+    }
+order: 1

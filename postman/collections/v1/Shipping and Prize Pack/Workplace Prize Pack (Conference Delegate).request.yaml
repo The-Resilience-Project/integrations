@@ -1,0 +1,23 @@
+$kind: http-request
+name: Workplace Prize Pack (Conference Delegate)
+url: "{{base_url}}/api/prize_pack.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Workplace",
+        "contact_email": "sarah.chen@melbournecorp.com.au",
+        "contact_first_name": "Sarah",
+        "contact_last_name": "Chen",
+        "contact_phone": "0434567890",
+        "workplace_name_other": "Melbourne Corporate Services Pty Ltd",
+        "workplace_name_other_selected": true,
+        "state": "VIC",
+        "source_form": "NSWPDPN Delegate 2026",
+        "num_of_employees": "150"
+    }
+order: 7

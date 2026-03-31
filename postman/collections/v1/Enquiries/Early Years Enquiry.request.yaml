@@ -1,0 +1,24 @@
+$kind: http-request
+name: Early Years Enquiry
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "contact_email": "director@littlestarseyc.com.au",
+        "contact_first_name": "Emma",
+        "contact_last_name": "Nguyen",
+        "contact_phone": "0421987654",
+        "job_title": "Centre Director",
+        "earlyyears_account_no": "EY-0001",
+        "state": "VIC",
+        "source_form": "Early Years Enquiry",
+        "enquiry": "Our early years centre in Richmond is interested in the resilience program for our kindergarten-aged children.",
+        "num_of_ey_children": "75"
+    }
+order: 4

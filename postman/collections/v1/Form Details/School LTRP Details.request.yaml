@@ -1,0 +1,6 @@
+$kind: http-request
+name: School LTRP Details
+url: "{{base_url}}/api/school_ltrp_details.php?org_id={{test_school_1_id}}"
+method: GET
+headers: []
+order: 2

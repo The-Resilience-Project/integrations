@@ -1,0 +1,24 @@
+$kind: http-request
+name: Workplace Enquiry (Conference)
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Workplace",
+        "contact_email": "sarah.chen@melbournecorp.com.au",
+        "contact_first_name": "Sarah",
+        "contact_last_name": "Chen",
+        "contact_phone": "0434567890",
+        "organisation_name": "Melbourne Corporate Services Pty Ltd",
+        "organisation_sub_type": "Corporate",
+        "state": "VIC",
+        "source_form": "NSWPDPN Enquiry 2026",
+        "enquiry": "Discussed workplace wellbeing program at conference booth.",
+        "num_of_employees": "150"
+    }
+order: 6

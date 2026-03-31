@@ -1,0 +1,24 @@
+$kind: http-request
+name: v2 School Enquiry (New School - NSW)
+url: "{{base_url}}/api/v2/schools/enquiry"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "{{test_school_2_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Two",
+        "contact_phone": "0400000001",
+        "job_title": "Head of Wellbeing",
+        "school_name_other": "POSTMAN TEST - New School NSW",
+        "school_name_other_selected": "1",
+        "state": "NSW",
+        "source_form": "School Enquiry",
+        "enquiry": "We are a new school in NSW and would like to learn more about the School Partnership Program.",
+        "num_of_students": "850"
+    }
+order: 3

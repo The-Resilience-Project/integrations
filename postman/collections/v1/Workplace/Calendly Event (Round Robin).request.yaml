@@ -1,0 +1,34 @@
+$kind: http-request
+name: Calendly Event (Round Robin)
+url: "{{base_url}}/api/calendly_event.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "event": "invitee.created",
+        "payload": {
+            "email": "ops@retailgroup.com.au",
+            "first_name": "Kate",
+            "last_name": "Murray",
+            "questions_and_answers": [
+                {
+                    "question": "Workplace Name",
+                    "answer": "RetailGroup Australia"
+                },
+                {
+                    "question": "Number of Employees",
+                    "answer": "180"
+                }
+            ],
+            "scheduled_event": {
+                "uri": "https://api.calendly.com/scheduled_events/round-robin-event-id",
+                "start_time": "2026-04-22T10:00:00.000000Z",
+                "end_time": "2026-04-22T10:30:00.000000Z"
+            }
+        }
+    }
+order: 4

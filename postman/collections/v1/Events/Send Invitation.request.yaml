@@ -1,0 +1,23 @@
+$kind: http-request
+name: Send Invitation
+url: "{{base_url}}/Events/54701_sendInvitation.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    - key: "list[]"
+      value: "12x1001"
+    - key: "list[]"
+      value: "12x1002"
+    - key: selectedEmail
+      value: "Email Template 1"
+    - key: mailSubject
+      value: "You're Invited - TRP Event"
+    - key: mailBody
+      value: ""
+    - key: eventid
+      value: "18x5001"
+order: 1

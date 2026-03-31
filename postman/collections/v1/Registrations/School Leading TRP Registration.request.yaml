@@ -1,0 +1,24 @@
+$kind: http-request
+name: School Leading TRP Registration
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_1_contact_teacher}}",
+        "contact_first_name": "Test Teacher",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "job_title": "Classroom Teacher",
+        "school_account_no": "{{test_school_1_account_no}}",
+        "state": "VIC",
+        "event_id": "EVT101400",
+        "source_form": "Leading TRP Registration",
+        "attendance_type": "Attending Live"
+    }
+order: 6

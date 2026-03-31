@@ -1,0 +1,21 @@
+$kind: http-request
+name: Workplace Prize Pack
+url: "{{base_url}}/api/prize_pack.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Workplace",
+        "contact_email": "hr@acmecorp.com.au",
+        "contact_first_name": "Sarah",
+        "contact_last_name": "Johnson",
+        "contact_phone": "0412345678",
+        "organisation_name": "ACME Corporation",
+        "state": "VIC",
+        "source_form": "Prize Pack"
+    }
+order: 3

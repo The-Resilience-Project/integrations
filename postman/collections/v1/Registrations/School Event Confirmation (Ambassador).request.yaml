@@ -1,0 +1,26 @@
+$kind: http-request
+name: School Event Confirmation (Ambassador)
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_2_contact_ambassador}}",
+        "contact_first_name": "Test Ambassador",
+        "contact_last_name": "Two",
+        "contact_phone": "0400000000",
+        "job_title": "Student Ambassador",
+        "school_account_no": "{{test_school_2_account_no}}",
+        "contact_id": "4x802922",
+        "state": "NSW",
+        "event_id": "EVT101450",
+        "source_form": "Event Confirmation",
+        "attendance_type": "Attending Live",
+        "event_name_display": "School Partnership Launch"
+    }
+order: 7

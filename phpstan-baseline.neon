@@ -1,0 +1,535 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Variable \$custom might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: src/Events/54701_sendInvitation.php
+
+		-
+			message: '#^Variable \$selectedEmailTemplateId in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: src/Events/54701_sendInvitation.php
+
+		-
+			message: '#^Variable \$vtod might not be defined\.$#'
+			identifier: variable.undefined
+			count: 8
+			path: src/Events/54701_sendInvitation.php
+
+		-
+			message: '#^Variable \$this might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Invoices/58850_updateXeroCodeInvoiceItem.php
+
+		-
+			message: '#^Variable \$vtod_config might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Invoices/58850_updateXeroCodeInvoiceItem.php
+
+		-
+			message: '#^Cannot unset offset ''assigned_user_id'' on array\{amount\: float, amount_currency_value\: float, LineItems\: list\<array\{section_no\: 1, section_name\: ''Display on Invoice'', productid\: mixed, quantity\: float, listprice\: float, cf_invoice_xerocode\?\: mixed\}\|array\{section_no\: 2, section_name\: ''Student Journals'', productid\: mixed, quantity\: float, listprice\: float\}\|array\{section_no\: 3, section_name\: ''Teacher Resources'', productid\: mixed, quantity\: mixed, listprice\: float\}\>, hdnSubTotal\: float, hdnGrandTotal\: float, quote_id\: mixed\}\.$#'
+			identifier: unset.offset
+			count: 1
+			path: src/Invoices/createInvoice.php
+
+		-
+			message: '#^Cannot unset offset ''createdtime'' on array\{amount\: float, amount_currency_value\: float, LineItems\: list\<array\{section_no\: 1, section_name\: ''Display on Invoice'', productid\: mixed, quantity\: float, listprice\: float, cf_invoice_xerocode\?\: mixed\}\|array\{section_no\: 2, section_name\: ''Student Journals'', productid\: mixed, quantity\: float, listprice\: float\}\|array\{section_no\: 3, section_name\: ''Teacher Resources'', productid\: mixed, quantity\: mixed, listprice\: float\}\>, hdnSubTotal\: float, hdnGrandTotal\: float, quote_id\: mixed\}\.$#'
+			identifier: unset.offset
+			count: 1
+			path: src/Invoices/createInvoice.php
+
+		-
+			message: '#^Cannot unset offset ''id'' on array\{amount\: float, amount_currency_value\: float, LineItems\: list\<array\{section_no\: 1, section_name\: ''Display on Invoice'', productid\: mixed, quantity\: float, listprice\: float, cf_invoice_xerocode\?\: mixed\}\|array\{section_no\: 2, section_name\: ''Student Journals'', productid\: mixed, quantity\: float, listprice\: float\}\|array\{section_no\: 3, section_name\: ''Teacher Resources'', productid\: mixed, quantity\: mixed, listprice\: float\}\>, hdnSubTotal\: float, hdnGrandTotal\: float, quote_id\: mixed\}\.$#'
+			identifier: unset.offset
+			count: 1
+			path: src/Invoices/createInvoice.php
+
+		-
+			message: '#^Cannot unset offset ''source'' on array\{amount\: float, amount_currency_value\: float, LineItems\: list\<array\{section_no\: 1, section_name\: ''Display on Invoice'', productid\: mixed, quantity\: float, listprice\: float, cf_invoice_xerocode\?\: mixed\}\|array\{section_no\: 2, section_name\: ''Student Journals'', productid\: mixed, quantity\: float, listprice\: float\}\|array\{section_no\: 3, section_name\: ''Teacher Resources'', productid\: mixed, quantity\: mixed, listprice\: float\}\>, hdnSubTotal\: float, hdnGrandTotal\: float, quote_id\: mixed\}\.$#'
+			identifier: unset.offset
+			count: 1
+			path: src/Invoices/createInvoice.php
+
+		-
+			message: '#^Variable \$vtod_config might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Invoices/createInvoice.php
+
+		-
+			message: '#^Variable \$weightProduct might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Invoices/createShipment.php
+
+		-
+			message: '#^Variable \$vtod_config might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Potentials/createNewProgramBooking.php
+
+		-
+			message: '#^Variable \$type might not be defined\.$#'
+			identifier: variable.undefined
+			count: 3
+			path: src/Potentials/getEventPlanned.php
+
+		-
+			message: '#^Variable \$vtod_config might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/Potentials/getEventPlanned.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$deal_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$deal_org_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$deal_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$organisation_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$quote_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$quote_program\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$quote_stage\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$quote_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to undefined constant SchoolVTController\:\:capture_customer_info_token\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to undefined constant SchoolVTController\:\:capture_customer_info_with_account_no_token\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to undefined constant SchoolVTController\:\:get_deal_details_from_accountno_token\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to undefined constant SchoolVTController\:\:get_deal_details_token\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to undefined constant SchoolVTController\:\:get_organisation_details_token\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to undefined constant SchoolVTController\:\:update_organisation_token\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method EarlyYearsVTController\:\:create_enquiry\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method GeneralVTController\:\:create_enquiry\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method GeneralVTController\:\:get_contact_by_email\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method SchoolVTController\:\:_submit_event_registration\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method SchoolVTController\:\:create_enquiry\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method VTController\:\:get_contact_assignee\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method VTController\:\:get_enquiry_assignee\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method VTController\:\:get_org_assignee\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method WorkplaceVTController\:\:_submit_event_registration\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Call to an undefined method WorkplaceVTController\:\:create_enquiry\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Method VTController\:\:format_customer_info_payload\(\) invoked with 2 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Method VTController\:\:post_request_to_vt\(\) invoked with 4 parameters, 2\-3 required\.$#'
+			identifier: arguments.count
+			count: 3
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Method VTController\:\:update_or_create_deal\(\) invoked with 3 parameters, 2 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Undefined variable\: \$deal_response$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Undefined variable\: \$response$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Undefined variable\: \$response_data$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/api_helpers_backup.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$deal_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/api/classes/base.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$deal_org_type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/api/classes/base.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$deal_type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: src/api/classes/base.php
+
+		-
+			message: '#^Access to an undefined property VTController\:\:\$organisation_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/classes/base.php
+
+		-
+			message: '#^Call to an undefined method VTController\:\:capture_customer_info_in_vt\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/api/classes/base.php
+
+		-
+			message: '#^Call to an undefined method VTController\:\:get_contact_assignee\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: src/api/classes/base.php
+
+		-
+			message: '#^Call to an undefined method VTController\:\:get_org_assignee\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/api/classes/base.php
+
+		-
+			message: '#^Access to an undefined property EarlyYearsVTController\:\:\$seip_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/api/classes/early_years.php
+
+		-
+			message: '#^Undefined variable\: \$deal_response$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/early_years.php
+
+		-
+			message: '#^Undefined variable\: \$response$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/early_years.php
+
+		-
+			message: '#^Undefined variable\: \$billing_contact$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$contact$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$deal_id$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$deal_response$#'
+			identifier: variable.undefined
+			count: 2
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$invoice_response$#'
+			identifier: variable.undefined
+			count: 2
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$line_items$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$org_id$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$org_response$#'
+			identifier: variable.undefined
+			count: 2
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$quote_id$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$response$#'
+			identifier: variable.undefined
+			count: 4
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Variable \$quote_id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/school.php
+
+		-
+			message: '#^Undefined variable\: \$response$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/classes/workplace.php
+
+		-
+			message: '#^Variable \$data_controller might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/enquiry.php
+
+		-
+			message: '#^Variable \$data_controller might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/enquiry_test.php
+
+		-
+			message: '#^Variable \$data_controller might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/api/prize_pack.php
+
+		-
+			message: '#^Variable \$data_controller might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: src/api/register.php
+
+		-
+			message: '#^Call to static method createReaderForFile\(\) on an unknown class PHPExcel_IOFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Call to static method post\(\) on an unknown class dhrest\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Deprecated in PHP 8\.0\: Required parameter \$sub_folder follows optional parameter \$filename\.$#'
+			identifier: parameter.requiredAfterOptional
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Function eregi_replace not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Instantiated class PHPExcel not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Instantiated class PHPExcel_Writer_Excel2007 not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Instantiated class PHPMailer not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$array_mfr_part_match_items might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$assigned_user_id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$cost_col might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$count might not be defined\.$#'
+			identifier: variable.undefined
+			count: 5
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$manufacturer_col might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$opty_name might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$product_id might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$qty_col might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$system_phase might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: src/functions.php
+
+		-
+			message: '#^Variable \$vendor_part_number_col might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: src/functions.php
+
+		-
+			message: '#^Instantiated class dhpdo not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/init.php
+
+		-
+			message: '#^Instantiated class dhvt not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/init.php

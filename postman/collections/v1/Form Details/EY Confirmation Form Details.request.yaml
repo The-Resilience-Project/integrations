@@ -1,0 +1,6 @@
+$kind: http-request
+name: EY Confirmation Form Details
+url: "{{base_url}}/api/ey_confirmation_form_details.php?school_account_no=EY-0001&school_name=Sunshine%20Early%20Learning"
+method: GET
+headers: []
+order: 4

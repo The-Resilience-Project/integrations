@@ -1,0 +1,1879 @@
+{
+  "generated": "2026-03-27T04:59:02.311Z",
+  "count": 144,
+  "workflows": [
+    {
+      "id": 137,
+      "name": "New School Confirmation 2026 - automated quote email",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Source is WEBSERVICE\n           Type is School - New\n           Deal Name is not empty\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=137&mode=V7Edit"
+    },
+    {
+      "id": 162,
+      "name": "Create new school preview subscription in hub",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Status has changed to Hub Subscription Created\n           (Deals) Deal Name - Org Type is School - New\n           (Organisations) Organisation Name - TRP Hub New School Preview Ambassador Access is empty\n           Ambassador email is not empty\n           Shipping Postal Code is not empty\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=162&mode=V7Edit"
+    },
+    {
+      "id": 160,
+      "name": "EY Info Session Registration Emails",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is EY Info Session Registration\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=160&mode=V7Edit"
+    },
+    {
+      "id": 158,
+      "name": "Create yearly subscription in Hub",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Status has changed to Hub Subscription Created\n           (Organisations) Organisation Name - TRP Hub Ambassador Access is empty\n           Ambassador email is not empty\n           Shipping Postal Code is not empty\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=158&mode=V7Edit"
+    },
+    {
+      "id": 157,
+      "name": "Set Curric ordered date",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Status is Auto Created\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=157&mode=V7Edit"
+    },
+    {
+      "id": 155,
+      "name": "Create Order in Ship Station 2025",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Status has changed to Approved\nAny : Subject contains School Partnership Program\n           Subject contains Workplace",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=155&mode=V7Edit"
+    },
+    {
+      "id": 154,
+      "name": "Notify of unconfirmed deal ordering curric",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Source is WEBSERVICE\n           (Deals) Deal Name - Sales Stage is not Deal Won,Closed INV,Prepaid\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=154&mode=V7Edit"
+    },
+    {
+      "id": 151,
+      "name": "Notify Sarah when extend and inspire options are changed",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Quote Created? is Enabled\n           Deal Name is 2026 School Partnership Program\nAny : Extend has changed\n           Inspire has changed",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=151&mode=V7Edit"
+    },
+    {
+      "id": 147,
+      "name": "Existing School Confirmation 2026 - internal email notification",
+      "module": "Deals",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Deal Name is 2026 School Partnership Program\n           Org Type is School - Existing\n           Sales Stage has changed to Deal Won\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=147&mode=V7Edit"
+    },
+    {
+      "id": 143,
+      "name": "Mark school deal as dormant",
+      "module": "Deals",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Sales Stage is New\n           Org Type is School - New\n           Deal Name contains 2026\n           Expected Close Date more than 29 days ago\n           Expected Close Date less than 30 days ago\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=143&mode=V7Edit"
+    },
+    {
+      "id": 140,
+      "name": "Mark workplace deal as dormant",
+      "module": "Deals",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Sales Stage is New\n           Org Type is Workplace - New\n           Expected Close Date more than 22 days ago\n           Expected Close Date less than 23 days ago\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=140&mode=V7Edit"
+    },
+    {
+      "id": 139,
+      "name": "New enquiry - send email to new assignee",
+      "module": "Enquiries",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Enquiry Assigned To is not Dawn Maxa\n           Enquiry Assigned To has changed\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=139&mode=V7Edit"
+    },
+    {
+      "id": 138,
+      "name": "Send Workplace Enquiry follow up email 2",
+      "module": "Deals",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Sales Stage is New\n           Org Type is Workplace - New\n           Expected Close Date more than 15 days ago\n           Expected Close Date less than 16 days ago\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=138&mode=V7Edit"
+    },
+    {
+      "id": 115,
+      "name": "Accounts: Update deal to Closed INV when inv is imported to Xero",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Status is Imported to Xero\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=115&mode=V7Edit"
+    },
+    {
+      "id": 97,
+      "name": "Set Due Date on Invoice creation",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   Status is Auto Created\n           Source is WEBSERVICE\n           Due Date is empty\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=97&mode=V7Edit"
+    },
+    {
+      "id": 101,
+      "name": "Workplace deal won notification",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Sales Stage has changed to Deal Won\n           Org Type is Workplace - New,Workplace - Existing\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=101&mode=V7Edit"
+    },
+    {
+      "id": 108,
+      "name": "Event - Leading TRP",
+      "module": "Events",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Workflow Name is Leading TRP\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=108&mode=V7Edit"
+    },
+    {
+      "id": 111,
+      "name": "Early Years - internal email notification",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name is 2026 Early Years Partnership Program\n           Sales Stage has changed to Deal Won\n           Org Type is Early Years - New,Early Years - Existing\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=111&mode=V7Edit"
+    },
+    {
+      "id": 1,
+      "name": "UpdateInventoryProducts On Every Save",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Subject does not contain `!`\nAny : -NA-",
+      "actions": [],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=1&mode=V7Edit"
+    },
+    {
+      "id": 114,
+      "name": "Update organisation Inspire field",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2026\nAny : Inspire is Inspire 1\n           Inspire is Inspire 2\n           Inspire is Inspire 3\n           Inspire is Inspire 4",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=114&mode=V7Edit"
+    },
+    {
+      "id": 128,
+      "name": "New enquiry - send email to assignee",
+      "module": "Enquiries",
+      "trigger": "Enquiries creation",
+      "conditions": "All :   Enquiry Assigned To is not Dawn Maxa\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=128&mode=V7Edit"
+    },
+    {
+      "id": 136,
+      "name": "New School Confirmation 2026 - internal email notification",
+      "module": "Deals",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Deal Name is 2026 School Partnership Program\n           Org Type is School - New\n           Sales Stage has changed to Deal Won\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=136&mode=V7Edit"
+    },
+    {
+      "id": 135,
+      "name": "Send Workplace Enquiry follow up email 1",
+      "module": "Deals",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Sales Stage is New\n           Org Type is Workplace - New\n           Expected Close Date is yesterday\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=135&mode=V7Edit"
+    },
+    {
+      "id": 163,
+      "name": "Set Ambassador email",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   Subject contains School Partnership Program\n           Status is Auto Created\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=163&mode=V7Edit"
+    },
+    {
+      "id": 127,
+      "name": "New enquiry - send email to enquirer",
+      "module": "Enquiries",
+      "trigger": "Enquiries creation",
+      "conditions": "All :   Enquiry Body does not contain Participated in the 21 day journal challenge.\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=127&mode=V7Edit"
+    },
+    {
+      "id": 162,
+      "name": "Create new school preview subscription in hub",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Status has changed to Hub Subscription Created\n           (Deals) Deal Name - Org Type is School - New\n           (Organisations) Organisation Name - TRP Hub New School Preview Ambassador Access is empty\n           Ambassador email is not empty\n           Shipping Postal Code is not empty\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=162&mode=V7Edit"
+    },
+    {
+      "id": 180,
+      "name": "Workplace webinar recording email 100+",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Workplace Webinar Recording 2025 >100\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=180&mode=V7Edit"
+    },
+    {
+      "id": 206,
+      "name": "Create Workplace Hub Subscriptions",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Status is Hub Subscription Created\n           Subject is 2026 Workplace Partner\n           (Deals) Deal Name - Number of Participants is not empty\n           Contact Name is not empty\nAny : Resilience through change - Ambassador Email is not empty\n           Supporting team wellbeing - Ambassador Email is not empty\n           Supporting individual wellbeing - Ambassador Email is not empty\n           Building a resilient culture - Ambassador Email is not empty\n           Discovering resilience - HVC - Ambassador Email is not empty\n           Discovering resilience - MH - Ambassador Email is not empty",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=206&mode=V7Edit"
+    },
+    {
+      "id": 205,
+      "name": "EY Hub Access (Existing)",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name is 2026 Early Years Partnership Program\n           EY Hub Access Provisioned is Enabled\n           (Organisations) Organisation Name - TRP Hub Ambassador Access is empty\n           School Postcode is not empty\n           Org Type is Early Years - Existing\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=205&mode=V7Edit"
+    },
+    {
+      "id": 201,
+      "name": "Copy SEIP Priority to 2026 priority",
+      "module": "SEIP",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Priority has changed\n           SEIP Name is 2026 SEIP\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=201&mode=V7Edit"
+    },
+    {
+      "id": 200,
+      "name": "Notify of failed ship station integration",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Ship Station Success has changed to false\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=200&mode=V7Edit"
+    },
+    {
+      "id": 199,
+      "name": "Set priority",
+      "module": "SEIP",
+      "trigger": "SEIP creation",
+      "conditions": "All :   Priority is empty\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=199&mode=V7Edit"
+    },
+    {
+      "id": 197,
+      "name": "Update org details from SEIP",
+      "module": "SEIP",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Years with TRP is 1st year\nAny : Assigned To has changed\n           Welcome Meeting has changed",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=197&mode=V7Edit"
+    },
+    {
+      "id": 196,
+      "name": "EY Info Session Download - ROA",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Source is EY INFO SESSION DOWNLOAD\n           (Deals) Deals - State is not VIC,QLD\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=196&mode=V7Edit"
+    },
+    {
+      "id": 195,
+      "name": "EY Info Session Download - VIC",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Source is EY INFO SESSION DOWNLOAD\n           (Deals) Deals - State is VIC\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=195&mode=V7Edit"
+    },
+    {
+      "id": 190,
+      "name": "Populate participating students from confirmed school deal",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2026\n           Number of Participants is not empty\n           Sales Stage has changed to Deal Won\n           Org Type is School - New,School - Existing\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=190&mode=V7Edit"
+    },
+    {
+      "id": 188,
+      "name": "Notify Dawn of Confirmed Planner School",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Engage is Planners\n           Sales Stage is Deal Won\nAny : Engage has changed\n           Sales Stage has changed",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=188&mode=V7Edit"
+    },
+    {
+      "id": 182,
+      "name": "School Prog Info Session Recording Email +351",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Recording\n           (Deals) Deals - Number of Participants greater than or equal to 351\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=182&mode=V7Edit"
+    },
+    {
+      "id": 181,
+      "name": "Workplace webinar recording email 100-",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Workplace Webinar Recording 2025 <100\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=181&mode=V7Edit"
+    },
+    {
+      "id": 173,
+      "name": "Populate Changed to Deal Won date if blank",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Changed to Deal Won is empty\nAny : Sales Stage has changed to Prepaid\n           Sales Stage has changed to Closed INV",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=173&mode=V7Edit"
+    },
+    {
+      "id": 164,
+      "name": "Send Date Acceptance Confirmation to contact",
+      "module": "Date Acceptances",
+      "trigger": "Date Acceptances creation",
+      "conditions": "All :   Email Body is not empty\n           Confirmation Sent To is not empty\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=164&mode=V7Edit"
+    },
+    {
+      "id": 165,
+      "name": "Notify accounts of returned items",
+      "module": "creditnotes",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Return Type is Change to order\n           Items received is Enabled\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=165&mode=V7Edit"
+    },
+    {
+      "id": 167,
+      "name": "Notify of cancellation",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2026\n           Sales Stage is Closed Lost\n           Type is School\n           Quote Created? is Enabled\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=167&mode=V7Edit"
+    },
+    {
+      "id": 169,
+      "name": "Set organisation confirmed date",
+      "module": "Deals",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Sales Stage is Deal Won\nAny : Deal Name contains 2025\n           Deal Name contains 2026",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=169&mode=V7Edit"
+    },
+    {
+      "id": 171,
+      "name": "EY Hub Access (New)",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name is 2026 Early Years Partnership Program\n           EY Hub Access Provisioned is Enabled\n           (Organisations) Organisation Name - TRP Hub Ambassador Access is empty\n           School Postcode is not empty\n           Org Type is Early Years - New\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=171&mode=V7Edit"
+    },
+    {
+      "id": 177,
+      "name": "School Prog Info Session Recording Email -350",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Recording\n           (Deals) Deals - Number of Participants less than or equal to 350\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=177&mode=V7Edit"
+    },
+    {
+      "id": 179,
+      "name": "Send workplace program confirmation to EXISTING client",
+      "module": "Invoice",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Status has changed to Approved\n           Subject contains Workplace\n           (Deals) Deal Name - Org Type is Workplace - Existing\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=179&mode=V7Edit"
+    },
+    {
+      "id": 178,
+      "name": "Send workplace program confirmation to NEW client",
+      "module": "Invoice",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Status has changed to Approved\n           Subject contains Workplace\n           (Deals) Deal Name - Org Type is Workplace - New\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=178&mode=V7Edit"
+    },
+    {
+      "id": 113,
+      "name": "Create Shipment For Invoice Approved",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Status has changed to Approved\n           Subject is 2024 School Partnership Program\nAny : -NA-",
+      "actions": [
+        "Webhook (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=113&mode=V7Edit"
+    },
+    {
+      "id": 176,
+      "name": "School Prog Info Session Registration Email",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Registration\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=176&mode=V7Edit"
+    },
+    {
+      "id": 154,
+      "name": "Notify of unconfirmed deal ordering curric",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Source is WEBSERVICE\n           (Deals) Deal Name - Sales Stage is not Deal Won,Closed INV,Prepaid\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=154&mode=V7Edit"
+    },
+    {
+      "id": 155,
+      "name": "Create Order in Ship Station 2025",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Status has changed to Approved\nAny : Subject contains School Partnership Program\n           Subject contains Workplace",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=155&mode=V7Edit"
+    },
+    {
+      "id": 157,
+      "name": "Set Curric ordered date",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Status is Auto Created\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=157&mode=V7Edit"
+    },
+    {
+      "id": 158,
+      "name": "Create yearly subscription in Hub",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Status has changed to Hub Subscription Created\n           (Organisations) Organisation Name - TRP Hub Ambassador Access is empty\n           Ambassador email is not empty\n           Shipping Postal Code is not empty\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=158&mode=V7Edit"
+    },
+    {
+      "id": 160,
+      "name": "EY Info Session Registration Emails",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is EY Info Session Registration\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=160&mode=V7Edit"
+    },
+    {
+      "id": 162,
+      "name": "Create new school preview subscription in hub",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Subject is 2026 School Partnership Program\n           Status has changed to Hub Subscription Created\n           (Deals) Deal Name - Org Type is School - New\n           (Organisations) Organisation Name - TRP Hub New School Preview Ambassador Access is empty\n           Ambassador email is not empty\n           Shipping Postal Code is not empty\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=162&mode=V7Edit"
+    },
+    {
+      "id": 163,
+      "name": "Set Ambassador email",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   Subject contains School Partnership Program\n           Status is Auto Created\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=163&mode=V7Edit"
+    },
+    {
+      "id": 164,
+      "name": "Send Date Acceptance Confirmation to contact",
+      "module": "Date Acceptances",
+      "trigger": "Date Acceptances creation",
+      "conditions": "All :   Email Body is not empty\n           Confirmation Sent To is not empty\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=164&mode=V7Edit"
+    },
+    {
+      "id": 165,
+      "name": "Notify accounts of returned items",
+      "module": "creditnotes",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Return Type is Change to order\n           Items received is Enabled\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=165&mode=V7Edit"
+    },
+    {
+      "id": 167,
+      "name": "Notify of cancellation",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2026\n           Sales Stage is Closed Lost\n           Type is School\n           Quote Created? is Enabled\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=167&mode=V7Edit"
+    },
+    {
+      "id": 169,
+      "name": "Set organisation confirmed date",
+      "module": "Deals",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Sales Stage is Deal Won\nAny : Deal Name contains 2025\n           Deal Name contains 2026",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=169&mode=V7Edit"
+    },
+    {
+      "id": 171,
+      "name": "EY Hub Access (New)",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name is 2026 Early Years Partnership Program\n           EY Hub Access Provisioned is Enabled\n           (Organisations) Organisation Name - TRP Hub Ambassador Access is empty\n           School Postcode is not empty\n           Org Type is Early Years - New\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=171&mode=V7Edit"
+    },
+    {
+      "id": 173,
+      "name": "Populate Changed to Deal Won date if blank",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Changed to Deal Won is empty\nAny : Sales Stage has changed to Prepaid\n           Sales Stage has changed to Closed INV",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=173&mode=V7Edit"
+    },
+    {
+      "id": 174,
+      "name": "EY Info Session Download - QLD",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Source is EY INFO SESSION DOWNLOAD\n           (Deals) Deals - State is QLD\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=174&mode=V7Edit"
+    },
+    {
+      "id": 176,
+      "name": "School Prog Info Session Registration Email",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Registration\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=176&mode=V7Edit"
+    },
+    {
+      "id": 177,
+      "name": "School Prog Info Session Recording Email -350",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Recording\n           (Deals) Deals - Number of Participants less than or equal to 350\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=177&mode=V7Edit"
+    },
+    {
+      "id": 178,
+      "name": "Send workplace program confirmation to NEW client",
+      "module": "Invoice",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Status has changed to Approved\n           Subject contains Workplace\n           (Deals) Deal Name - Org Type is Workplace - New\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=178&mode=V7Edit"
+    },
+    {
+      "id": 179,
+      "name": "Send workplace program confirmation to EXISTING client",
+      "module": "Invoice",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Status has changed to Approved\n           Subject contains Workplace\n           (Deals) Deal Name - Org Type is Workplace - Existing\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=179&mode=V7Edit"
+    },
+    {
+      "id": 180,
+      "name": "Workplace webinar recording email 100+",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Workplace Webinar Recording 2025 >100\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=180&mode=V7Edit"
+    },
+    {
+      "id": 181,
+      "name": "Workplace webinar recording email 100-",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Workplace Webinar Recording 2025 <100\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=181&mode=V7Edit"
+    },
+    {
+      "id": 182,
+      "name": "School Prog Info Session Recording Email +351",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Recording\n           (Deals) Deals - Number of Participants greater than or equal to 351\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=182&mode=V7Edit"
+    },
+    {
+      "id": 188,
+      "name": "Notify Dawn of Confirmed Planner School",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Engage is Planners\n           Sales Stage is Deal Won\nAny : Engage has changed\n           Sales Stage has changed",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=188&mode=V7Edit"
+    },
+    {
+      "id": 190,
+      "name": "Populate participating students from confirmed school deal",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2026\n           Number of Participants is not empty\n           Sales Stage has changed to Deal Won\n           Org Type is School - New,School - Existing\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=190&mode=V7Edit"
+    },
+    {
+      "id": 195,
+      "name": "EY Info Session Download - VIC",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Source is EY INFO SESSION DOWNLOAD\n           (Deals) Deals - State is VIC\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=195&mode=V7Edit"
+    },
+    {
+      "id": 196,
+      "name": "EY Info Session Download - ROA",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Source is EY INFO SESSION DOWNLOAD\n           (Deals) Deals - State is not VIC,QLD\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=196&mode=V7Edit"
+    },
+    {
+      "id": 197,
+      "name": "Update org details from SEIP",
+      "module": "SEIP",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Years with TRP is 1st year\nAny : Assigned To has changed\n           Welcome Meeting has changed",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=197&mode=V7Edit"
+    },
+    {
+      "id": 199,
+      "name": "Set priority",
+      "module": "SEIP",
+      "trigger": "SEIP creation",
+      "conditions": "All :   Priority is empty\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=199&mode=V7Edit"
+    },
+    {
+      "id": 200,
+      "name": "Notify of failed ship station integration",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Ship Station Success has changed to false\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=200&mode=V7Edit"
+    },
+    {
+      "id": 201,
+      "name": "Copy SEIP Priority to 2026 priority",
+      "module": "SEIP",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Priority has changed\n           SEIP Name is 2026 SEIP\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=201&mode=V7Edit"
+    },
+    {
+      "id": 205,
+      "name": "EY Hub Access (Existing)",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name is 2026 Early Years Partnership Program\n           EY Hub Access Provisioned is Enabled\n           (Organisations) Organisation Name - TRP Hub Ambassador Access is empty\n           School Postcode is not empty\n           Org Type is Early Years - Existing\nAny : -NA-",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=205&mode=V7Edit"
+    },
+    {
+      "id": 206,
+      "name": "Create Workplace Hub Subscriptions",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Status is Hub Subscription Created\n           Subject is 2026 Workplace Partner\n           (Deals) Deal Name - Number of Participants is not empty\n           Contact Name is not empty\nAny : Resilience through change - Ambassador Email is not empty\n           Supporting team wellbeing - Ambassador Email is not empty\n           Supporting individual wellbeing - Ambassador Email is not empty\n           Building a resilient culture - Ambassador Email is not empty\n           Discovering resilience - HVC - Ambassador Email is not empty\n           Discovering resilience - MH - Ambassador Email is not empty",
+      "actions": [
+        "Webhook (1)",
+        "Field Update (1)"
+      ],
+      "enabled": true,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=206&mode=V7Edit"
+    },
+    {
+      "id": 5,
+      "name": "New school - internal email notification",
+      "module": "Deals",
+      "trigger": "Only first time conditions are met",
+      "conditions": "All :   Deal Name contains 2024 School Partnership Program\n           Sales Stage is Deal Won\n           Org Type is School - New\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=5&mode=V7Edit"
+    },
+    {
+      "id": 12,
+      "name": "Calculate or Update Weighted Revenue",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   -NA-\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=12&mode=V7Edit"
+    },
+    {
+      "id": 35,
+      "name": "Create Project On Successful Close",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Sales Stage is Closed Won\nAny : -NA-",
+      "actions": [
+        "Create Record (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=35&mode=V7Edit"
+    },
+    {
+      "id": 40,
+      "name": "Send Mail on Quote Creation",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Source is WEBSERVICE\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=40&mode=V7Edit"
+    },
+    {
+      "id": 41,
+      "name": "Update Meeting Notes Field (remove Agenda afterwards)",
+      "module": "Events",
+      "trigger": "Time Interval (Hourly)",
+      "conditions": "All :   Agenda is not empty\n           Meeting Notes is not empty\n           Record ID is Workflow 54287\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=41&mode=V7Edit"
+    },
+    {
+      "id": 42,
+      "name": "Update Confirmation Form",
+      "module": "Contacts",
+      "trigger": "Time Interval (On Specific Date)",
+      "conditions": "All :   -NA-\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=42&mode=V7Edit"
+    },
+    {
+      "id": 47,
+      "name": "Update Confirmation URL - New School",
+      "module": "Contacts",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Confirmation Form has changed to New School\nAny : -NA-",
+      "actions": [
+        "Webhook (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=47&mode=V7Edit"
+    },
+    {
+      "id": 69,
+      "name": "New School - Send Mail on Deal Creation with Number Of Students less than 200",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Source is WEBSERVICE\n           Number of Participants less than 200\n           (Contacts) Contact Name - Confirmation Form is New School\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=69&mode=V7Edit"
+    },
+    {
+      "id": 70,
+      "name": "New School - Send Mail on Deal Creation with Number Of Students greater than or equal to 200",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Source is WEBSERVICE\n           (Deals) Deal Name - Number of Participants greater than or equal to 200\n           (Contacts) Contact Name - Confirmation Form is New School\n           (Deals) Deal Name - Form Link does not contain new-schools-confirmation-2024\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=70&mode=V7Edit"
+    },
+    {
+      "id": 71,
+      "name": "Existing School - Send Mail on Deal Creation with Number Of Students less than 200",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Source is WEBSERVICE\n           Number of Participants less than 200\nAny : (Contacts) Contact Name - Confirmation Form is Existing School (F2F/Digital)\n           (Contacts) Contact Name - Confirmation Form is Existing School (Digital Only)",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=71&mode=V7Edit"
+    },
+    {
+      "id": 72,
+      "name": "Existing School - Send Mail on Deal Creation with Number Of Students greater than or equal to 200",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Source is WEBSERVICE\n           (Deals) Deal Name - Number of Participants greater than or equal to 200\n           (Deals) Deal Name - Form Link does not contain new-schools-confirmation-2024\n           (Deals) Deal Name - Deal Name is not 2024 School Partnership Program\nAny : (Contacts) Contact Name - Confirmation Form is Existing School (F2F/Digital)\n           (Contacts) Contact Name - Confirmation Form is Existing School (Digital Only)",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=72&mode=V7Edit"
+    },
+    {
+      "id": 74,
+      "name": "Task to Schedule staff and parent presentations with Hugh",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Inspire is Hugh F2F\nAny : -NA-",
+      "actions": [
+        "Task (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=74&mode=V7Edit"
+    },
+    {
+      "id": 75,
+      "name": "Task to schedule staff and parent webinar with Hugh",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Inspire is Hugh F2F\nAny : -NA-",
+      "actions": [
+        "Task (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=75&mode=V7Edit"
+    },
+    {
+      "id": 76,
+      "name": "Update Quote Address",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Source is WEBSERVICE\n           Deal Name is not empty\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=76&mode=V7Edit"
+    },
+    {
+      "id": 86,
+      "name": "Filter out Staff Calendar Items - TESTING INACTIVE",
+      "module": "Events",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Source is GOOGLE\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=86&mode=V7Edit"
+    },
+    {
+      "id": 88,
+      "name": "Workplace Booking Confirmation Email",
+      "module": "Invoice",
+      "trigger": "Invoice creation",
+      "conditions": "All :   (Deals) Deal Name - Sales Stage is Closed INV\n           Status is Auto Created\n           Form Link contains /book-form/\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=88&mode=V7Edit"
+    },
+    {
+      "id": 89,
+      "name": "Workplace Booking Request Email",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Quote Stage is New\n           Deal Name is not empty\n           Form Link contains /book-form/\n           Source is WEBSERVICE\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=89&mode=V7Edit"
+    },
+    {
+      "id": 91,
+      "name": "58619- Send Email - Information Session Form",
+      "module": "Events",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Workflow Name is Send Email - Information Session Form\n           (Contacts) Contact Name - EY Information Session Date is not empty\n           Presentation Type is Information Session\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=91&mode=V7Edit"
+    },
+    {
+      "id": 93,
+      "name": "Send to contact email after deal creation: Welcome to The Resilience Project’s 2024 Partnership Prog",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Source is WEBSERVICE\n           Deal Name contains 2024 School Partnership Program\n           Form Link contains new-schools-confirmation-2024\nAny : -NA-",
+      "actions": [],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=93&mode=V7Edit"
+    },
+    {
+      "id": 94,
+      "name": "Send email to contact step 2",
+      "module": "Contacts",
+      "trigger": "Time Interval (On Specific Date)",
+      "conditions": "All :   (Organisations) Organisation Name - 2024 Confirmation Status is not Confirmed,Not Interested\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=94&mode=V7Edit"
+    },
+    {
+      "id": 95,
+      "name": "Send email to contact step 3",
+      "module": "Contacts",
+      "trigger": "Time Interval (On Specific Date)",
+      "conditions": "All :   (Organisations) Organisation Name - 2024 Confirmation Status is not Confirmed,Not Interested\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=95&mode=V7Edit"
+    },
+    {
+      "id": 96,
+      "name": "New school - automated quote email",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Source is WEBSERVICE\n           Form Link contains new-schools-confirmation-2024\n           Deal Name is not empty\n           (Deals) Deal Name - Number of Participants greater than or equal to 200\n           Subject is 2024 School Partnership Program\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=96&mode=V7Edit"
+    },
+    {
+      "id": 98,
+      "name": "Send Mail on Quote Creation -  2024 Existing Confirmation Form",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Subject is 2024 School Partnership Program\n           Source is WEBSERVICE\n           (Deals) Deal Name - Deal Name is 2024 School Partnership Program\n           (Deals) Deal Name - School Mental Health Funding is not Yes\n           (Deals) Deal Name - Number of Participants greater than or equal to 200\n           Quote Stage is Delivered\n           Form Link does not contain new-schools-confirmation-2024\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=98&mode=V7Edit"
+    },
+    {
+      "id": 99,
+      "name": "Existing school deal - internal email notification",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Deal Name contains 2024\n           Sales Stage is Deal Won\n           Org Type is School - Existing\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=99&mode=V7Edit"
+    },
+    {
+      "id": 100,
+      "name": "Workplace Booking Request - Automated Email",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Sales Stage is Ready To Close\n           Org Type is Workplace - New\n           Source is WEBSERVICE\nAny : -NA-",
+      "actions": [
+        "Email (2)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=100&mode=V7Edit"
+    },
+    {
+      "id": 102,
+      "name": "Event - Welcome Meeting",
+      "module": "Events",
+      "trigger": "Events creation",
+      "conditions": "All :   Source contains WELCOME MEETING\n           Name contains Welcome Meeting\nAny : -NA-",
+      "actions": [
+        "Field Update (3)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=102&mode=V7Edit"
+    },
+    {
+      "id": 103,
+      "name": "Event - Resilient Youth Survey",
+      "module": "Events",
+      "trigger": "Events creation",
+      "conditions": "All :   Source is AP - [RESILIENT YOUTH SURVEY]\n           Name contains Resilient Youth Survey\nAny : -NA-",
+      "actions": [
+        "Field Update (3)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=103&mode=V7Edit"
+    },
+    {
+      "id": 104,
+      "name": "Event - Embedding TRP",
+      "module": "Events",
+      "trigger": "Events creation",
+      "conditions": "All :   Source contains AP - [EMBEDDING TRP\n           Name contains Embedding TRP\nAny : -NA-",
+      "actions": [
+        "Field Update (2)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=104&mode=V7Edit"
+    },
+    {
+      "id": 105,
+      "name": "Event - Program Planning",
+      "module": "Events",
+      "trigger": "Events creation",
+      "conditions": "All :   Source is AP - [PROGRAM PLANNING]\n           Name contains Program Planning\nAny : -NA-",
+      "actions": [
+        "Field Update (2)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=105&mode=V7Edit"
+    },
+    {
+      "id": 106,
+      "name": "Event - Teaching TRP",
+      "module": "Events",
+      "trigger": "Events creation",
+      "conditions": "All :   Source is AP - [TEACHING TRP]\n           Name contains Teaching TRP\nAny : -NA-",
+      "actions": [
+        "Field Update (3)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=106&mode=V7Edit"
+    },
+    {
+      "id": 107,
+      "name": "Assigned SPM updated",
+      "module": "Organisations",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Assigned To has changed\nAny : Assigned To is Phoebe Smith\n           Assigned To is Elias Karageorgiou\n           Assigned To is Lillian Walsh\n           Assigned To is Courteney Boulter\n           Assigned To is Whitney Beseler\n           Assigned To is Luke Davis\n           Assigned To is Sam Korsch",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=107&mode=V7Edit"
+    },
+    {
+      "id": 110,
+      "name": "58619 - Send Email To Contact - 2024 Early Years Program",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Subject is 2024 Early Years Program\n           Source is WEBSERVICE\n           (Deals) Deal Name - Deal Name is 2024 Early Years Program\n           Quote Stage is Delivered\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=110&mode=V7Edit"
+    },
+    {
+      "id": 112,
+      "name": "58850 - Update Xero Code Invoice Item",
+      "module": "Invoice",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   -NA-\nAny : -NA-",
+      "actions": [
+        "Webhook (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=112&mode=V7Edit"
+    },
+    {
+      "id": 117,
+      "name": "Update Resource order URL",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   -NA-\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=117&mode=V7Edit"
+    },
+    {
+      "id": 118,
+      "name": "MM - Update School 2024 Confirmation Status when Deal Won",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2024\n           Sales Stage is Deal Won\nAny : Org Type is School - New\n           Org Type is School - Existing",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=118&mode=V7Edit"
+    },
+    {
+      "id": 119,
+      "name": "MM - Update School 2024 Confirmation Status when Closed Lost",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2024\n           Sales Stage is Closed Lost\n           Org Type is School - New,School - Existing\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=119&mode=V7Edit"
+    },
+    {
+      "id": 120,
+      "name": "Update Resource order URL for old quotes",
+      "module": "Quotes",
+      "trigger": "Time Interval (Hourly)",
+      "conditions": "All :   Resource order URL is empty\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=120&mode=V7Edit"
+    },
+    {
+      "id": 121,
+      "name": "MM - Update Workplace 2024 Confirmation Status - NEW Prospect",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Expected Close Date after 01-01-2024\n           Org Type is Workplace - New\n           Sales Stage is New\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=121&mode=V7Edit"
+    },
+    {
+      "id": 122,
+      "name": "MM - Update Workplace 2024 Confirmation Status - Considering",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Expected Close Date after 01-01-2024\n           Org Type is Workplace - New\n           Sales Stage is Considering\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=122&mode=V7Edit"
+    },
+    {
+      "id": 123,
+      "name": "MM - Update Workplace 2024 Confirmation Status - Ready to Close",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Expected Close Date after 01-01-2024\n           Org Type is Workplace - New\n           Sales Stage is Ready To Close\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=123&mode=V7Edit"
+    },
+    {
+      "id": 124,
+      "name": "MM - Update Workplace 2024 Confirmation Status - Deal Won",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Expected Close Date after 01-01-2024\n           Org Type is Workplace - New\nAny : Sales Stage is Deal Won\n           Sales Stage is Closed INV",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=124&mode=V7Edit"
+    },
+    {
+      "id": 125,
+      "name": "MM - Update Workplace 2024 Confirmation Status - Closed Lost",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Expected Close Date after 01-01-2024\n           Org Type is Workplace - New\n           Sales Stage is Closed Lost\nAny : -NA-",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=125&mode=V7Edit"
+    },
+    {
+      "id": 131,
+      "name": "Test attaching ical",
+      "module": "Registration",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   -NA-\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=131&mode=V7Edit"
+    },
+    {
+      "id": 133,
+      "name": "Workplace webinar registration email",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Workplace Webinar Registration 2025\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=133&mode=V7Edit"
+    },
+    {
+      "id": 134,
+      "name": "Set Org 2024 Conf status for new WP deal",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2024\n           (Organisations) Organisation Name - 2024 Confirmation Status is empty\n           Sales Stage is New\nAny : Type is Workplace\n           Org Type is Workplace - New",
+      "actions": [
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=134&mode=V7Edit"
+    },
+    {
+      "id": 144,
+      "name": "Send School Enquiry follow up email 1",
+      "module": "Deals",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Sales Stage is New\n           Org Type is School - New\n           Deal Name contains 2026\n           Expected Close Date is yesterday\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=144&mode=V7Edit"
+    },
+    {
+      "id": 145,
+      "name": "Send School Enquiry follow up email 2",
+      "module": "Deals",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Sales Stage is New\n           Org Type is School - New\n           Deal Name contains 2026\n           Expected Close Date more than 22 days ago\n           Expected Close Date less than 23 days ago\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=145&mode=V7Edit"
+    },
+    {
+      "id": 150,
+      "name": "Leading TRP Registration email NSW",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Source is Leading TRP Registration\n           Event Registrant is not empty\n           Event No is not empty\n           (Contacts) Event Registrant - State is NSW\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=150&mode=V7Edit"
+    },
+    {
+      "id": 152,
+      "name": "Leading TRP Registration email QLD",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Source is Leading TRP Registration\n           Event Registrant is not empty\n           Event No is not empty\n           (Contacts) Event Registrant - State is QLD\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=152&mode=V7Edit"
+    },
+    {
+      "id": 153,
+      "name": "Leading TRP Registration email ROA",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Source is Leading TRP Registration\n           Event Registrant is not empty\n           Event No is not empty\nAny : (Contacts) Event Registrant - State is not QLD\n           (Contacts) Event Registrant - State is not NSW",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=153&mode=V7Edit"
+    },
+    {
+      "id": 159,
+      "name": "Automated reminder for curric ordering",
+      "module": "Deals",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Deal Name is 2025 School Partnership Program\n           Org Type is School - Existing\n           Sales Stage is Deal Won\n           Expected Close Date after 16-09-2024\n           (Organisations) Organisation Name - Curriculum Ordered is empty\nAny : Expected Close Date 14 days ago\n           Expected Close Date 28 days ago",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=159&mode=V7Edit"
+    },
+    {
+      "id": 183,
+      "name": "School Prog Info Session Recording Follow Up 1 -350",
+      "module": "Registration",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Datetime Registered more than 7 days ago\n           Datetime Registered less than 8 days ago\n           Source is Info Session Recording\n           (Deals) Deals - Number of Participants less than or equal to 350\n           (Deals) Deals - Sales Stage is Considering\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=183&mode=V7Edit"
+    },
+    {
+      "id": 184,
+      "name": "School Prog Info Session Recording Follow Up 2 -350",
+      "module": "Registration",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Recording\n           Datetime Registered more than 14 days ago\n           Datetime Registered less than 15 days ago\n           (Deals) Deals - Number of Participants less than or equal to 350\n           (Deals) Deals - Sales Stage is Considering\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=184&mode=V7Edit"
+    },
+    {
+      "id": 185,
+      "name": "School Prog Info Session Recording Follow Up 1 +351",
+      "module": "Registration",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Recording\n           Datetime Registered more than 7 days ago\n           Datetime Registered less than 8 days ago\n           (Deals) Deals - Sales Stage is Considering\n           (Deals) Deals - Number of Participants greater than or equal to 351\nAny : -NA-",
+      "actions": [
+        "Email (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=185&mode=V7Edit"
+    },
+    {
+      "id": 186,
+      "name": "School Prog Info Session Recording Follow Up 2 +351",
+      "module": "Registration",
+      "trigger": "Time Interval (Daily)",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Info Session Recording\n           Datetime Registered more than 14 days ago\n           Datetime Registered less than 15 days ago\n           (Deals) Deals - Sales Stage is Considering\n           (Deals) Deals - Number of Participants greater than or equal to 351\nAny : -NA-",
+      "actions": [
+        "Email (1)",
+        "Field Update (1)"
+      ],
+      "enabled": false,
+      "workflowType": "singlepath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=186&mode=V7Edit"
+    },
+    {
+      "id": 132,
+      "name": "2024 Deal Update Org 2024 Confirmation Status",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2024\nAny : -NA-",
+      "actions": [],
+      "enabled": true,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=132&mode=V7Edit"
+    },
+    {
+      "id": 148,
+      "name": "Existing School Confirmation 2026 - automated quote email",
+      "module": "Quotes",
+      "trigger": "Quotes creation",
+      "conditions": "All :   Deal Name is not empty\n           Subject is 2026 School Partnership Program\n           Source is WEBSERVICE\n           Type is School - Existing\nAny : -NA-",
+      "actions": [],
+      "enabled": true,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=148&mode=V7Edit"
+    },
+    {
+      "id": 166,
+      "name": "Event Confirmation Registration Emails",
+      "module": "Registration",
+      "trigger": "Registration creation",
+      "conditions": "All :   Event Registrant is not empty\n           Event No is not empty\n           Source is Event Confirmation\nAny : -NA-",
+      "actions": [],
+      "enabled": true,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=166&mode=V7Edit"
+    },
+    {
+      "id": 168,
+      "name": "206 Deal Update Org 2026 Confirmation Status",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2026\nAny : Org Type is not Workplace - Existing\n           Sales Stage is not New",
+      "actions": [],
+      "enabled": true,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=168&mode=V7Edit"
+    },
+    {
+      "id": 172,
+      "name": "Populate Changed to Status Date",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Assigned To is not Aretha Peethamparam\n           Sales Stage has changed\nAny : -NA-",
+      "actions": [],
+      "enabled": true,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=172&mode=V7Edit"
+    },
+    {
+      "id": 208,
+      "name": "2027 Deal Update Org 2027 Confirmation Status",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2027\nAny : Org Type is not Workplace - Existing\n           Sales Stage is not New",
+      "actions": [],
+      "enabled": true,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=208&mode=V7Edit"
+    },
+    {
+      "id": 36,
+      "name": "New partnership school",
+      "module": "Deals",
+      "trigger": "Deals creation",
+      "conditions": "All :   Deal Name is Partnership Program\n           Sales Stage is Closed Won\n           Org Type contains School\nAny : -NA-",
+      "actions": [],
+      "enabled": false,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=36&mode=V7Edit"
+    },
+    {
+      "id": 130,
+      "name": "2025 Deal Update Org 2025 Confirmation Status",
+      "module": "Deals",
+      "trigger": "Every time conditions are met",
+      "conditions": "All :   Deal Name contains 2025\nAny : Org Type is not Workplace - Existing\n           Sales Stage is not New",
+      "actions": [],
+      "enabled": false,
+      "workflowType": "multipath",
+      "editUrl": "https://theresilienceproject.od2.vtiger.com/index.php?module=Workflows&parent=Settings&view=Edit&record=130&mode=V7Edit"
+    }
+  ]
+}

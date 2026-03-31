@@ -1,0 +1,19 @@
+$kind: http-request
+name: v2 School Event Confirmation (Ambassador)
+url: "{{base_url}}/api/v2/schools/register"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_id": "4x802922",
+        "school_account_no": "{{test_school_2_account_no}}",
+        "state": "NSW",
+        "event_id": "18x503",
+        "source_form": "Event Confirmation",
+        "event_name_display": "School Partnership Launch"
+    }
+order: 6

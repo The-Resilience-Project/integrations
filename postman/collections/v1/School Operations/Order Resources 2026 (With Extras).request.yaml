@@ -1,0 +1,41 @@
+$kind: http-request
+name: Order Resources 2026 (With Extras)
+url: "{{base_url}}/api/order_resources_2026.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "school_account_no": "{{test_school_1_account_no}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "order_for_2026": true,
+        "shipping": 42.00,
+        "foundation_qty": 30,
+        "year1_qty": 28,
+        "year2_qty": 30,
+        "year3_qty": 25,
+        "tr_foundation_qty": 2,
+        "tr_year1_qty": 2,
+        "tr_year2_qty": 2,
+        "tr_year3_qty": 2,
+        "fence_sign_qty": 2,
+        "reading_log_qty": 60,
+        "primary_planner_qty": 30,
+        "teacher_planner_qty": 5,
+        "teacher_planner_type": "Primary",
+        "shipping_address": "100 Lygon Street",
+        "shipping_address_2": "Building A",
+        "shipping_suburb": "Carlton",
+        "shipping_postcode": "3053",
+        "shipping_state": "VIC",
+        "billing_address": "PO Box 500",
+        "billing_address_2": "Finance Department",
+        "billing_suburb": "Carlton",
+        "billing_postcode": "3053",
+        "billing_state": "VIC"
+    }
+order: 7

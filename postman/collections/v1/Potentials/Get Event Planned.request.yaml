@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get Event Planned
+url: "{{base_url}}/Potentials/getEventPlanned.php?type=leading-trp"
+method: GET
+order: 2

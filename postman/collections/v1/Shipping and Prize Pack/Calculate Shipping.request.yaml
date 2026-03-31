@@ -1,0 +1,24 @@
+$kind: http-request
+name: Calculate Shipping
+url: "{{base_url}}/api/calculate_shipping.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "consignment": [
+            {
+                "length": 30,
+                "width": 20,
+                "height": 15,
+                "weight": 2.5
+            }
+        ],
+        "destination_suburb": "Melbourne",
+        "destination_state": "VIC",
+        "destination_postcode": "3000"
+    }
+order: 1

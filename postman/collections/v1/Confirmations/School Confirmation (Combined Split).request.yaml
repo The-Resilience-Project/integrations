@@ -1,0 +1,34 @@
+$kind: http-request
+name: School Confirmation (Combined Split)
+url: "{{base_url}}/api/confirm.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_3_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Three",
+        "contact_phone": "0400000000",
+        "job_title": "Deputy Principal",
+        "school_account_no": "{{test_school_3_account_no}}",
+        "state": "QLD",
+        "address": "10 Beach Road",
+        "suburb": "Brighton",
+        "postcode": "3186",
+        "participating_journal_students": "300",
+        "participating_planner_students": "250",
+        "different_billing_contact": "No",
+        "mental_health_funding": "No",
+        "school_type": "Combined",
+        "secondary_engage": "Planners",
+        "engage": "Journals",
+        "inspire": "Inspire 1",
+        "selected_year_levels": ["Foundation", "Year 1", "Year 2", "Year 3", "Year 4", "Year 5", "Year 6", "Year 7", "Year 8", "Year 9"],
+        "source_form": "New Schools Confirmation 2026"
+    }
+order: 7

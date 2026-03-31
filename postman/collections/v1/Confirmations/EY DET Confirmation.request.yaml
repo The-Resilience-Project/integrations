@@ -1,0 +1,22 @@
+$kind: http-request
+name: EY DET Confirmation
+url: "{{base_url}}/api/confirm.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "earlyyears_account_no": "EY-0018",
+        "contact_first_name": "Emma",
+        "contact_last_name": "Ward",
+        "contact_email": "emma.ward@littlestarskindy.com.au",
+        "centre_name": "Little Stars Kindergarten",
+        "participating_year": "2026",
+        "participating_num_of_students": "45",
+        "source_form": "EY DET Confirmation"
+    }
+order: 13

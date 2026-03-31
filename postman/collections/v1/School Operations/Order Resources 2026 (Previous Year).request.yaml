@@ -1,0 +1,22 @@
+$kind: http-request
+name: Order Resources 2026 (Previous Year)
+url: "{{base_url}}/api/order_resources_2026.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "school_account_no": "{{test_school_1_account_no}}",
+        "order_for_2026": false,
+        "shipping": 18.50,
+        "foundation_qty": 25,
+        "year1_qty": 22,
+        "year2_qty": 24,
+        "tr_foundation_qty": 2,
+        "tr_year1_qty": 2,
+        "tr_year2_qty": 2
+    }
+order: 6

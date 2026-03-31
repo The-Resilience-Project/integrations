@@ -1,0 +1,25 @@
+$kind: http-request
+name: Early Years Registration
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "contact_email": "sarah.wilson@littlestars.edu.au",
+        "contact_first_name": "Sarah",
+        "contact_last_name": "Wilson",
+        "contact_phone": "0423456789",
+        "job_title": "Centre Director",
+        "earlyyears_account_no": "EY-0042",
+        "state": "QLD",
+        "event_id": "EVT101361",
+        "source_form": "Info Session Registration",
+        "attendance_type": "Attending Live",
+        "num_of_ey_children": "85"
+    }
+order: 3

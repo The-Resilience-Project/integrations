@@ -1,0 +1,6 @@
+$kind: http-request
+name: School Curriculum Ordering Details
+url: "{{base_url}}/api/school_curric_ordering_details.php?school_account_no={{test_school_1_account_no}}&for_2026=1"
+method: GET
+headers: []
+order: 3

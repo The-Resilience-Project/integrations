@@ -1,0 +1,29 @@
+{
+  "name": "integrations",
+  "version": "1.0.0",
+  "description": "A serverless PHP API for The Resilience Project (TRP) that integrates with Vtiger CRM to manage enquiries, registrations, confirmations, and resource ordering for Schools, Workplaces, and Early Years programs.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-form-docs": "tsx scripts/generate-form-docs.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/The-Resilience-Project/wp-apis.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/The-Resilience-Project/wp-apis/issues"
+  },
+  "homepage": "https://github.com/The-Resilience-Project/wp-apis#readme",
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}

@@ -1,5 +1,6 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: theresilienceproject
+app: trp-api
 service: trp-api
 
 provider:
@@ -8,6 +9,9 @@ provider:
     region: ap-southeast-2
     runtime: provided.al2
     timeout: 29  # HTTP API Gateway has a hard limit of 30 seconds
+    tracing:
+        lambda: true
+        apiGateway: true
     environment:
         # Add any environment variables your PHP needs here
         # APP_ENV: production
@@ -233,6 +237,25 @@ functions:
                 path: /Events/54701_sendInvitation.php
                 method: POST
     
+    # API v2 — Schools endpoints
+    v2_schools_enquiry:
+        handler: src/api-v2/endpoints/schools/enquiry.php
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/enquiry
+                method: POST
+
+    v2_schools_prize_pack:
+        handler: src/api-v2/endpoints/schools/prize_pack.php
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/prize-pack
+                method: POST
+
     # Webhook endpoints
     woocommerce_order:
         handler: src/Webhooks/Order.php

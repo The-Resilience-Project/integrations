@@ -1,0 +1,32 @@
+$kind: http-request
+name: School Confirmation (Secondary Journals)
+url: "{{base_url}}/api/confirm.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_2_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Two",
+        "contact_phone": "0400000000",
+        "job_title": "Head of Wellbeing",
+        "school_account_no": "{{test_school_2_account_no}}",
+        "state": "NSW",
+        "address": "200 Punt Road",
+        "suburb": "South Yarra",
+        "postcode": "3141",
+        "participating_num_of_students": "600",
+        "different_billing_contact": "No",
+        "mental_health_funding": "No",
+        "school_type": "Secondary",
+        "engage": "Journals",
+        "inspire": "Inspire 2",
+        "selected_year_levels": ["Year 7", "Year 8", "Year 9", "Year 10"],
+        "source_form": "New Schools Confirmation 2026"
+    }
+order: 5

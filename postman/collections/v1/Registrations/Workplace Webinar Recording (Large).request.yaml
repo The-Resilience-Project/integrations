@@ -1,0 +1,25 @@
+$kind: http-request
+name: Workplace Webinar Recording (Large)
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Workplace",
+        "contact_email": "hr@bigcorp.com.au",
+        "contact_first_name": "Rachel",
+        "contact_last_name": "Green",
+        "contact_phone": "0467890123",
+        "role_workplace": "People & Culture Manager",
+        "organisation_name": "BigCorp Australia",
+        "organisation_sub_type": "Professional Services",
+        "num_of_employees": "500",
+        "state": "VIC",
+        "event_id": "EVT102000",
+        "source_form": "Workplace Webinar Recording 2026"
+    }
+order: 9

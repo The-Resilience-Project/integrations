@@ -1,12 +1,12 @@
 <?php
 
-require dirname(__FILE__)."/utils.php";
-require dirname(__FILE__)."/api_helpers.php";
-require dirname(__FILE__)."/../init.php";
+require dirname(__FILE__).'/utils.php';
+require dirname(__FILE__).'/api_helpers.php';
+require dirname(__FILE__).'/../init.php';
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: PUT, GET, POST");
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: PUT, GET, POST');
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
 $method = get_method();
 $data = get_request_data();
@@ -14,57 +14,53 @@ $data = get_request_data();
 // POST request
 // Store some data or something
 if ($method === 'POST') {
-    log_info("Enquiry request started", [
+    log_info('Enquiry request started', [
         'endpoint' => 'enquiry',
         'method' => $method,
         'service_type' => $data['service_type'] ?? 'unknown',
         'organization_name' => $data['organisation_name'] ?? $data['workplace_name_other'] ?? $data['school_name_other'] ?? 'unknown',
         'contact_email' => $data['contact_email'] ?? 'unknown',
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
     ]);
 
-    log_debug("Enquiry data received", ['data' => $data]);
+    log_debug('Enquiry data received', ['data' => $data]);
 
     try {
         $data_controller;
 
-        if($data["service_type"] === "School"){
-            log_debug("Creating SchoolVTController for enquiry");
+        if ($data['service_type'] === 'School') {
+            log_debug('Creating SchoolVTController for enquiry');
             $data_controller = new SchoolVTController($data);
-        }
-        elseif($data["service_type"] === "Workplace"){
-            log_debug("Creating WorkplaceVTController for enquiry");
+        } elseif ($data['service_type'] === 'Workplace') {
+            log_debug('Creating WorkplaceVTController for enquiry');
             $data_controller = new WorkplaceVTController($data);
-        }
-        elseif($data["service_type"] === "Early Years"){
-            log_debug("Creating EarlyYearsVTController for enquiry");
+        } elseif ($data['service_type'] === 'Early Years') {
+            log_debug('Creating EarlyYearsVTController for enquiry');
             $data_controller = new EarlyYearsVTController($data);
-        }
-        elseif($data["service_type"] === "Imperfects"){
-            log_debug("Creating ImperfectsVTController for enquiry");
+        } elseif ($data['service_type'] === 'Imperfects') {
+            log_debug('Creating ImperfectsVTController for enquiry');
             $data_controller = new ImperfectsVTController($data);
-        }
-        else{
-            log_debug("Creating GeneralVTController for enquiry", [
-                'service_type' => $data["service_type"] ?? 'not provided'
+        } else {
+            log_debug('Creating GeneralVTController for enquiry', [
+                'service_type' => $data['service_type'] ?? 'not provided',
             ]);
             $data_controller = new GeneralVTController($data);
         }
 
-        log_info("Calling submit_enquiry() to process enquiry");
+        log_info('Calling submit_enquiry() to process enquiry');
         $success = $data_controller->submit_enquiry();
 
         if ($success) {
-            log_info("Enquiry processed successfully", [
+            log_info('Enquiry processed successfully', [
                 'service_type' => $data['service_type'],
                 'organization' => $data['organisation_name'] ?? $data['workplace_name_other'] ?? $data['school_name_other'] ?? 'unknown',
-                'status' => 'success'
+                'status' => 'success',
             ]);
         } else {
-            log_error("Enquiry processing failed", [
+            log_error('Enquiry processing failed', [
                 'service_type' => $data['service_type'],
                 'organization' => $data['organisation_name'] ?? $data['workplace_name_other'] ?? $data['school_name_other'] ?? 'unknown',
-                'status' => 'fail'
+                'status' => 'fail',
             ]);
         }
 
@@ -78,12 +74,12 @@ if ($method === 'POST') {
         log_exception($e, [
             'endpoint' => 'enquiry',
             'service_type' => $data['service_type'] ?? 'unknown',
-            'organization' => $data['organisation_name'] ?? $data['workplace_name_other'] ?? $data['school_name_other'] ?? 'unknown'
+            'organization' => $data['organisation_name'] ?? $data['workplace_name_other'] ?? $data['school_name_other'] ?? 'unknown',
         ]);
 
         send_response([
             'status' => 'fail',
-            'message' => 'Error processing enquiry: ' . $e->getMessage()
+            'message' => 'Error processing enquiry: ' . $e->getMessage(),
         ]);
         exit;
     }

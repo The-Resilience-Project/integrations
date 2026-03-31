@@ -1,0 +1,43 @@
+$kind: http-request
+name: Create New Program Booking
+url: "{{base_url}}/Potentials/createNewProgramBooking.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    - key: potentialname
+      value: "ACME Corporation"
+    - key: number_of_participants
+      value: "50"
+    - key: program_start_date
+      value: "2026-06-15"
+    - key: contact_name
+      value: "Sarah Johnson"
+    - key: email_address
+      value: "hr@acmecorp.com.au"
+    - key: job_title
+      value: "HR Manager"
+    - key: org_street
+      value: "100 Collins Street"
+    - key: org_city
+      value: "Melbourne"
+    - key: org_state
+      value: "VIC"
+    - key: org_postcode
+      value: "3000"
+    - key: org_country
+      value: "Australia"
+    - key: purchase_order_number
+      value: "PO-2026-001"
+    - key: billing_firstname
+      value: "Sarah"
+    - key: billing_lastname
+      value: "Johnson"
+    - key: billing_email
+      value: "accounts@acmecorp.com.au"
+    - key: dr_package1
+      value: "Yes"
+order: 1

@@ -1,0 +1,19 @@
+$kind: http-request
+name: Accept Dates
+url: "{{base_url}}/api/accept_dates.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  mode: raw
+  raw: |
+    {
+      "email": "{{test_school_1_contact_primary}}",
+      "school_id": "{{test_school_1_id}}",
+      "event_nos": "EVT101,EVT102",
+      "twb_1_web": "2026-05-15",
+      "twb_1_inp": "2026-05-20",
+      "ac_staff": "2026-06-10"
+    }
+order: 1

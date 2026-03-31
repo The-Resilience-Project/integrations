@@ -1,0 +1,23 @@
+$kind: http-request
+name: Early Years Prize Pack (Conference Delegate)
+url: "{{base_url}}/api/prize_pack.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "contact_email": "director@littlestarseyc.com.au",
+        "contact_first_name": "Emma",
+        "contact_last_name": "Nguyen",
+        "contact_phone": "0421987654",
+        "earlyyears_name_other": "Little Stars Early Years Centre",
+        "service_name_other_selected": true,
+        "state": "VIC",
+        "source_form": "NSWPDPN Delegate 2026",
+        "num_of_employees": "75"
+    }
+order: 6

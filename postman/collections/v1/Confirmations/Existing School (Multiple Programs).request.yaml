@@ -1,0 +1,30 @@
+$kind: http-request
+name: Existing School (Multiple Programs)
+url: "{{base_url}}/api/confirm_existing_schools.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "{{test_school_2_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Two",
+        "contact_phone": "0400000000",
+        "school_account_no": "{{test_school_2_account_no}}",
+        "teacher_wellbeing_program": "TWB 1, DWF, BRH",
+        "twb_1_online_only": "",
+        "twb_1_workshop_paid": "TWB 1 Workshop ($500)",
+        "twb_1_workshop_free": "",
+        "dwf_online_only": "Yes",
+        "dwf_workshop_paid": "",
+        "dwf_workshop_free": "",
+        "brh_online_only": "",
+        "brh_workshop_paid": "BRH Workshop ($500)",
+        "brh_workshop_free": "",
+        "connected_parenting": "Yes",
+        "source_form": "Existing Schools Confirmation 2026"
+    }
+order: 11

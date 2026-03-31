@@ -1,0 +1,6 @@
+$kind: http-request
+name: School Confirmation Form Details
+url: "{{base_url}}/api/school_confirmation_form_details.php?school_account_no={{test_school_1_account_no}}&school_name=POSTMAN%20TEST%20-%20Bayside%20Primary"
+method: GET
+headers: []
+order: 1

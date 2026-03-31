@@ -1,5 +1,10 @@
 .DS_Store
 vendor/
+node_modules/
+__pycache__/
 .serverless/
 composer.phar
 .env
+.php-cs-fixer.cache
+.phpunit.result.cache
+~$*.xlsx

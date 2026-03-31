@@ -1,0 +1,26 @@
+$kind: http-request
+name: School Event Confirmation (Teacher)
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_1_contact_teacher}}",
+        "contact_first_name": "Test Teacher",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "job_title": "Classroom Teacher",
+        "school_account_no": "{{test_school_1_account_no}}",
+        "state": "VIC",
+        "event_id": "EVT101450",
+        "contact_type": "Teacher",
+        "source_form": "Event Confirmation",
+        "attendance_type": "Attending Live",
+        "event_name_display": "School Partnership Launch"
+    }
+order: 8

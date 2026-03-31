@@ -1,0 +1,32 @@
+$kind: http-request
+name: School Confirmation (Secondary Planners)
+url: "{{base_url}}/api/confirm.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_2_contact_billing}}",
+        "contact_first_name": "Test Billing",
+        "contact_last_name": "Two",
+        "contact_phone": "0400000000",
+        "job_title": "Finance Officer",
+        "school_account_no": "{{test_school_2_account_no}}",
+        "state": "NSW",
+        "address": "55 Burke Road",
+        "suburb": "Camberwell",
+        "postcode": "3124",
+        "participating_num_of_students": "450",
+        "different_billing_contact": "No",
+        "mental_health_funding": "No",
+        "school_type": "Secondary",
+        "engage": "Planners",
+        "inspire": "",
+        "selected_year_levels": ["Year 7", "Year 8", "Year 9"],
+        "source_form": "New Schools Confirmation 2026"
+    }
+order: 6
