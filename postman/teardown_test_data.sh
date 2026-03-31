@@ -79,11 +79,32 @@ fi
 
 echo "Found $contact_count contact(s) to delete."
 
+# --- Find deals linked to test organisations ---
+
+echo ""
+echo "Searching for deals linked to test organisations..."
+deal_ids=""
+for org_id in $org_ids; do
+    ids=$(query_ids "SELECT id FROM Potentials WHERE related_to = '$org_id';")
+    if [ -n "$ids" ]; then
+        deal_ids="${deal_ids}${ids}"$'\n'
+    fi
+done
+deal_ids=$(echo "$deal_ids" | sed '/^$/d')
+
+deal_count=0
+if [ -n "$deal_ids" ]; then
+    deal_count=$(echo "$deal_ids" | wc -l | tr -d ' ')
+fi
+
+echo "Found $deal_count deal(s) to delete."
+
 # --- Confirm ---
 
 echo ""
 echo "This will delete:"
 echo "  - $contact_count contact(s)"
+echo "  - $deal_count deal(s)"
 echo "  - $org_count organisation(s)"
 
 if [ "$DRY_RUN" = true ]; then
@@ -111,6 +132,21 @@ if [ -n "$contact_ids" ]; then
     for id in $contact_ids; do
         if delete_record "$id"; then
             echo "  Deleted contact $id"
+            ((deleted++))
+        else
+            ((failed++))
+        fi
+    done
+fi
+
+# --- Delete deals ---
+
+if [ -n "$deal_ids" ]; then
+    echo ""
+    echo "Deleting deals..."
+    for id in $deal_ids; do
+        if delete_record "$id"; then
+            echo "  Deleted deal $id"
             ((deleted++))
         else
             ((failed++))
