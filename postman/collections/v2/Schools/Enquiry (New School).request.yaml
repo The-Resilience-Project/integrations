@@ -17,7 +17,7 @@ body:
         "school_name_other": "POSTMAN TEST - New School",
         "school_name_other_selected": "1",
         "state": "VIC",
-        "source_form": "School Enquiry",
+        "source_form": "Enquiry",
         "enquiry": "We are a new school and would like to learn more about the School Partnership Program.",
         "num_of_students": "320"
     }

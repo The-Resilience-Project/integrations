@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
@@ -18,16 +19,27 @@ import { FunctionsTable } from './functions-table';
 import { LogViewer } from './log-viewer';
 import { LoadingSkeleton } from './loading-skeleton';
 export function Dashboard() {
-  const [range, setRange] = useState<TimeRange>('24h');
-  const [activeTab, setActiveTab] = useState('overview');
-  const [selectedLogFn, setSelectedLogFn] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'overview';
+  const range = (searchParams.get('range') || '24h') as TimeRange;
+  const selectedLogFn = searchParams.get('fn') || null;
+
+  const setParams = useCallback((updates: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(updates)) {
+      params.set(key, value);
+    }
+    window.history.replaceState(null, '', `?${params.toString()}`);
+  }, [searchParams]);
+
+  const setActiveTab = useCallback((tab: string) => setParams({ tab }), [setParams]);
+  const setRange = useCallback((value: string) => setParams({ range: value }), [setParams]);
 
   const { data, isLoading, error, dataUpdatedAt } = useMetrics(range);
   const functionFormsMap = useFunctionFormsMap();
 
   function handleSelectFunction(name: string) {
-    setSelectedLogFn(name);
-    setActiveTab('logs');
+    setParams({ fn: name, tab: 'logs' });
   }
 
   const lastUpdated = dataUpdatedAt
@@ -62,7 +74,7 @@ export function Dashboard() {
             )}
           </div>
         </div>
-        <Select value={range} onValueChange={(v) => setRange(v as TimeRange)}>
+        <Select value={range} onValueChange={(v) => v && setRange(v)}>
           <SelectTrigger className="w-[160px] h-9 text-xs bg-secondary border-border/50">
             <SelectValue />
           </SelectTrigger>
@@ -125,7 +137,12 @@ export function Dashboard() {
           ) : null}
         </TabsContent>
         <TabsContent value="logs" className="mt-4">
-          <LogViewer range={range} initialFunction={selectedLogFn} functionFormsMap={functionFormsMap} />
+          <LogViewer
+            range={range}
+            initialFunction={selectedLogFn}
+            onFunctionChange={(fn) => fn ? setParams({ fn }) : undefined}
+            functionFormsMap={functionFormsMap}
+          />
         </TabsContent>
       </Tabs>
     </div>

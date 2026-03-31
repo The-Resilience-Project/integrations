@@ -18,7 +18,7 @@ analyse: ## Run static analysis
 check: lint analyse test ## Run all checks (lint + analyse + test)
 
 serve: ## Start local dev server
-	php -S localhost:8000 -t src/
+	php -S localhost:8000 router.php
 
 deploy: ## Deploy entire stack with commit tracking
 	@if [ "$$AWS_PROFILE" != "trp-integrations" ]; then \

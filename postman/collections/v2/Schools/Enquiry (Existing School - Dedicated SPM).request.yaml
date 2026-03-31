@@ -16,7 +16,7 @@ body:
         "job_title": "Principal",
         "school_account_no": "{{test_school_5_account_no}}",
         "state": "NSW",
-        "source_form": "School Enquiry",
+        "source_form": "Enquiry",
         "enquiry": "Existing school assigned to Emma (dedicated SPM) - should keep Emma as assignee."
     }
 order: 6

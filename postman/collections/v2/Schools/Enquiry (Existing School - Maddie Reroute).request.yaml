@@ -16,7 +16,7 @@ body:
         "job_title": "Wellbeing Lead",
         "school_account_no": "{{test_school_4_account_no}}",
         "state": "NSW",
-        "source_form": "School Enquiry",
+        "source_form": "Enquiry",
         "enquiry": "Existing school assigned to Maddie - should reroute to Brendan (NSW)."
     }
 order: 5

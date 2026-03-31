@@ -18,10 +18,11 @@ import { FunctionEntries } from './function-entries';
 interface LogViewerProps {
   range: TimeRange;
   initialFunction?: string | null;
+  onFunctionChange?: (fn: string | null) => void;
   functionFormsMap?: FunctionFormsMap;
 }
 
-export function LogViewer({ range, initialFunction = null, functionFormsMap }: LogViewerProps) {
+export function LogViewer({ range, initialFunction = null, onFunctionChange, functionFormsMap }: LogViewerProps) {
   const [selectedFn, setSelectedFn] = useState<string | null>(initialFunction);
 
   useEffect(() => {
@@ -29,6 +30,11 @@ export function LogViewer({ range, initialFunction = null, functionFormsMap }: L
       setSelectedFn(initialFunction);
     }
   }, [initialFunction]);
+
+  const handleFnChange = useCallback((fn: string | null) => {
+    setSelectedFn(fn);
+    onFunctionChange?.(fn);
+  }, [onFunctionChange]);
 
   const [filter, setFilter] = useState('');
   const [debouncedFilter, setDebouncedFilter] = useState('');
@@ -48,7 +54,7 @@ export function LogViewer({ range, initialFunction = null, functionFormsMap }: L
       <div className="flex gap-3">
         <Select
           value={selectedFn ?? ''}
-          onValueChange={(v) => setSelectedFn(v || null)}
+          onValueChange={(v) => handleFnChange(v || null)}
         >
           <SelectTrigger className="w-[260px] h-9 text-xs font-mono bg-secondary border-border/50">
             <SelectValue placeholder="Select function..." />

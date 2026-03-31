@@ -97,18 +97,21 @@ class CustomerService
 
         $currentForm = $data['source_form'] ?? '';
         if ($currentForm !== '') {
-            $existingFormsArray = explode(' |##| ', $orgDetails->salesEvents2025);
+            $existingFormsArray = array_filter(explode(' |##| ', $orgDetails->salesEvents2025), fn ($v) => $v !== '');
             if (!in_array($currentForm, $existingFormsArray, true)) {
                 $existingFormsArray[] = $currentForm;
-                $requestBody['salesEvents2025'] = $existingFormsArray;
+                $requestBody['salesEvents2025'] = array_values($existingFormsArray);
             }
         }
 
         if (count($requestBody) === 0) {
+            log_info('updateOrgAssigneeAndSalesEvents: No changes needed, skipping update');
+
             return $orgDetails;
         }
 
         $requestBody['organisationId'] = $orgDetails->organisationId;
+        log_info('updateOrgAssigneeAndSalesEvents: Calling updateOrganisation', $requestBody);
         $response = $this->client->post('updateOrganisation', $requestBody);
         $responseData = $response->result[0];
 
@@ -131,10 +134,10 @@ class CustomerService
 
         $currentForm = $data['source_form'] ?? '';
         if ($currentForm !== '') {
-            $existingFormsArray = explode(' |##| ', $captured->formsCompleted);
+            $existingFormsArray = array_filter(explode(' |##| ', $captured->formsCompleted), fn ($v) => $v !== '');
             if (!in_array($currentForm, $existingFormsArray, true)) {
                 $existingFormsArray[] = $currentForm;
-                $requestBody['contactLeadSource'] = $existingFormsArray;
+                $requestBody['contactLeadSource'] = array_values($existingFormsArray);
             }
         }
 
@@ -144,10 +147,13 @@ class CustomerService
         }
 
         if (count($requestBody) === 0) {
+            log_info('updateContactAssigneeAndFormsCompleted: No changes needed, skipping update');
+
             return;
         }
 
         $requestBody['contactId'] = $captured->contactId;
+        log_info('updateContactAssigneeAndFormsCompleted: Calling updateContactById', $requestBody);
         $this->client->post('updateContactById', $requestBody);
     }
 
@@ -195,6 +201,9 @@ class CustomerService
         }
         if ($organisation->subType) {
             $payload['organisationSubType'] = $organisation->subType;
+        }
+        if (!empty($data['source_form'])) {
+            $payload['sourceForm'] = $data['source_form'];
         }
 
         return $payload;

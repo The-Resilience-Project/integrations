@@ -19,9 +19,8 @@ const URL_TO_FUNCTION: Record<string, string> = {
   'calculate_shipping.php': 'calculate_shipping',
   'prize_pack.php': 'prize_pack',
   'calendly_event.php': 'calendly_event',
-  '/api/v2/schools/enquiry': 'v2_enquiry',
-  '/api/v2/schools/register': 'v2_register',
-  '/api/v2/schools/prize-pack': 'v2_prize_pack',
+  '/api/v2/schools/enquiry': 'v2_schools_enquiry',
+  '/api/v2/schools/prize-pack': 'v2_schools_prize_pack',
 };
 
 export function urlToFunctionName(webhookUrl: string): string | null {

@@ -27,9 +27,8 @@ export const FUNCTION_NAMES = [
   'createNewProgramBooking',
   'getEventPlanned',
   'sendInvitation',
-  'v2_enquiry',
-  'v2_register',
-  'v2_prize_pack',
+  'v2_schools_enquiry',
+  'v2_schools_prize_pack',
   'woocommerce_order',
 ] as const;
 

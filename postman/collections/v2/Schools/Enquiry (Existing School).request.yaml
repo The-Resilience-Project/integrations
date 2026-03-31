@@ -16,7 +16,7 @@ body:
         "job_title": "Wellbeing Coordinator",
         "school_account_no": "{{test_school_1_account_no}}",
         "state": "VIC",
-        "source_form": "School Enquiry",
+        "source_form": "Enquiry",
         "enquiry": "We would like information about renewing our partnership for 2027."
     }
 order: 2
