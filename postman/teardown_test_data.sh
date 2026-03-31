@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Deletes POSTMAN TEST organisations and their contacts from Vtiger CRM.
-# Contacts are deleted first (to avoid orphaned records), then organisations.
+# Deletes POSTMAN TEST organisations and their related records from Vtiger CRM.
+# Deletion order: enquiries → contacts → deals → organisations (children first).
 #
 # Usage: bash postman/teardown_test_data.sh
 #        bash postman/teardown_test_data.sh --dry-run   # preview only, no deletions
@@ -28,8 +28,20 @@ query_ids() {
     local query="$1"
     local encoded
     encoded=$(python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$query")
-    curl -s -u "$AUTH" "$API_BASE/query?query=$encoded" \
-        | python3 -c "import sys,json; [print(r['id']) for r in json.load(sys.stdin)['result']]"
+    local response
+    response=$(curl -s -u "$AUTH" "$API_BASE/query?query=$encoded")
+    if [ -z "$response" ]; then
+        return 0
+    fi
+    echo "$response" | python3 -c "
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    for r in data.get('result', []):
+        print(r['id'])
+except (json.JSONDecodeError, KeyError, TypeError):
+    pass
+"
 }
 
 delete_record() {
@@ -79,6 +91,19 @@ fi
 
 echo "Found $contact_count contact(s) to delete."
 
+# --- Find enquiries linked to test organisations ---
+
+echo ""
+echo "Searching for enquiries linked to test organisations..."
+enquiry_ids=$(query_ids "SELECT id FROM vtcmenquiries WHERE fld_vtcmenquiriesname LIKE '%POSTMAN TEST%';")
+
+enquiry_count=0
+if [ -n "$enquiry_ids" ]; then
+    enquiry_count=$(echo "$enquiry_ids" | wc -l | tr -d ' ')
+fi
+
+echo "Found $enquiry_count enquiry(ies) to delete."
+
 # --- Find deals linked to test organisations ---
 
 echo ""
@@ -103,6 +128,7 @@ echo "Found $deal_count deal(s) to delete."
 
 echo ""
 echo "This will delete:"
+echo "  - $enquiry_count enquiry(ies)"
 echo "  - $contact_count contact(s)"
 echo "  - $deal_count deal(s)"
 echo "  - $org_count organisation(s)"
@@ -121,10 +147,25 @@ if [ "$AUTO_YES" != true ]; then
     fi
 fi
 
-# --- Delete contacts first ---
+# --- Delete enquiries first ---
 
 deleted=0
 failed=0
+
+if [ -n "$enquiry_ids" ]; then
+    echo ""
+    echo "Deleting enquiries..."
+    for id in $enquiry_ids; do
+        if delete_record "$id"; then
+            echo "  Deleted enquiry $id"
+            ((deleted++))
+        else
+            ((failed++))
+        fi
+    done
+fi
+
+# --- Delete contacts ---
 
 if [ -n "$contact_ids" ]; then
     echo ""
