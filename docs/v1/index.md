@@ -116,7 +116,7 @@ flowchart LR
 
 | Function | Method | Path | Description | Docs |
 |---|---|---|---|---|
-| enquiry | POST | `/api/enquiry.php` | Submit enquiry (School/Workplace/EY/General) | [enquiries](enquiries/index.md) |
+| enquiry | POST | `/api/enquiry.php` | Submit enquiry (School ⚠️ deprecated/Workplace/EY/General) | [enquiries](enquiries/index.md) |
 | qualify | POST | `/api/qualify.php` | Workplace qualifier submission | [workplace.md](workplace.md) |
 | confirm_existing_schools | POST | `/api/confirm_existing_schools.php` | Existing school program confirmation | [confirmations](confirmations/index.md) |
 | seminar_registration | POST | `/api/seminar_registration.php` | Teacher seminar registration | [registrations](registrations/index.md) |

@@ -2,6 +2,8 @@
 
 The enquiry endpoint captures contact information, optionally creates or updates a CRM deal, and creates an enquiry record in Vtiger CRM. The controller used depends on the `service_type` parameter, which determines the enquiry type, assignee routing, and whether a deal is created.
 
+> **Deprecation notice:** The v1 school enquiry (`service_type=School`) is deprecated. School enquiries should use the [v2 endpoint](../../v2/schools.md) (`POST /api/v2/schools/enquiry`). Workplace, Early Years, and General enquiries continue to use this v1 endpoint.
+
 ## Overview
 
 | Method | Endpoint | Description |

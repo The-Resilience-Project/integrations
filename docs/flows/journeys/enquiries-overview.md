@@ -30,7 +30,7 @@ flowchart LR
 
 | Enquiry Type | Flow Doc | API Version | Service Type | VTAP Calls | Contact/Org Update | Deal Created |
 |-------------|----------|-------------|--------------|------------|-------------------|--------------|
-| [School](../enquiry.md) | v1 + v2 | `School` | 7 | Yes | Yes |
+| [School](../enquiry.md) | **v2** (v1 deprecated) | `School` | 7 | Yes | Yes |
 | [Workplace](../workplace-enquiry.md) | v1 only | `Workplace` | 7 | Yes | Yes |
 | [Early Years](../early-years-enquiry.md) | v1 only | `Early Years` | 7 | Yes | Yes |
 | [General](../general-enquiry.md) | v1 only | `General` | 2 | No | No |
@@ -57,7 +57,15 @@ flowchart LR
 2. `createEnquiry` — records the enquiry (no org/deal work)
 
 ### v2 migration status
-Only the **School** enquiry has been migrated to v2 (`POST /api/v2/schools/enquiry`). Workplace, Early Years, and General remain v1-only.
+The **School** enquiry and registration have been migrated to v2. The v1 school enquiry endpoint (`POST /api/enquiry.php` with `service_type=School`) is now deprecated. Workplace, Early Years, and General remain v1-only.
+
+| Service Type | v2 Endpoint | v1 Status |
+|-------------|-------------|-----------|
+| School | `POST /api/v2/schools/enquiry` | Deprecated |
+| School | `POST /api/v2/schools/register` | Deprecated |
+| Workplace | — | Active |
+| Early Years | — | Active |
+| General | — | Active |
 
 ## Assignee Routing
 

@@ -1,5 +1,7 @@
 # School Enquiry Flow
 
+> **Deprecated:** This v1 school enquiry flow is deprecated. School enquiries should use the [v2 endpoint](../../v2/schools.md) (`POST /api/v2/schools/enquiry`). This document is retained for reference.
+
 School enquiries are handled by `SchoolVTController`. The key decision point is whether the school is "new" (not yet assigned to a dedicated School Partnership Manager) or "existing" (already a partner). New schools get a deal created; existing schools get an enquiry only.
 
 ## Organisation Detection

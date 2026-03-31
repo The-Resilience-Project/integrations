@@ -154,7 +154,7 @@ composer require <package-name>
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/enquiry.php` | POST | Submit new enquiry |
+| `/api/enquiry.php` | POST | Submit new enquiry (deprecated for Schools — use v2) |
 | `/api/register.php` | POST | Register for program |
 | `/api/confirm.php` | POST | Confirm registration |
 | `/api/qualify.php` | POST | Qualification check |
@@ -181,6 +181,15 @@ composer require <package-name>
 |----------|--------|-------------|
 | `/api/calculate_shipping.php` | POST | Calculate shipping costs |
 | `/api/calendly_event.php` | POST | Handle Calendly events |
+
+### API v2 — Schools Endpoints
+
+School enquiries and registrations have been migrated to v2. The v1 school endpoints are deprecated.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v2/schools/enquiry` | POST | Submit a school enquiry |
+| `/api/v2/schools/register` | POST | Register for a school event |
 
 ### Invoice Endpoints
 

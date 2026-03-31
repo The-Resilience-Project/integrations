@@ -9,8 +9,8 @@ Triggered when a school submits an enquiry form. Creates or updates the contact 
 | Layer | Detail | Docs |
 |-------|--------|------|
 | **Gravity Form** | School enquiry form (via GF Webhooks Add-On) | -- |
-| **API v2** | `POST /api/v2/schools/enquiry` | [v2 Schools Endpoints](../v2/schools.md) |
-| **API v1** | `POST /api/enquiry.php` | [v1 Enquiry Endpoints](../v1/enquiries/index.md) |
+| **API v2 (current)** | `POST /api/v2/schools/enquiry` | [v2 Schools Endpoints](../v2/schools.md) |
+| **API v1 (deprecated)** | `POST /api/enquiry.php` | [v1 Enquiry Endpoints](../v1/enquiries/index.md) |
 | **PHP Handler (v2)** | `ApiV2\Application\Schools\SubmitEnquiryHandler` | -- |
 | **PHP Handler (v1)** | `Enquiry` trait on `SchoolVTController` | [v1 School Enquiry](../v1/enquiries/school-enquiries.md) |
 | **Domain Logic** | `ApiV2\Domain\AssigneeRules` (assignee routing), `ApiV2\Domain\Deal` (deal creation) | -- |

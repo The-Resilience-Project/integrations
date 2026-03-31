@@ -80,15 +80,15 @@ Traits live in `src/api/classes/traits/` and encapsulate business logic.
 
 ### API v2 — DDD-lite Architecture (`src/api-v2/`)
 
-New endpoints use a domain-driven structure with PSR-4 autoloading under the `ApiV2\` namespace. Currently schools-only — the URL IS the service type (e.g., `/api/v2/schools/enquiry`). Non-school traffic stays on v1.
+New endpoints use a domain-driven structure with PSR-4 autoloading under the `ApiV2\` namespace. Schools-only — the URL IS the service type (e.g., `/api/v2/schools/enquiry`). Non-school traffic stays on v1. **The v1 school enquiry endpoint is deprecated; all new school enquiries should use v2.**
 
 - **`endpoints/schools/`** — Thin HTTP handlers (CORS, method routing, error handling). Include `init.php` for logging.
-- **`Application/Schools/`** — Use-case handlers (`SubmitEnquiryHandler`, `SubmitRegistrationHandler`, `SubmitPrizePackHandler`) plus `CustomerService` for shared capture/update flows.
+- **`Application/Schools/`** — Use-case handlers (`SubmitEnquiryHandler`, `SubmitRegistrationHandler`) plus `CustomerService` for shared capture/update flows.
 - **`Domain/`** — Immutable value objects (`Contact`, `Organisation`, `Deal`, `Enquiry`) with `fromFormData()` factories, plus `AssigneeRules` for pure business logic (assignee routing by state, new-school detection).
 - **`Infrastructure/`** — `VtigerWebhookClient` (cURL-based VTAP caller) implementing `VtigerWebhookClientInterface`. `RequestParser` for typed field extraction.
 - **`Config/`** — `UserIds.php` (staff constants), `webhook_tokens.php` (endpoint auth tokens).
 
-**v1 vs v2**: New school endpoints should use v2. The v1 controller/trait pattern remains for Workplace, Early Years, General, and existing school endpoints that haven't been migrated.
+**v1 vs v2**: School enquiries and registrations now use v2 — the v1 school enquiry endpoint (`/api/enquiry.php` with `service_type=School`) is deprecated. The v1 controller/trait pattern remains active for Workplace, Early Years, and General service types.
 
 ### Non-API Endpoints
 
