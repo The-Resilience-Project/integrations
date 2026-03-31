@@ -81,22 +81,24 @@ cp src/config.php.example src/config.php
 
 ## Deployment
 
+All deployments track the git commit SHA via the `DEPLOYED_COMMIT` environment variable on each Lambda function. Always use the Makefile targets below to ensure this is set automatically.
+
 ### Deploy Entire Stack
 
 ```bash
 export AWS_PROFILE=trp-integrations
-serverless deploy
+make deploy
 ```
 
 ### Deploy Single Function
 
 ```bash
-serverless deploy function -f <function-name>
+make deploy-function F=<function-name>
 ```
 
 Example:
 ```bash
-serverless deploy function -f enquiry
+make deploy-function F=enquiry
 ```
 
 ### View Deployment Information
@@ -104,6 +106,20 @@ serverless deploy function -f enquiry
 ```bash
 serverless info
 ```
+
+### Rollback a Deployment
+
+```bash
+# List previous deployments and their timestamps
+serverless deploy list
+
+# Rollback to a specific timestamp
+serverless rollback --timestamp <timestamp>
+```
+
+### Check Deployed Commit
+
+The deployed git commit SHA is available as the `DEPLOYED_COMMIT` environment variable on every Lambda function. You can view it in the AWS console under each function's configuration, or access it in PHP via `$_ENV['DEPLOYED_COMMIT']`.
 
 ## Development
 

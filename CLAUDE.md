@@ -30,11 +30,13 @@ vendor/bin/phpunit tests/SchoolAssigneeTest.php
 # Run a single test method
 vendor/bin/phpunit --filter test_method_name
 
-# Deploy (requires AWS profile)
+# Deploy (requires AWS profile — always use make targets to track commit SHA)
 export AWS_PROFILE=trp-integrations
-serverless deploy                          # Entire stack
-serverless deploy function -f <function-name>  # Single function
+make deploy                                # Entire stack (sets DEPLOYED_COMMIT automatically)
+make deploy-function F=<function-name>     # Single function
 serverless logs -f <function-name> -t      # Tail logs
+serverless deploy list                     # List previous deployments
+serverless rollback --timestamp <timestamp>  # Rollback to previous deployment
 ```
 
 ## CI Pipeline

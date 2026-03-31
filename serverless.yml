@@ -13,8 +13,7 @@ provider:
         lambda: true
         apiGateway: true
     environment:
-        # Add any environment variables your PHP needs here
-        # APP_ENV: production
+        DEPLOYED_COMMIT: ${env:DEPLOYED_COMMIT, 'unknown'}
 
 functions:
     # Main API endpoints

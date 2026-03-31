@@ -1,4 +1,4 @@
-.PHONY: install test lint fix analyse check serve
+.PHONY: install test lint fix analyse check serve deploy deploy-function
 
 install: ## Install dependencies
 	composer install
@@ -19,6 +19,22 @@ check: lint analyse test ## Run all checks (lint + analyse + test)
 
 serve: ## Start local dev server
 	php -S localhost:8000 -t src/
+
+deploy: ## Deploy entire stack with commit tracking
+	@if [ "$$AWS_PROFILE" != "trp-integrations" ]; then \
+		echo "Error: AWS_PROFILE must be set to 'trp-integrations'"; \
+		echo "Run: export AWS_PROFILE=trp-integrations"; \
+		exit 1; \
+	fi
+	DEPLOYED_COMMIT=$$(git rev-parse --short HEAD) serverless deploy
+
+deploy-function: ## Deploy single function (usage: make deploy-function F=enquiry)
+	@if [ "$$AWS_PROFILE" != "trp-integrations" ]; then \
+		echo "Error: AWS_PROFILE must be set to 'trp-integrations'"; \
+		echo "Run: export AWS_PROFILE=trp-integrations"; \
+		exit 1; \
+	fi
+	DEPLOYED_COMMIT=$$(git rev-parse --short HEAD) serverless deploy function -f $(F)
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
