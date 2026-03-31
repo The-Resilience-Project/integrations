@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   Select,
   SelectContent,
@@ -23,6 +23,13 @@ interface LogViewerProps {
 
 export function LogViewer({ range, initialFunction = null, functionFormsMap }: LogViewerProps) {
   const [selectedFn, setSelectedFn] = useState<string | null>(initialFunction);
+
+  useEffect(() => {
+    if (initialFunction) {
+      setSelectedFn(initialFunction);
+    }
+  }, [initialFunction]);
+
   const [filter, setFilter] = useState('');
   const [debouncedFilter, setDebouncedFilter] = useState('');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
