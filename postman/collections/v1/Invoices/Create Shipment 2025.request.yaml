@@ -1,0 +1,13 @@
+$kind: http-request
+name: Create Shipment 2025
+url: "{{base_url}}/Invoices/create_shipment_2025.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    - key: recordid
+      value: "7x12345"
+order: 4

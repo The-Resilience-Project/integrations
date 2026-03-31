@@ -1,0 +1,14 @@
+# Core dependencies
+httpx
+flask
+flask-cors
+python-dotenv
+
+# Development dependencies (code quality)
+black
+ruff
+pre-commit
+
+# Testing
+pytest
+pytest-cov

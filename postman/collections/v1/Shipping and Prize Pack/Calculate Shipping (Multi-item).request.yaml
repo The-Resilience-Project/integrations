@@ -1,0 +1,36 @@
+$kind: http-request
+name: Calculate Shipping (Multi-item)
+url: "{{base_url}}/api/calculate_shipping.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "consignment": [
+            {
+                "length": 40,
+                "width": 30,
+                "height": 25,
+                "weight": 8.5
+            },
+            {
+                "length": 40,
+                "width": 30,
+                "height": 25,
+                "weight": 8.5
+            },
+            {
+                "length": 30,
+                "width": 25,
+                "height": 15,
+                "weight": 3.2
+            }
+        ],
+        "destination_suburb": "Perth",
+        "destination_state": "WA",
+        "destination_postcode": "6000"
+    }
+order: 5

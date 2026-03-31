@@ -1,0 +1,29 @@
+$kind: http-request
+name: Early Years Confirmation (With Funding)
+url: "{{base_url}}/api/confirm.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "contact_email": "director@sunshine-elc.vic.edu.au",
+        "contact_first_name": "Maria",
+        "contact_last_name": "Gonzalez",
+        "contact_phone": "0477888999",
+        "job_title": "Centre Director",
+        "earlyyears_account_no": "EY-0025",
+        "state": "VIC",
+        "address": "5 Sunshine Avenue",
+        "suburb": "Footscray",
+        "postcode": "3011",
+        "participating_num_of_students": "60",
+        "different_billing_contact": "No",
+        "funding_org": "Department of Education",
+        "kindy_uplift": "Yes",
+        "source_form": "Early Years Confirmation Form 2025"
+    }
+order: 10

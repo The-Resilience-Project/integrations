@@ -1,0 +1,17 @@
+$kind: http-request
+name: Order Resources
+url: "{{base_url}}/api/order_resources.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  mode: raw
+  raw: |
+    {
+      "school_account_no": "{{test_school_1_account_no}}",
+      "contact_email": "{{test_school_1_contact_primary}}",
+      "contact_first_name": "Test Primary",
+      "contact_last_name": "One"
+    }
+order: 3

@@ -1,0 +1,21 @@
+$kind: http-request
+name: Imperfects Enquiry
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Imperfects",
+        "contact_email": "fan@gmail.com",
+        "contact_first_name": "Alex",
+        "contact_last_name": "Taylor",
+        "contact_phone": "0400111222",
+        "state": "VIC",
+        "source_form": "General Enquiry",
+        "enquiry": "I attended an Imperfects live show and would like to bring it to our community group."
+    }
+order: 7

@@ -1,0 +1,25 @@
+$kind: http-request
+name: Workplace Webinar Recording (Small)
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Workplace",
+        "contact_email": "manager@smallbiz.com.au",
+        "contact_first_name": "Tom",
+        "contact_last_name": "Wilson",
+        "contact_phone": "0478901234",
+        "role_workplace": "Office Manager",
+        "organisation_name": "SmallBiz Consulting",
+        "organisation_sub_type": "Healthcare",
+        "num_of_employees": "45",
+        "state": "NSW",
+        "event_id": "EVT102001",
+        "source_form": "Workplace Webinar Recording 2026"
+    }
+order: 10

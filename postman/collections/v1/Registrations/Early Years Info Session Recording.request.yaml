@@ -1,0 +1,23 @@
+$kind: http-request
+name: Early Years Info Session Recording
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "contact_email": "director@littlestarseyc.com.au",
+        "contact_first_name": "Emma",
+        "contact_last_name": "Nguyen",
+        "contact_phone": "0421987654",
+        "earlyyears_account_no": "EY-0042",
+        "state": "VIC",
+        "event_id": "EVT101365",
+        "source_form": "Info Session Recording",
+        "num_of_ey_children": "75"
+    }
+order: 9

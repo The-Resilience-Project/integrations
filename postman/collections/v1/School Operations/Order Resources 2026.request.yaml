@@ -1,0 +1,36 @@
+$kind: http-request
+name: Order Resources 2026
+url: "{{base_url}}/api/order_resources_2026.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  mode: raw
+  raw: |
+    {
+      "school_account_no": "{{test_school_1_account_no}}",
+      "contact_first_name": "Test Primary",
+      "contact_last_name": "One",
+      "order_for_2026": true,
+      "shipping": 25.50,
+      "shipping_address": "45 Collins Street",
+      "shipping_suburb": "Melbourne",
+      "shipping_postcode": "3000",
+      "shipping_state": "VIC",
+      "foundation_qty": 30,
+      "year1_qty": 30,
+      "year2_qty": 28,
+      "year3_qty": 25,
+      "year4_qty": 25,
+      "year5_qty": 22,
+      "year6_qty": 22,
+      "tr_foundation_qty": 2,
+      "tr_year1_qty": 2,
+      "tr_year2_qty": 2,
+      "tr_year3_qty": 2,
+      "tr_year4_qty": 2,
+      "tr_year5_qty": 2,
+      "tr_year6_qty": 2
+    }
+order: 4

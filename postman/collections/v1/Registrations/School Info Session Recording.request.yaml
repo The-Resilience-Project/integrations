@@ -1,0 +1,24 @@
+$kind: http-request
+name: School Info Session Recording
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "job_title": "Wellbeing Coordinator",
+        "school_account_no": "{{test_school_1_account_no}}",
+        "state": "VIC",
+        "event_id": "EVT101360",
+        "source_form": "Info Session Recording",
+        "attendance_type": ""
+    }
+order: 5

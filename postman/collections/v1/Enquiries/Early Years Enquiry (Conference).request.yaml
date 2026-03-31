@@ -1,0 +1,24 @@
+$kind: http-request
+name: Early Years Enquiry (Conference)
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "contact_email": "director@littlestarseyc.com.au",
+        "contact_first_name": "Emma",
+        "contact_last_name": "Nguyen",
+        "contact_phone": "0421987654",
+        "earlyyears_name_other": "Little Stars Early Years Centre",
+        "service_name_other_selected": true,
+        "state": "VIC",
+        "source_form": "NSWPDPN Enquiry 2026",
+        "enquiry": "Met at conference, interested in Early Years resilience program.",
+        "num_of_ey_children": "75"
+    }
+order: 5

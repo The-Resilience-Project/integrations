@@ -1,0 +1,28 @@
+$kind: http-request
+name: Early Years Confirmation
+url: "{{base_url}}/api/confirm.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Early Years",
+        "contact_email": "emma.ward@littlestarskindy.com.au",
+        "contact_first_name": "Emma",
+        "contact_last_name": "Ward",
+        "contact_phone": "0423987654",
+        "job_title": "Centre Director",
+        "earlyyears_account_no": "EY-0018",
+        "state": "VIC",
+        "address": "12 Flinders Lane",
+        "suburb": "Southbank",
+        "postcode": "3006",
+        "participating_num_of_students": "45",
+        "different_billing_contact": "No",
+        "funding_org": "",
+        "source_form": "Early Years Confirmation Form 2025"
+    }
+order: 2

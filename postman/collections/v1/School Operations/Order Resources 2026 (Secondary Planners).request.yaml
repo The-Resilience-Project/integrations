@@ -1,0 +1,30 @@
+$kind: http-request
+name: Order Resources 2026 (Secondary Planners)
+url: "{{base_url}}/api/order_resources_2026.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "school_account_no": "{{test_school_2_account_no}}",
+        "order_for_2026": true,
+        "shipping": 35.00,
+        "year7_qty": 120,
+        "year8_qty": 115,
+        "year9_qty": 110,
+        "year10_qty": 105,
+        "year7_planner_1": "Planners",
+        "year8_planner_1": "Planners",
+        "year9_planner_1": "Planners",
+        "year10_planner_1": "Planners",
+        "tr_year7_qty": 5,
+        "tr_year8_qty": 5,
+        "tr_year9_qty": 4,
+        "tr_year10_qty": 4,
+        "gem_card_qty": 150,
+        "emotion_card_qty": 120
+    }
+order: 5

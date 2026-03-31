@@ -1,0 +1,49 @@
+name: Local
+values:
+  - key: base_url
+    value: http://localhost:8000
+  # Test School 1: POSTMAN TEST - Bayside Primary (VIC, Government, 320 students)
+  - key: test_school_1_id
+    value: "3x802914"
+  - key: test_school_1_account_no
+    value: ACC66267
+  - key: test_school_1_contact_primary
+    value: ian.newmarch+postman-bayside1@theresilienceproject.com.au
+  - key: test_school_1_contact_billing
+    value: ian.newmarch+postman-bayside2@theresilienceproject.com.au
+  - key: test_school_1_contact_teacher
+    value: ian.newmarch+postman-bayside3@theresilienceproject.com.au
+  # Test School 2: POSTMAN TEST - Northside Secondary (NSW, Catholic, 850 students)
+  - key: test_school_2_id
+    value: "3x802915"
+  - key: test_school_2_account_no
+    value: ACC66268
+  - key: test_school_2_contact_primary
+    value: ian.newmarch+postman-northside1@theresilienceproject.com.au
+  - key: test_school_2_contact_billing
+    value: ian.newmarch+postman-northside2@theresilienceproject.com.au
+  - key: test_school_2_contact_ambassador
+    value: ian.newmarch+postman-northside3@theresilienceproject.com.au
+  # Test School 3: POSTMAN TEST - Riverside College (QLD, Independent, 480 students)
+  - key: test_school_3_id
+    value: "3x802916"
+  - key: test_school_3_account_no
+    value: ACC66269
+  - key: test_school_3_contact_primary
+    value: ian.newmarch+postman-riverside1@theresilienceproject.com.au
+  - key: test_school_3_contact_billing
+    value: ian.newmarch+postman-riverside2@theresilienceproject.com.au
+  # Test School 4: POSTMAN TEST - Maddie Assigned School (NSW, Government, 600 students, assigned: Maddie)
+  - key: test_school_4_id
+    value: "TODO"
+  - key: test_school_4_account_no
+    value: TODO
+  - key: test_school_4_contact_primary
+    value: ian.newmarch+postman-maddie1@theresilienceproject.com.au
+  # Test School 5: POSTMAN TEST - Emma Assigned School (NSW, Catholic, 750 students, assigned: Emma)
+  - key: test_school_5_id
+    value: "TODO"
+  - key: test_school_5_account_no
+    value: TODO
+  - key: test_school_5_contact_primary
+    value: ian.newmarch+postman-emma1@theresilienceproject.com.au

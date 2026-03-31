@@ -1,0 +1,25 @@
+$kind: http-request
+name: Workplace Enquiry
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Workplace",
+        "contact_email": "sarah.chen@melbournecorp.com.au",
+        "contact_first_name": "Sarah",
+        "contact_last_name": "Chen",
+        "contact_phone": "0398765432",
+        "job_title": "People & Culture Manager",
+        "organisation_name": "Melbourne Corporate Services Pty Ltd",
+        "state": "VIC",
+        "source_form": "Workplace Enquiry",
+        "enquiry": "We would like to explore the Workplace Wellbeing Program for our Melbourne office team.",
+        "num_of_employees": "150",
+        "organisation_sub_type": "Corporate"
+    }
+order: 3

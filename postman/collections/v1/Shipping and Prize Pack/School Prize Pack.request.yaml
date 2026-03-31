@@ -1,0 +1,21 @@
+$kind: http-request
+name: School Prize Pack
+url: "{{base_url}}/api/prize_pack.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "school_account_no": "{{test_school_1_account_no}}",
+        "state": "VIC",
+        "source_form": "Prize Pack"
+    }
+order: 2

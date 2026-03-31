@@ -1,0 +1,33 @@
+$kind: http-request
+name: School Confirmation (Mental Health Funding)
+url: "{{base_url}}/api/confirm.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_3_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Three",
+        "contact_phone": "0400000000",
+        "job_title": "Deputy Principal",
+        "school_account_no": "{{test_school_3_account_no}}",
+        "state": "QLD",
+        "address": "42 High Street",
+        "suburb": "Northcote",
+        "postcode": "3070",
+        "participating_num_of_students": "480",
+        "different_billing_contact": "No",
+        "mental_health_funding": "Yes",
+        "school_type": "Primary",
+        "engage": "Journals",
+        "inspire": "Inspire 1",
+        "inspire_added": "Yes",
+        "selected_year_levels": ["Foundation", "Year 1", "Year 2", "Year 3", "Year 4"],
+        "source_form": "New Schools Confirmation 2026"
+    }
+order: 8

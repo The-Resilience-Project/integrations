@@ -1,0 +1,41 @@
+$kind: http-request
+name: Submit Culture Assessment
+url: "{{base_url}}/api/submit_ca.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  mode: raw
+  raw: |
+    {
+      "school_account_no": "{{test_school_1_account_no}}",
+      "organisation_id": "{{test_school_1_id}}",
+      "VP01": "Yes",
+      "VP02": "Yes",
+      "VP03": "No",
+      "VP04": "No",
+      "ET01": "Yes",
+      "ET02": "No",
+      "ET03": "No",
+      "ET04": "No",
+      "HB01": "Yes",
+      "HB02": "No",
+      "HB03": "No",
+      "HB04": "No",
+      "SC01": "Yes",
+      "SC02": "No",
+      "SC03": "No",
+      "SW01": "Yes",
+      "SW02": "No",
+      "FC01": "No",
+      "FC02": "No",
+      "P01": "No",
+      "P02": "No",
+      "concern_1": "Student engagement",
+      "concern_2": "Staff wellbeing",
+      "concern_3": "Parent involvement",
+      "class_structure": "Single year level classes",
+      "responsible_for_wellbeing": "Assistant Principal"
+    }
+order: 2

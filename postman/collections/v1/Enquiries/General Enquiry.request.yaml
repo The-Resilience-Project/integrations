@@ -1,0 +1,21 @@
+$kind: http-request
+name: General Enquiry
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "General",
+        "contact_email": "david.murray@gmail.com",
+        "contact_first_name": "David",
+        "contact_last_name": "Murray",
+        "contact_phone": "0438112233",
+        "state": "VIC",
+        "source_form": "General Enquiry",
+        "enquiry": "I attended one of your presentations in Geelong and would like more information about how to get involved with The Resilience Project."
+    }
+order: 5

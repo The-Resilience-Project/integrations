@@ -1,0 +1,24 @@
+$kind: http-request
+name: Existing School (Feeling Ace)
+url: "{{base_url}}/api/confirm_existing_schools.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "{{test_school_3_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Three",
+        "contact_phone": "0400000000",
+        "school_account_no": "{{test_school_3_account_no}}",
+        "teacher_wellbeing_program": "TWB 2",
+        "twb_2_online_only": "Yes",
+        "twb_2_workshop_paid": "",
+        "twb_2_workshop_free": "",
+        "feeling_ace": "Yes",
+        "source_form": "Existing Schools Confirmation 2026"
+    }
+order: 12

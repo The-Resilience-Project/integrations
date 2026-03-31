@@ -1,0 +1,26 @@
+$kind: http-request
+name: Workplace Registration
+url: "{{base_url}}/api/register.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "Workplace",
+        "contact_email": "michael.chen@corpwell.com.au",
+        "contact_first_name": "Michael",
+        "contact_last_name": "Chen",
+        "contact_phone": "0412345678",
+        "job_title": "HR Manager",
+        "organisation_name": "Corpwell Industries",
+        "state": "NSW",
+        "event_id": "EVT101360",
+        "source_form": "Info Session Registration",
+        "attendance_type": "Attending Live",
+        "organisation_sub_type": "Corporate",
+        "num_of_employees": "150"
+    }
+order: 2

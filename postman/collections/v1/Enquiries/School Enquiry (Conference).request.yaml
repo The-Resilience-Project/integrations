@@ -1,0 +1,24 @@
+$kind: http-request
+name: School Enquiry (Conference)
+url: "{{base_url}}/api/enquiry.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "service_type": "School",
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "school_name_other": "POSTMAN TEST - Bayside Primary",
+        "school_name_other_selected": "1",
+        "state": "VIC",
+        "source_form": "NSWPDPN Enquiry 2026",
+        "enquiry": "Spoke at conference booth, interested in School Partnership Program.",
+        "num_of_students": "320"
+    }
+order: 3

@@ -1,0 +1,26 @@
+$kind: http-request
+name: Workplace Qualifier
+url: "{{base_url}}/api/qualify.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "hr@acmecorp.com.au",
+        "contact_first_name": "Sarah",
+        "contact_last_name": "Johnson",
+        "contact_phone": "0412345678",
+        "job_title": "HR Manager",
+        "organisation_name": "ACME Corporation",
+        "organisation_sub_type": "Professional Services",
+        "num_of_employees": "250",
+        "state": "VIC",
+        "deal_status": "Ready To Close",
+        "interested_programs": "Digital Resilience, Authentic Resilience",
+        "enquiry": "Interested in workplace resilience programs for our Melbourne office.",
+        "source_form": "Workplace Qualifier"
+    }
+order: 1

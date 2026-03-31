@@ -1,0 +1,49 @@
+<?php
+
+require dirname(__FILE__).'/../../../api/utils.php';
+require dirname(__FILE__).'/../../../init.php';
+require dirname(__FILE__).'/../../../../vendor/autoload.php';
+
+use ApiV2\Application\Schools\SubmitEnquiryHandler;
+use ApiV2\Infrastructure\VtigerWebhookClient;
+
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
+
+$method = get_method();
+
+if ($method === 'OPTIONS') {
+    send_response([], 204);
+    exit;
+}
+
+if ($method === 'POST') {
+    $data = get_request_data();
+
+    log_info('v2 School enquiry request started', [
+        'endpoint' => 'v2/schools/enquiry',
+        'contact_email' => $data['contact_email'] ?? 'unknown',
+        'school_account_no' => $data['school_account_no'] ?? 'unknown',
+    ]);
+
+    try {
+        $tokens = require dirname(__FILE__).'/../../Config/webhook_tokens.php';
+        $client = new VtigerWebhookClient(
+            'https://theresilienceproject.od2.vtiger.com/restapi/vtap/webhook/',
+            $tokens,
+        );
+
+        $handler = new SubmitEnquiryHandler($client);
+        $result = $handler->handle($data);
+
+        log_info('v2 School enquiry processed', ['status' => $result ? 'success' : 'fail']);
+        send_response(['status' => $result ? 'success' : 'fail']);
+    } catch (Exception $e) {
+        log_exception($e, ['endpoint' => 'v2/schools/enquiry']);
+        send_response([
+            'status' => 'fail',
+            'message' => 'Error processing school enquiry: '.$e->getMessage(),
+        ]);
+    }
+}

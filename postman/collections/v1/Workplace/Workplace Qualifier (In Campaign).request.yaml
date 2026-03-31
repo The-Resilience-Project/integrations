@@ -1,0 +1,26 @@
+$kind: http-request
+name: Workplace Qualifier (In Campaign)
+url: "{{base_url}}/api/qualify.php"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "people@startup.com.au",
+        "contact_first_name": "Alex",
+        "contact_last_name": "Rivera",
+        "contact_phone": "0423456789",
+        "job_title": "People & Culture Lead",
+        "organisation_name": "InnovateTech Startup",
+        "organisation_sub_type": "Not for Profit",
+        "num_of_employees": "75",
+        "state": "NSW",
+        "deal_status": "In Campaign",
+        "interested_programs": "Digital Resilience",
+        "enquiry": "Exploring resilience programs for our growing team.",
+        "source_form": "Workplace Qualifier"
+    }
+order: 3
