@@ -57,12 +57,11 @@ flowchart LR
 2. `createEnquiry` — records the enquiry (no org/deal work)
 
 ### v2 migration status
-The **School** enquiry and registration have been migrated to v2. The v1 school enquiry endpoint (`POST /api/enquiry.php` with `service_type=School`) is now deprecated. Workplace, Early Years, and General remain v1-only.
+The **School** enquiry has been migrated to v2 (`POST /api/v2/schools/enquiry`). The v1 school enquiry endpoint (`POST /api/enquiry.php` with `service_type=School`) is now deprecated. Workplace, Early Years, and General remain v1-only.
 
 | Service Type | v2 Endpoint | v1 Status |
 |-------------|-------------|-----------|
 | School | `POST /api/v2/schools/enquiry` | Deprecated |
-| School | `POST /api/v2/schools/register` | Deprecated |
 | Workplace | — | Active |
 | Early Years | — | Active |
 | General | — | Active |

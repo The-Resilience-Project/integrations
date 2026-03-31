@@ -184,12 +184,11 @@ composer require <package-name>
 
 ### API v2 — Schools Endpoints
 
-School enquiries and registrations have been migrated to v2. The v1 school endpoints are deprecated.
+School enquiries have been migrated to v2. The v1 school enquiry endpoint is deprecated.
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/v2/schools/enquiry` | POST | Submit a school enquiry |
-| `/api/v2/schools/register` | POST | Register for a school event |
 
 ### Invoice Endpoints
 
