@@ -55,7 +55,7 @@ class SubmitEnquiryHandlerTest extends TestCase
             'contact_last_name' => 'Smith',
             'school_account_no' => 'ACC123',
             'state' => 'VIC',
-            'source_form' => 'Enquiry Form',
+            // source_form is hardcoded in handler as 'Enquiry'
             'enquiry' => 'Interested in the program',
         ], $overrides);
     }
@@ -212,12 +212,12 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['source_form' => 'School Enquiry']));
+        $handler->handle($this->makeSchoolData());
 
         $this->assertTrue($client->wasCalled('updateOrganisation'));
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertArrayHasKey('salesEvents2025', $orgBody);
-        $this->assertContains('School Enquiry', $orgBody['salesEvents2025']);
+        $this->assertContains('Enquiry', $orgBody['salesEvents2025']);
         $this->assertNotContains('', $orgBody['salesEvents2025'], 'Should not contain empty string');
     }
 
@@ -230,11 +230,11 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['source_form' => 'School Enquiry']));
+        $handler->handle($this->makeSchoolData());
 
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertContains('Registration Form', $orgBody['salesEvents2025']);
-        $this->assertContains('School Enquiry', $orgBody['salesEvents2025']);
+        $this->assertContains('Enquiry', $orgBody['salesEvents2025']);
     }
 
     public function test_does_not_duplicate_source_form_in_org_sales_events(): void
@@ -244,7 +244,7 @@ class SubmitEnquiryHandlerTest extends TestCase
             'getOrgDetails',
             StubVtigerWebhookClient::makeOrgDetailsResponse(
                 assignedUserId: UserIds::LAURA,
-                salesEvents: 'School Enquiry',
+                salesEvents: 'Enquiry',
             ),
         );
         $client->setResponse(
@@ -253,7 +253,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['source_form' => 'School Enquiry']));
+        $handler->handle($this->makeSchoolData());
 
         // Org update should not be called since assignee is already LAURA and form already exists
         $this->assertFalse($client->wasCalled('updateOrganisation'));
@@ -268,12 +268,12 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['source_form' => 'School Enquiry']));
+        $handler->handle($this->makeSchoolData());
 
         $this->assertTrue($client->wasCalled('updateContactById'));
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertArrayHasKey('contactLeadSource', $contactBody);
-        $this->assertContains('School Enquiry', $contactBody['contactLeadSource']);
+        $this->assertContains('Enquiry', $contactBody['contactLeadSource']);
         $this->assertNotContains('', $contactBody['contactLeadSource'], 'Should not contain empty string');
     }
 
@@ -286,11 +286,11 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['source_form' => 'School Enquiry']));
+        $handler->handle($this->makeSchoolData());
 
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertContains('Registration Form', $contactBody['contactLeadSource']);
-        $this->assertContains('School Enquiry', $contactBody['contactLeadSource']);
+        $this->assertContains('Enquiry', $contactBody['contactLeadSource']);
     }
 
     public function test_does_not_duplicate_source_form_in_contact_forms_completed(): void
@@ -300,7 +300,7 @@ class SubmitEnquiryHandlerTest extends TestCase
             'captureCustomerInfoWithAccountNo',
             StubVtigerWebhookClient::makeCaptureResponse(
                 assignedUserId: UserIds::LAURA,
-                formsCompleted: 'School Enquiry',
+                formsCompleted: 'Enquiry',
             ),
         );
         $client->setResponse(
@@ -313,7 +313,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['source_form' => 'School Enquiry']));
+        $handler->handle($this->makeSchoolData());
 
         // Contact update should not be called since assignee matches and form already exists
         $this->assertFalse($client->wasCalled('updateContactById'));
@@ -324,21 +324,10 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['source_form' => 'School Enquiry']));
+        $handler->handle($this->makeSchoolData());
 
         $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
         $this->assertArrayHasKey('sourceForm', $captureBody);
-        $this->assertSame('School Enquiry', $captureBody['sourceForm']);
-    }
-
-    public function test_capture_payload_omits_source_form_when_empty(): void
-    {
-        $client = $this->makeClient();
-        $handler = new SubmitEnquiryHandler($client);
-
-        $handler->handle($this->makeSchoolData(['source_form' => '']));
-
-        $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
-        $this->assertArrayNotHasKey('sourceForm', $captureBody);
+        $this->assertSame('Enquiry', $captureBody['sourceForm']);
     }
 }

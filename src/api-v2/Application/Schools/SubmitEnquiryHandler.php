@@ -28,6 +28,8 @@ class SubmitEnquiryHandler
      */
     public function handle(array $data): bool
     {
+        $data['source_form'] = 'Enquiry';
+
         $contact = Contact::fromFormData($data);
         $organisation = Organisation::fromFormData($data);
 
