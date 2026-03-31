@@ -17,7 +17,6 @@ API v2 introduces a schools-specific URL structure with a DDD-lite architecture.
 |----------|--------|-----|-------------|
 | School Enquiry | POST | `/api/v2/schools/enquiry` | Submit a school enquiry |
 | School Registration | POST | `/api/v2/schools/register` | Register for an event (info session, recording, Leading TRP, event confirmation) |
-| School Prize Pack | POST | `/api/v2/schools/prize-pack` | Submit a prize pack entry and mark org as 2026 lead |
 
 ---
 
@@ -196,59 +195,3 @@ or
 6. **Event Confirmation (Ambassador)** — Looks up existing contact by ID, creates invitation, registers. → `Event Confirmation (Ambassador).request.yaml`
 7. **Event Confirmation (Teacher)** — Captures new contact, sets attendance to "Attending Live", creates invitation, registers. → `Event Confirmation (Teacher).request.yaml`
 
----
-
-## POST /api/v2/schools/prize-pack
-
-Submit a prize pack entry. Captures customer info and marks the organisation as a 2026 lead if it doesn't already have a confirmation status.
-
-### Request
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `contact_email` | string | Yes | Contact's email address |
-| `contact_first_name` | string | Yes | Contact's first name |
-| `contact_last_name` | string | Yes | Contact's last name |
-| `contact_phone` | string | No | Contact's phone number |
-| `school_account_no` | string | Conditional | School's Vtiger account number |
-| `school_name_other` | string | Conditional | New school name |
-| `school_name_other_selected` | string | Conditional | Flag for new school name |
-| `state` | string | No | Australian state |
-| `source_form` | string | No | Name of the originating form |
-
-### Control Flow
-
-```mermaid
-flowchart TD
-    A[POST /api/v2/schools/prize-pack] --> B[Deactivate existing contacts]
-    B --> C[Capture customer info in CRM]
-    C --> D[Get organisation details]
-    D --> E[Update org assignee + sales events]
-    E --> F[Update contact assignee + forms]
-    F --> G{cf_accounts_2026confirmationstatus<br/>already set?}
-
-    G -->|Empty| H["updateOrganisation<br/>organisation2026Status = 'Lead'"]
-    G -->|Already set| I[Skip — org already has status]
-
-    H --> J["Response: {status: success}"]
-    I --> J
-
-    style A fill:#4a90d9,color:#fff
-    style H fill:#f5a623,color:#fff
-    style J fill:#7ed321,color:#fff
-```
-
-### Response
-
-```json
-{"status": "success"}
-```
-or
-```json
-{"status": "fail", "message": "Error processing school prize pack: ..."}
-```
-
-### Scenarios
-
-1. **Prize pack (new lead)** — Org has no 2026 status. Marked as "Lead". → `Prize Pack.request.yaml`
-2. **Prize pack (existing status)** — Org already confirmed for 2026. Status not overwritten.

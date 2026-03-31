@@ -246,15 +246,6 @@ functions:
                 path: /api/v2/schools/enquiry
                 method: POST
 
-    v2_schools_prize_pack:
-        handler: src/api-v2/endpoints/schools/prize_pack.php
-        layers:
-            - ${bref:layer.php-82-fpm}
-        events:
-            - httpApi:
-                path: /api/v2/schools/prize-pack
-                method: POST
-
     # Webhook endpoints
     woocommerce_order:
         handler: src/Webhooks/Order.php
