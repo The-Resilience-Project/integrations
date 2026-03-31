@@ -273,7 +273,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['participating_num_of_students' => '500']));
+        $handler->handle($this->makeSchoolData(['num_of_students' => '500']));
 
         $this->assertTrue($client->wasCalled('getOrCreateDeal'));
         $dealBody = $client->getFirstCallBody('getOrCreateDeal');
@@ -295,7 +295,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['participating_num_of_students' => '500']));
+        $handler->handle($this->makeSchoolData(['num_of_students' => '500']));
 
         $this->assertFalse($client->wasCalled('getOrCreateDeal'));
     }
@@ -310,28 +310,12 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $handler = new SubmitMoreInfoHandler($client);
 
         $handler->handle($this->makeSchoolData([
-            'participating_num_of_students' => '600',
+            'num_of_students' => '600',
             'state' => 'NSW',
         ]));
 
         $dealBody = $client->getFirstCallBody('getOrCreateDeal');
         $this->assertSame('NSW', $dealBody['dealState']);
-    }
-
-    public function test_uses_num_of_students_fallback_for_student_count(): void
-    {
-        $client = $this->makeClient();
-        $client->setResponse(
-            'getOrgDetails',
-            StubVtigerWebhookClient::makeOrgDetailsResponse(assignedUserId: UserIds::MADDIE),
-        );
-        $handler = new SubmitMoreInfoHandler($client);
-
-        $handler->handle($this->makeSchoolData(['num_of_students' => '700']));
-
-        $this->assertTrue($client->wasCalled('getOrCreateDeal'));
-        $dealBody = $client->getFirstCallBody('getOrCreateDeal');
-        $this->assertSame('700', $dealBody['dealNumOfParticipants']);
     }
 
     // ── Event registration (< 500 students) ─────────────────────────
@@ -341,7 +325,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['participating_num_of_students' => '200']));
+        $handler->handle($this->makeSchoolData(['num_of_students' => '200']));
 
         $this->assertTrue($client->wasCalled('getEventDetails'));
         $this->assertTrue($client->wasCalled('checkContactRegisteredForEvent'));
@@ -404,7 +388,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['participating_num_of_students' => '500']));
+        $handler->handle($this->makeSchoolData(['num_of_students' => '500']));
 
         $this->assertFalse($client->wasCalled('createEnquiry'));
     }
@@ -414,7 +398,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['participating_num_of_students' => '100']));
+        $handler->handle($this->makeSchoolData(['num_of_students' => '100']));
 
         $this->assertFalse($client->wasCalled('createEnquiry'));
     }

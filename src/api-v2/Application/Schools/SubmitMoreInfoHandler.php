@@ -129,9 +129,6 @@ class SubmitMoreInfoHandler
      */
     private function getStudentCount(array $data): int
     {
-        if (!empty($data['participating_num_of_students'])) {
-            return (int) $data['participating_num_of_students'];
-        }
         if (!empty($data['num_of_students'])) {
             return (int) $data['num_of_students'];
         }
