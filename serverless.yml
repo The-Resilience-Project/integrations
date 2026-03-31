@@ -246,6 +246,15 @@ functions:
                 path: /api/v2/schools/enquiry
                 method: POST
 
+    v2_schools_more_info:
+        handler: src/api-v2/endpoints/schools/more-info.php
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/more-info
+                method: POST
+
     # Webhook endpoints
     woocommerce_order:
         handler: src/Webhooks/Order.php
