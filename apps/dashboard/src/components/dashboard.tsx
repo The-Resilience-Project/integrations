@@ -18,6 +18,7 @@ import { Overview } from './overview';
 import { FunctionsTable } from './functions-table';
 import { LogViewer } from './log-viewer';
 import { LoadingSkeleton } from './loading-skeleton';
+import { MonitorForms } from './monitor-forms';
 export function Dashboard() {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || 'overview';
@@ -110,7 +111,7 @@ export function Dashboard() {
             value="functions"
             className="text-xs data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
           >
-            Functions
+            Functions & Forms
             {data && (
               <span className="ml-1.5 text-[10px] font-mono text-muted-foreground">
                 {data.functions.length}
@@ -127,13 +128,21 @@ export function Dashboard() {
         <TabsContent value="overview" className="mt-4">
           {data ? <Overview data={data} /> : isLoading ? <LoadingSkeleton /> : null}
         </TabsContent>
-        <TabsContent value="functions" className="mt-4">
+        <TabsContent value="functions" className="mt-4 space-y-6">
           {data ? (
-            <FunctionsTable
-              functions={data.functions}
-              onSelectFunction={handleSelectFunction}
-              functionFormsMap={functionFormsMap}
-            />
+            <>
+              <MonitorForms
+                functions={data.functions}
+                functionFormsMap={functionFormsMap}
+                range={range}
+                onSelectFunction={handleSelectFunction}
+              />
+              <FunctionsTable
+                functions={data.functions}
+                onSelectFunction={handleSelectFunction}
+                functionFormsMap={functionFormsMap}
+              />
+            </>
           ) : null}
         </TabsContent>
         <TabsContent value="logs" className="mt-4">

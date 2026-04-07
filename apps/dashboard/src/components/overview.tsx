@@ -62,6 +62,12 @@ export function Overview({ data }: OverviewProps) {
     .sort((a, b) => b.errors - a.errors)
     .slice(0, 10);
 
+  // Top functions by invocations
+  const topInvocations = functions
+    .filter((f) => f.invocations > 0)
+    .sort((a, b) => b.invocations - a.invocations)
+    .slice(0, 10);
+
   // Top functions by duration
   const topDuration = functions
     .filter((f) => f.avgDuration > 0)
@@ -176,7 +182,7 @@ export function Overview({ data }: OverviewProps) {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         {/* Errors by function */}
         {topErrors.length > 0 && (
           <Card className="bg-card border-border/50">
@@ -271,6 +277,52 @@ export function Overview({ data }: OverviewProps) {
                   />
                   <Bar dataKey="avg" fill={CHART_COLOURS.cyan} radius={[0, 4, 4, 0]} name="Avg" />
                   <Bar dataKey="p95" fill={CHART_COLOURS.violet} radius={[0, 4, 4, 0]} name="p95" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Most executed functions */}
+        {topInvocations.length > 0 && (
+          <Card className="bg-card border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Most Executed
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={Math.max(200, topInvocations.length * 32)}>
+                <BarChart data={topInvocations} layout="vertical" margin={{ top: 0, right: 8, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLOURS.grid} horizontal={false} />
+                  <XAxis
+                    type="number"
+                    fontSize={11}
+                    fontFamily="var(--font-geist-mono)"
+                    stroke={CHART_COLOURS.axis}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    fontSize={11}
+                    fontFamily="var(--font-geist-mono)"
+                    stroke={CHART_COLOURS.axis}
+                    width={150}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: 'oklch(0.16 0.015 260)',
+                      border: '1px solid oklch(0.25 0.02 260)',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontFamily: 'var(--font-geist-mono)',
+                    }}
+                  />
+                  <Bar dataKey="invocations" fill={CHART_COLOURS.teal} radius={[0, 4, 4, 0]} name="Invocations" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
