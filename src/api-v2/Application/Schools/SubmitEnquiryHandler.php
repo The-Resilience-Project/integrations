@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ApiV2\Application\Schools;
 
 use ApiV2\Application\CustomerService;
-use ApiV2\Domain\Contact;
 use ApiV2\Domain\Enquiry;
-use ApiV2\Domain\Organisation;
+use ApiV2\Domain\EnquiryRequest;
 use ApiV2\Domain\Schools\AssigneeRules;
 use ApiV2\Domain\Schools\Deal;
 use ApiV2\Infrastructure\VtigerWebhookClientInterface;
@@ -24,14 +23,14 @@ class SubmitEnquiryHandler
     /**
      * Handle a school enquiry submission.
      *
-     * @param array<string, mixed> $data Raw request data
+     * @param EnquiryRequest $request The validated enquiry request
      */
-    public function handle(array $data): bool
+    public function handle(EnquiryRequest $request): bool
     {
-        $data['source_form'] = 'Enquiry';
+        $sourceForm = 'Enquiry 2026';
 
-        $contact = Contact::fromFormData($data);
-        $organisation = Organisation::fromFormData($data);
+        $contact = $request->toContact();
+        $organisation = $request->toOrganisation();
 
         // 1. Deactivate existing contacts with this email
         $customerService = new CustomerService($this->client);
@@ -40,7 +39,7 @@ class SubmitEnquiryHandler
 
         // 2. Create/update contact and organisation in CRM
         log_info('Step 2: Capturing contact and organisation');
-        $captured = $customerService->captureContact($contact, $organisation, $data);
+        $captured = $customerService->captureContact($contact, $organisation, $sourceForm);
         log_info('Step 2 complete: Contact captured', [
             'contactId' => $captured->contactId,
             'organisationId' => $captured->organisationId,
@@ -59,22 +58,22 @@ class SubmitEnquiryHandler
 
         // 4. Update org assignee routing and sales event tracking
         log_info('Step 4: Updating org assignee and sales events', [
-            'sourceForm' => $data['source_form'] ?? '',
-            'state' => $data['state'] ?? '',
+            'sourceForm' => $sourceForm,
+            'state' => $request->state ?? '',
         ]);
-        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $data);
+        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $sourceForm, $request->state);
         log_info('Step 4 complete: Org updated', [
             'assignedUserId' => $orgDetails->assignedUserId,
         ]);
 
         // 5. Update contact assignee routing and forms-completed tracking
         log_info('Step 5: Updating contact assignee and forms completed', [
-            'sourceForm' => $data['source_form'] ?? '',
+            'sourceForm' => $sourceForm,
             'capturedAssignee' => $captured->assignedUserId,
             'capturedFormsCompleted' => $captured->formsCompleted,
             'orgAssignee' => $orgDetails->assignedUserId,
         ]);
-        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $data);
+        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $sourceForm, $request->state);
 
         // 6. Create deal if this is a new school
         log_info('Step 6: Checking if new school for deal creation', [
@@ -83,7 +82,6 @@ class SubmitEnquiryHandler
         ]);
         if (AssigneeRules::isNewSchool($orgDetails->assignedUserId)) {
             $deal = Deal::forSchoolEnquiry();
-            $state = $data['state'] ?? null;
 
             $dealPayload = [
                 'dealName' => $deal->name,
@@ -95,18 +93,18 @@ class SubmitEnquiryHandler
                 'organisationId' => $captured->organisationId,
                 'assignee' => AssigneeRules::resolveContactAssignee(
                     $orgDetails->assignedUserId,
-                    $state,
+                    $request->state,
                 ),
             ];
 
-            if (!empty($data['participating_num_of_students'])) {
-                $dealPayload['dealNumOfParticipants'] = $data['participating_num_of_students'];
-            } elseif (!empty($data['num_of_students'])) {
-                $dealPayload['dealNumOfParticipants'] = $data['num_of_students'];
+            if ($request->participatingNumOfStudents !== null) {
+                $dealPayload['dealNumOfParticipants'] = $request->participatingNumOfStudents;
+            } elseif ($request->numOfStudents !== null) {
+                $dealPayload['dealNumOfParticipants'] = $request->numOfStudents;
             }
 
-            if (!empty($data['state'])) {
-                $dealPayload['dealState'] = $data['state'];
+            if ($request->state !== null) {
+                $dealPayload['dealState'] = $request->state;
             }
 
             log_info('Step 6: Creating deal', $dealPayload);
@@ -122,12 +120,12 @@ class SubmitEnquiryHandler
 
         $enquiry = new Enquiry(
             subject: $enquirySubject,
-            body: !empty($data['enquiry']) ? $data['enquiry'] : 'Conference Enquiry',
+            body: $request->enquiry !== null ? $request->enquiry : 'Conference Enquiry',
             type: 'School',
             contactId: $captured->contactId,
             assigneeId: AssigneeRules::resolveEnquiryAssignee(
                 $orgDetails->assignedUserId,
-                $data['state'] ?? null,
+                $request->state,
             ),
         );
 

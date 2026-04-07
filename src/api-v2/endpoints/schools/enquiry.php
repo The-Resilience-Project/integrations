@@ -5,6 +5,7 @@ require dirname(__FILE__).'/../../../init.php';
 require dirname(__FILE__).'/../../../../vendor/autoload.php';
 
 use ApiV2\Application\Schools\SubmitEnquiryHandler;
+use ApiV2\Domain\EnquiryRequest;
 use ApiV2\Infrastructure\VtigerWebhookClient;
 
 header('Access-Control-Allow-Origin: *');
@@ -20,11 +21,12 @@ if ($method === 'OPTIONS') {
 
 if ($method === 'POST') {
     $data = get_request_data();
+    $request = EnquiryRequest::fromFormData($data);
 
     log_info('v2 School enquiry request started', [
         'endpoint' => 'v2/schools/enquiry',
-        'contact_email' => $data['contact_email'] ?? 'unknown',
-        'school_account_no' => $data['school_account_no'] ?? 'unknown',
+        'contact_email' => $request->contactEmail,
+        'school_account_no' => $request->schoolAccountNo ?? 'unknown',
     ]);
 
     try {
@@ -35,7 +37,7 @@ if ($method === 'POST') {
         );
 
         $handler = new SubmitEnquiryHandler($client);
-        $result = $handler->handle($data);
+        $result = $handler->handle($request);
 
         log_info('v2 School enquiry processed', ['status' => $result ? 'success' : 'fail']);
         send_response(['status' => $result ? 'success' : 'fail']);

@@ -30,18 +30,16 @@ class CustomerService
 
     /**
      * Create or update a contact and organisation in the CRM.
-     *
-     * @param array<string, mixed> $data Raw request data
      */
-    public function captureContact(Contact $contact, Organisation $organisation, array $data): CapturedContact
+    public function captureContact(Contact $contact, Organisation $organisation, string $sourceForm): CapturedContact
     {
-        $payload = $this->buildCustomerPayload($contact, $organisation, $data);
+        $payload = $this->buildCustomerPayload($contact, $organisation, $sourceForm);
 
-        if (!empty($data['school_name_other_selected'])) {
-            $payload['organisationName'] = $data['school_name_other'] ?? '';
+        if ($organisation->name !== null) {
+            $payload['organisationName'] = $organisation->name ?? '';
             $response = $this->client->post('captureCustomerInfo', $payload);
         } else {
-            $payload['organisationAccountNo'] = $data['school_account_no'] ?? '';
+            $payload['organisationAccountNo'] = $organisation->accountNo ?? '';
             $response = $this->client->post('captureCustomerInfoWithAccountNo', $payload);
         }
 
@@ -82,24 +80,20 @@ class CustomerService
      * the current form to sales event tracking.
      *
      * Returns updated OrganisationDetails (assignee may have changed).
-     *
-     * @param array<string, mixed> $data Raw request data (needs source_form, state)
      */
-    public function updateOrgAssigneeAndSalesEvents(OrganisationDetails $orgDetails, array $data): OrganisationDetails
+    public function updateOrgAssigneeAndSalesEvents(OrganisationDetails $orgDetails, string $sourceForm, ?string $state): OrganisationDetails
     {
         $requestBody = [];
-        $state = $data['state'] ?? null;
 
         $newOrgAssignee = AssigneeRules::resolveOrgAssignee($orgDetails->assignedUserId, $state);
         if ($newOrgAssignee !== $orgDetails->assignedUserId) {
             $requestBody['assignee'] = $newOrgAssignee;
         }
 
-        $currentForm = $data['source_form'] ?? '';
-        if ($currentForm !== '') {
+        if ($sourceForm !== '') {
             $existingFormsArray = array_filter(explode(' |##| ', $orgDetails->salesEvents2025), fn ($v) => $v !== '');
-            if (!in_array($currentForm, $existingFormsArray, true)) {
-                $existingFormsArray[] = $currentForm;
+            if (!in_array($sourceForm, $existingFormsArray, true)) {
+                $existingFormsArray[] = $sourceForm;
                 $requestBody['salesEvents2025'] = array_values($existingFormsArray);
             }
         }
@@ -121,22 +115,19 @@ class CustomerService
     /**
      * Update the contact's assignee (based on state routing) and append
      * the current form to forms-completed tracking.
-     *
-     * @param array<string, mixed> $data Raw request data (needs source_form, state)
      */
     public function updateContactAssigneeAndFormsCompleted(
         CapturedContact $captured,
         OrganisationDetails $orgDetails,
-        array $data,
+        string $sourceForm,
+        ?string $state,
     ): void {
         $requestBody = [];
-        $state = $data['state'] ?? null;
 
-        $currentForm = $data['source_form'] ?? '';
-        if ($currentForm !== '') {
+        if ($sourceForm !== '') {
             $existingFormsArray = array_filter(explode(' |##| ', $captured->formsCompleted), fn ($v) => $v !== '');
-            if (!in_array($currentForm, $existingFormsArray, true)) {
-                $existingFormsArray[] = $currentForm;
+            if (!in_array($sourceForm, $existingFormsArray, true)) {
+                $existingFormsArray[] = $sourceForm;
                 $requestBody['contactLeadSource'] = array_values($existingFormsArray);
             }
         }
@@ -160,10 +151,9 @@ class CustomerService
     /**
      * Build the customer info payload for Vtiger.
      *
-     * @param  array<string, mixed> $data
      * @return array<string, mixed>
      */
-    private function buildCustomerPayload(Contact $contact, Organisation $organisation, array $data): array
+    private function buildCustomerPayload(Contact $contact, Organisation $organisation, string $sourceForm): array
     {
         $payload = [
             'contactEmail' => $contact->email,
@@ -202,8 +192,8 @@ class CustomerService
         if ($organisation->subType) {
             $payload['organisationSubType'] = $organisation->subType;
         }
-        if (!empty($data['source_form'])) {
-            $payload['sourceForm'] = $data['source_form'];
+        if ($sourceForm !== '') {
+            $payload['sourceForm'] = $sourceForm;
         }
 
         return $payload;

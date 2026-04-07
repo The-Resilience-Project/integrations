@@ -29,7 +29,7 @@ class SubmitMoreInfoHandler
      */
     public function handle(array $data): bool
     {
-        $data['source_form'] = 'More Info 2026';
+        $sourceForm = 'More Info 2026';
 
         $contact = Contact::fromFormData($data);
         $organisation = Organisation::fromFormData($data);
@@ -41,7 +41,7 @@ class SubmitMoreInfoHandler
 
         // 2. Create/update contact and organisation in CRM
         log_info('Step 2: Capturing contact and organisation');
-        $captured = $customerService->captureContact($contact, $organisation, $data);
+        $captured = $customerService->captureContact($contact, $organisation, $sourceForm);
         log_info('Step 2 complete: Contact captured', [
             'contactId' => $captured->contactId,
             'organisationId' => $captured->organisationId,
@@ -60,22 +60,22 @@ class SubmitMoreInfoHandler
 
         // 4. Update org assignee routing and sales event tracking
         log_info('Step 4: Updating org assignee and sales events', [
-            'sourceForm' => $data['source_form'] ?? '',
+            'sourceForm' => $sourceForm,
             'state' => $data['state'] ?? '',
         ]);
-        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $data);
+        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $sourceForm, $data['state'] ?? null);
         log_info('Step 4 complete: Org updated', [
             'assignedUserId' => $orgDetails->assignedUserId,
         ]);
 
         // 5. Update contact assignee routing and forms-completed tracking
         log_info('Step 5: Updating contact assignee and forms completed', [
-            'sourceForm' => $data['source_form'] ?? '',
+            'sourceForm' => $sourceForm,
             'capturedAssignee' => $captured->assignedUserId,
             'capturedFormsCompleted' => $captured->formsCompleted,
             'orgAssignee' => $orgDetails->assignedUserId,
         ]);
-        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $data);
+        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $sourceForm, $data['state'] ?? null);
 
         // 6. Branch based on student count
         $studentCount = $this->getStudentCount($data);
@@ -116,7 +116,7 @@ class SubmitMoreInfoHandler
         } else {
             // 6b. Register contact for more-info event
             log_info('Step 6b: Registering contact for more-info event');
-            $this->registerContactForEvent($contact, $captured->contactId, $data);
+            $this->registerContactForEvent($contact, $captured->contactId, $data, $sourceForm);
         }
 
         log_info('All steps complete');
@@ -138,10 +138,8 @@ class SubmitMoreInfoHandler
 
     /**
      * Register the contact for the more-info event in Vtiger.
-     *
-     * @param array<string, mixed> $data Raw request data
      */
-    private function registerContactForEvent(Contact $contact, string $contactId, array $data): void
+    private function registerContactForEvent(Contact $contact, string $contactId, array $data, string $sourceForm): void
     {
         // Fetch event details
         $eventResponse = $this->client->post('getEventDetails', [
@@ -172,7 +170,7 @@ class SubmitMoreInfoHandler
             'eventZoomLink' => $event->cf_events_zoomlink,
             'registrationName' => $contact->fullName().' | '.$event->event_no,
             'contactId' => $contactId,
-            'source' => $data['source_form'] ?? 'More Info 2026',
+            'source' => $sourceForm,
         ];
 
         log_info('Registering contact for event', $requestBody);

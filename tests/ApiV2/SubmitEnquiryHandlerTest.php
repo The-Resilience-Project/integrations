@@ -2,6 +2,7 @@
 
 use ApiV2\Application\Schools\SubmitEnquiryHandler;
 use ApiV2\Config\UserIds;
+use ApiV2\Domain\EnquiryRequest;
 use PHPUnit\Framework\TestCase;
 
 class SubmitEnquiryHandlerTest extends TestCase
@@ -47,17 +48,16 @@ class SubmitEnquiryHandlerTest extends TestCase
         return $client;
     }
 
-    private function makeSchoolData(array $overrides = []): array
+    private function makeRequest(array $overrides = []): EnquiryRequest
     {
-        return array_merge([
+        return EnquiryRequest::fromFormData(array_merge([
             'contact_email' => 'jane@school.edu.au',
             'contact_first_name' => 'Jane',
             'contact_last_name' => 'Smith',
             'school_account_no' => 'ACC123',
             'state' => 'VIC',
-            // source_form is hardcoded in handler as 'Enquiry'
             'enquiry' => 'Interested in the program',
-        ], $overrides);
+        ], $overrides));
     }
 
     public function test_successful_enquiry_returns_true(): void
@@ -65,7 +65,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $result = $handler->handle($this->makeSchoolData());
+        $result = $handler->handle($this->makeRequest());
 
         $this->assertTrue($result);
     }
@@ -75,7 +75,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $sequence = $client->getCallSequence();
         $this->assertSame('setContactsInactive', $sequence[0]);
@@ -86,7 +86,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('captureCustomerInfoWithAccountNo'));
         $this->assertFalse($client->wasCalled('captureCustomerInfo'));
@@ -97,7 +97,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData([
+        $handler->handle($this->makeRequest([
             'school_name_other_selected' => true,
             'school_name_other' => 'Brand New School',
         ]));
@@ -115,7 +115,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('getOrCreateDeal'));
         $dealBody = $client->getFirstCallBody('getOrCreateDeal');
@@ -137,7 +137,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertFalse($client->wasCalled('getOrCreateDeal'));
     }
@@ -147,7 +147,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('createEnquiry'));
         $enquiryBody = $client->getFirstCallBody('createEnquiry');
@@ -165,7 +165,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['state' => 'VIC']));
+        $handler->handle($this->makeRequest(['state' => 'VIC']));
 
         $enquiryBody = $client->getFirstCallBody('createEnquiry');
         $this->assertSame(UserIds::LAURA, $enquiryBody['assignee']);
@@ -184,7 +184,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData(['state' => 'NSW']));
+        $handler->handle($this->makeRequest(['state' => 'NSW']));
 
         $enquiryBody = $client->getFirstCallBody('createEnquiry');
         $this->assertSame(UserIds::BRENDAN, $enquiryBody['assignee']);
@@ -195,9 +195,14 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $data = $this->makeSchoolData();
-        unset($data['enquiry']);
-        $handler->handle($data);
+        $request = EnquiryRequest::fromFormData([
+            'contact_email' => 'jane@school.edu.au',
+            'contact_first_name' => 'Jane',
+            'contact_last_name' => 'Smith',
+            'school_account_no' => 'ACC123',
+            'state' => 'VIC',
+        ]);
+        $handler->handle($request);
 
         $enquiryBody = $client->getFirstCallBody('createEnquiry');
         $this->assertSame('Conference Enquiry', $enquiryBody['enquiryBody']);
@@ -212,7 +217,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('updateOrganisation'));
         $orgBody = $client->getFirstCallBody('updateOrganisation');
@@ -230,7 +235,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertContains('Registration Form', $orgBody['salesEvents2025']);
@@ -253,7 +258,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         // Org update should not be called since assignee is already LAURA and form already exists
         $this->assertFalse($client->wasCalled('updateOrganisation'));
@@ -268,7 +273,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('updateContactById'));
         $contactBody = $client->getFirstCallBody('updateContactById');
@@ -286,7 +291,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertContains('Registration Form', $contactBody['contactLeadSource']);
@@ -313,7 +318,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         );
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         // Contact update should not be called since assignee matches and form already exists
         $this->assertFalse($client->wasCalled('updateContactById'));
@@ -324,7 +329,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitEnquiryHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
         $this->assertArrayHasKey('sourceForm', $captureBody);
