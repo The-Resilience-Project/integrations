@@ -2,6 +2,7 @@
 
 use ApiV2\Application\Schools\SubmitMoreInfoHandler;
 use ApiV2\Config\UserIds;
+use ApiV2\Domain\MoreInfoRequest;
 use PHPUnit\Framework\TestCase;
 
 class SubmitMoreInfoHandlerTest extends TestCase
@@ -57,15 +58,15 @@ class SubmitMoreInfoHandlerTest extends TestCase
         return $client;
     }
 
-    private function makeSchoolData(array $overrides = []): array
+    private function makeRequest(array $overrides = []): MoreInfoRequest
     {
-        return array_merge([
+        return MoreInfoRequest::fromFormData(array_merge([
             'contact_email' => 'jane@school.edu.au',
             'contact_first_name' => 'Jane',
             'contact_last_name' => 'Smith',
             'school_account_no' => 'ACC123',
             'state' => 'VIC',
-        ], $overrides);
+        ], $overrides));
     }
 
     private static function makeEventDetailsResponse(): object
@@ -90,7 +91,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $result = $handler->handle($this->makeSchoolData());
+        $result = $handler->handle($this->makeRequest());
 
         $this->assertTrue($result);
     }
@@ -102,7 +103,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $sequence = $client->getCallSequence();
         $this->assertSame('setContactsInactive', $sequence[0]);
@@ -115,7 +116,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('captureCustomerInfoWithAccountNo'));
         $this->assertFalse($client->wasCalled('captureCustomerInfo'));
@@ -126,7 +127,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData([
+        $handler->handle($this->makeRequest([
             'school_name_other_selected' => true,
             'school_name_other' => 'Brand New School',
         ]));
@@ -141,7 +142,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
         $this->assertArrayHasKey('sourceForm', $captureBody);
@@ -157,7 +158,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('updateOrganisation'));
         $orgBody = $client->getFirstCallBody('updateOrganisation');
@@ -174,7 +175,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertContains('Enquiry', $orgBody['salesEvents2025']);
@@ -197,7 +198,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         // Org update should not be called since assignee is already LAURA and form already exists
         $this->assertFalse($client->wasCalled('updateOrganisation'));
@@ -212,7 +213,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('updateContactById'));
         $contactBody = $client->getFirstCallBody('updateContactById');
@@ -229,7 +230,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertContains('Enquiry', $contactBody['contactLeadSource']);
@@ -256,7 +257,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         // Contact update should not be called since assignee matches and form already exists
         $this->assertFalse($client->wasCalled('updateContactById'));
@@ -273,7 +274,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['num_of_students' => '500']));
+        $handler->handle($this->makeRequest(['num_of_students' => '500']));
 
         $this->assertTrue($client->wasCalled('getOrCreateDeal'));
         $dealBody = $client->getFirstCallBody('getOrCreateDeal');
@@ -295,7 +296,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['num_of_students' => '500']));
+        $handler->handle($this->makeRequest(['num_of_students' => '500']));
 
         $this->assertFalse($client->wasCalled('getOrCreateDeal'));
     }
@@ -309,7 +310,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData([
+        $handler->handle($this->makeRequest([
             'num_of_students' => '600',
             'state' => 'NSW',
         ]));
@@ -325,7 +326,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['num_of_students' => '200']));
+        $handler->handle($this->makeRequest(['num_of_students' => '200']));
 
         $this->assertTrue($client->wasCalled('getEventDetails'));
         $this->assertTrue($client->wasCalled('checkContactRegisteredForEvent'));
@@ -338,7 +339,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('registerContact'));
         $this->assertFalse($client->wasCalled('getOrCreateDeal'));
@@ -349,10 +350,10 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $regBody = $client->getFirstCallBody('registerContact');
-        $this->assertSame('18x556914', $regBody['eventId']);
+        $this->assertSame('18x805253', $regBody['eventId']);
         $this->assertSame('EVT-001', $regBody['eventNo']);
         $this->assertSame('More Info Session', $regBody['eventShortName']);
         $this->assertSame('2026-04-15 10:00', $regBody['eventStart']);
@@ -371,7 +372,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData());
+        $handler->handle($this->makeRequest());
 
         $this->assertTrue($client->wasCalled('checkContactRegisteredForEvent'));
         $this->assertFalse($client->wasCalled('registerContact'));
@@ -388,7 +389,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         );
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['num_of_students' => '500']));
+        $handler->handle($this->makeRequest(['num_of_students' => '500']));
 
         $this->assertFalse($client->wasCalled('createEnquiry'));
     }
@@ -398,7 +399,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
 
-        $handler->handle($this->makeSchoolData(['num_of_students' => '100']));
+        $handler->handle($this->makeRequest(['num_of_students' => '100']));
 
         $this->assertFalse($client->wasCalled('createEnquiry'));
     }

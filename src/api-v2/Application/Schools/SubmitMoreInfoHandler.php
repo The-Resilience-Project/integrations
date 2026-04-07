@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace ApiV2\Application\Schools;
 
 use ApiV2\Application\CustomerService;
-use ApiV2\Domain\Contact;
-use ApiV2\Domain\Organisation;
+use ApiV2\Domain\MoreInfoRequest;
 use ApiV2\Domain\Schools\AssigneeRules;
 use ApiV2\Domain\Schools\Deal;
 use ApiV2\Infrastructure\VtigerWebhookClientInterface;
 
 class SubmitMoreInfoHandler
 {
-    private const EVENT_ID = '18x556914';
+    private const EVENT_ID = '18x805253';
 
     private VtigerWebhookClientInterface $client;
 
@@ -25,14 +24,14 @@ class SubmitMoreInfoHandler
     /**
      * Handle a school more-info submission.
      *
-     * @param array<string, mixed> $data Raw request data
+     * @param MoreInfoRequest $request The validated more-info request
      */
-    public function handle(array $data): bool
+    public function handle(MoreInfoRequest $request): bool
     {
-        $sourceForm = 'More Info 2026';
+        $sourceForm = $request->sourceForm ?? 'More Info 2026';
 
-        $contact = Contact::fromFormData($data);
-        $organisation = Organisation::fromFormData($data);
+        $contact = $request->toContact();
+        $organisation = $request->toOrganisation();
 
         // 1. Deactivate existing contacts with this email
         $customerService = new CustomerService($this->client);
@@ -61,9 +60,9 @@ class SubmitMoreInfoHandler
         // 4. Update org assignee routing and sales event tracking
         log_info('Step 4: Updating org assignee and sales events', [
             'sourceForm' => $sourceForm,
-            'state' => $data['state'] ?? '',
+            'state' => $request->state ?? '',
         ]);
-        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $sourceForm, $data['state'] ?? null);
+        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $sourceForm, $request->state);
         log_info('Step 4 complete: Org updated', [
             'assignedUserId' => $orgDetails->assignedUserId,
         ]);
@@ -75,10 +74,10 @@ class SubmitMoreInfoHandler
             'capturedFormsCompleted' => $captured->formsCompleted,
             'orgAssignee' => $orgDetails->assignedUserId,
         ]);
-        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $sourceForm, $data['state'] ?? null);
+        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $sourceForm, $request->state);
 
         // 6. Branch based on student count
-        $studentCount = $this->getStudentCount($data);
+        $studentCount = $request->numOfStudents ?? 0;
         log_info('Step 6: Branching on student count', ['studentCount' => $studentCount]);
 
         if ($studentCount >= 500) {
@@ -86,7 +85,6 @@ class SubmitMoreInfoHandler
             log_info('Step 6a: Creating deal for large school (>= 500 students)');
             if (AssigneeRules::isNewSchool($orgDetails->assignedUserId)) {
                 $deal = Deal::forSchoolEnquiry();
-                $state = $data['state'] ?? null;
 
                 $dealPayload = [
                     'dealName' => $deal->name,
@@ -99,7 +97,7 @@ class SubmitMoreInfoHandler
                     'organisationId' => $captured->organisationId,
                     'assignee' => AssigneeRules::resolveContactAssignee(
                         $orgDetails->assignedUserId,
-                        $state,
+                        $request->state,
                     ),
                 ];
 
@@ -107,8 +105,8 @@ class SubmitMoreInfoHandler
                     $dealPayload['dealNumOfParticipants'] = (string) $studentCount;
                 }
 
-                if (!empty($data['state'])) {
-                    $dealPayload['dealState'] = $data['state'];
+                if ($request->state !== null) {
+                    $dealPayload['dealState'] = $request->state;
                 }
 
                 log_info('Step 6a: Creating deal', $dealPayload);
@@ -117,7 +115,7 @@ class SubmitMoreInfoHandler
         } else {
             // 6b. Register contact for more-info event
             log_info('Step 6b: Registering contact for more-info event');
-            $this->registerContactForEvent($contact, $captured->contactId, $data, $sourceForm);
+            $this->registerContactForEvent($contact, $captured->contactId, $sourceForm);
         }
 
         log_info('All steps complete');
@@ -126,21 +124,9 @@ class SubmitMoreInfoHandler
     }
 
     /**
-     * Get the student count from form data.
-     */
-    private function getStudentCount(array $data): int
-    {
-        if (!empty($data['num_of_students'])) {
-            return (int) $data['num_of_students'];
-        }
-
-        return 0;
-    }
-
-    /**
      * Register the contact for the more-info event in Vtiger.
      */
-    private function registerContactForEvent(Contact $contact, string $contactId, array $data, string $sourceForm): void
+    private function registerContactForEvent(\ApiV2\Domain\Contact $contact, string $contactId, string $sourceForm): void
     {
         // Fetch event details
         $eventResponse = $this->client->post('getEventDetails', [
