@@ -273,3 +273,5 @@ package:
         - '!.git/**'
         - '!tests/**'
         - '!.env'
+        - '!apps/**'
+        - '!node_modules/**'
