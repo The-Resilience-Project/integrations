@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Deletes POSTMAN TEST organisations and their related records from Vtiger CRM.
-# Deletion order: enquiries → contacts → deals → organisations (children first).
+# Deletion order: enquiries → registrations → contacts → deals → organisations (children first).
 #
 # Usage: bash postman/teardown_test_data.sh
 #        bash postman/teardown_test_data.sh --dry-run   # preview only, no deletions
@@ -104,6 +104,28 @@ fi
 
 echo "Found $enquiry_count enquiry(ies) to delete."
 
+# --- Find event registrations linked to test contacts ---
+
+echo ""
+echo "Searching for event registrations linked to test contacts..."
+registration_ids=""
+if [ -n "$contact_ids" ]; then
+    for contact_id in $contact_ids; do
+        ids=$(query_ids "SELECT id FROM vtcmregistration WHERE cf_vtcmregistration_eventregistrant = '$contact_id';")
+        if [ -n "$ids" ]; then
+            registration_ids="${registration_ids}${ids}"$'\n'
+        fi
+    done
+fi
+registration_ids=$(echo "$registration_ids" | sed '/^$/d')
+
+registration_count=0
+if [ -n "$registration_ids" ]; then
+    registration_count=$(echo "$registration_ids" | wc -l | tr -d ' ')
+fi
+
+echo "Found $registration_count registration(s) to delete."
+
 # --- Find deals linked to test organisations ---
 
 echo ""
@@ -129,6 +151,7 @@ echo "Found $deal_count deal(s) to delete."
 echo ""
 echo "This will delete:"
 echo "  - $enquiry_count enquiry(ies)"
+echo "  - $registration_count registration(s)"
 echo "  - $contact_count contact(s)"
 echo "  - $deal_count deal(s)"
 echo "  - $org_count organisation(s)"
@@ -158,6 +181,21 @@ if [ -n "$enquiry_ids" ]; then
     for id in $enquiry_ids; do
         if delete_record "$id"; then
             echo "  Deleted enquiry $id"
+            ((deleted++))
+        else
+            ((failed++))
+        fi
+    done
+fi
+
+# --- Delete registrations ---
+
+if [ -n "$registration_ids" ]; then
+    echo ""
+    echo "Deleting registrations..."
+    for id in $registration_ids; do
+        if delete_record "$id"; then
+            echo "  Deleted registration $id"
             ((deleted++))
         else
             ((failed++))
