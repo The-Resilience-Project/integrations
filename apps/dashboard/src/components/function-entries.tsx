@@ -31,6 +31,7 @@ interface EntryRow {
   formPurpose: string;
   email: string;
   name: string;
+  serviceType: string;
   date: string;
   status: string;
   emailFieldId: string | null;
@@ -74,6 +75,17 @@ export function FunctionEntries({ functionName, functionFormsMap, range }: Funct
     return nameField ? nameField.id : null;
   }, [primaryForm, formsData]);
 
+  // Find service_type field (by inputName or label)
+  const serviceTypeFieldId = useMemo(() => {
+    if (!primaryForm || !formsData?.forms) return null;
+    const form = formsData.forms.find((f) => f.id === primaryForm.id);
+    if (!form) return null;
+    const field = form.fields.find(
+      (f) => f.inputName === 'service_type' || f.label.toLowerCase() === 'service type',
+    );
+    return field ? String(field.id) : null;
+  }, [primaryForm, formsData]);
+
   const rows: EntryRow[] = useMemo(() => {
     if (!entriesData?.entries || !primaryForm) return [];
     return entriesData.entries.map((entry: GFEntry) => {
@@ -84,18 +96,20 @@ export function FunctionEntries({ functionName, functionFormsMap, range }: Funct
         const last = entry[`${nameFieldId}.6`] ?? '';
         name = [first, last].filter(Boolean).join(' ');
       }
+      const serviceType = serviceTypeFieldId ? String(entry[serviceTypeFieldId] ?? '') : '';
       return {
         entryId: entry.id,
         formId: primaryForm.id,
         formPurpose: primaryForm.purpose || primaryForm.title,
         email,
         name,
+        serviceType,
         date: entry.date_created,
         status: entry.status ?? 'active',
         emailFieldId,
       };
     });
-  }, [entriesData, primaryForm, emailFieldId, nameFieldId]);
+  }, [entriesData, primaryForm, emailFieldId, nameFieldId, serviceTypeFieldId]);
 
   if (!forms || forms.length === 0) return null;
 
@@ -136,6 +150,9 @@ export function FunctionEntries({ functionName, functionFormsMap, range }: Funct
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground w-16">ID</TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Submitted</TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Name</TableHead>
+                {serviceTypeFieldId && (
+                  <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Service Type</TableHead>
+                )}
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Email</TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground w-16">Status</TableHead>
                 <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground w-16">Trace</TableHead>
@@ -156,6 +173,15 @@ export function FunctionEntries({ functionName, functionFormsMap, range }: Funct
                     })}
                   </TableCell>
                   <TableCell className="text-sm">{row.name || '—'}</TableCell>
+                  {serviceTypeFieldId && (
+                    <TableCell className="text-xs">
+                      {row.serviceType ? (
+                        <Badge variant="secondary" className="text-[10px]">
+                          {row.serviceType}
+                        </Badge>
+                      ) : '—'}
+                    </TableCell>
+                  )}
                   <TableCell className="text-xs font-mono text-muted-foreground truncate max-w-[200px]">
                     {row.email || '—'}
                   </TableCell>
