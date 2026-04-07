@@ -1,0 +1,22 @@
+$kind: http-request
+name: v2 School Enquiry (Existing School - Maddie Reroute)
+url: "{{base_url}}/api/v2/schools/enquiry"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "{{test_school_4_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Four",
+        "contact_phone": "0400000003",
+        "job_title": "Wellbeing Lead",
+        "school_account_no": "{{test_school_4_account_no}}",
+        "state": "NSW",
+        "source_form": "Enquiry",
+        "enquiry": "Existing school assigned to Maddie - should reroute to Brendan (NSW)."
+    }
+order: 4412376063030110

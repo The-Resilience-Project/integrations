@@ -1,0 +1,21 @@
+$kind: http-request
+name: v2 School Info Session Recording
+url: "{{base_url}}/api/v2/schools/register"
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "contact_email": "{{test_school_3_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Three",
+        "contact_phone": "0400000000",
+        "school_account_no": "{{test_school_3_account_no}}",
+        "state": "QLD",
+        "event_id": "18x501",
+        "source_form": "Info Session Recording"
+    }
+order: 1775533651236

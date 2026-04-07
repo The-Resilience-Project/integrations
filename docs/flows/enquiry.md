@@ -74,8 +74,9 @@ Both endpoints receive the same base payload built by `CustomerService::buildCus
 | `newsletter` | Form newsletter opt-in (optional) |
 | `jobTitle` | Form job title (optional) |
 | `organisationNumOfStudents` | Form `num_of_students` (optional) |
-| `contactLeadSource` | Form `lead_source` (optional) |
-| `organisationSubType` | Form `sub_type` (optional) |
+| `contactLeadSource` | Form `contact_lead_source` (optional) — sets the contact's lead source in Vtiger (e.g., "Google", "Website"). See [note on dual usage](#contactleadsource-dual-usage). |
+| `organisationSubType` | Form `organisation_sub_type` (optional) |
+| `sourceForm` | Always `"Enquiry"` — identifies this form submission type |
 
 **Returns:** `contact_id` and `account_id` (organisation) used in all subsequent steps. These are cached on the `CustomerService` instance.
 
@@ -146,7 +147,7 @@ If neither value has changed, this VTAP call is skipped entirely.
 Updates the contact with:
 
 1. **Assignee:** Set via `AssigneeRules::resolveContactAssignee()` using the (now-updated) org assignee and state
-2. **Forms completed:** Appends the current form to `cf_contacts_formscompleted` (same deduplication logic as the org sales events field)
+2. **Forms completed:** Appends the current form (e.g., "Enquiry") to `cf_contacts_formscompleted` (same deduplication logic as the org sales events field). Sent as the `contactLeadSource` payload key — see [note on dual usage](#contactleadsource-dual-usage).
 
 As with step 5, this call is skipped if no values have changed.
 
@@ -214,6 +215,21 @@ Summary of all CRM records created or updated during a school enquiry:
 | **Organisation** | Created (new school) or updated (existing) | If the user typed a new school name, a new org is created. If they selected from the dropdown, the existing org is updated. Assignee routing is applied and the form is tracked in `salesEvents2025`. |
 | **Deal** | Created only for new schools | `2026 School Partnership Program` deal with stage `New` and close date +2 weeks from submission. Only created when the org assignee is in the non-SPM list (MADDIE, LAURA, VICTOR, HELENOR, BRENDAN). |
 | **Enquiry** | Always created | Type `School`, subject `"Name \| Org"`, linked to the contact. Triggers the automated email workflow to the enquirer. |
+
+---
+
+## contactLeadSource Dual Usage
+
+The VTAP payload key `contactLeadSource` is used for **two different purposes** depending on the endpoint:
+
+| Endpoint | Value | Vtiger CRM Field | Purpose |
+|----------|-------|-------------------|---------|
+| `captureCustomerInfo` / `captureCustomerInfoWithAccountNo` (step 2) | Single string from form (e.g., "Google", "Website") | Contact lead source | Records **how** the contact found TRP |
+| `updateContactById` (step 6) | Array of form names (e.g., `["Enquiry", "Registration Form"]`) | `cf_contacts_formscompleted` (Forms Completed) | Tracks **which forms** the contact has submitted |
+
+This naming overlap exists because the VTAP webhook handlers in Vtiger route the value to different CRM fields based on context. At capture time, it sets the contact's lead source. During updates, it appends to the multi-select forms-completed field.
+
+Similarly, `sourceForm` (sent at capture time in step 2) is a separate field that records which form triggered the current submission (always "Enquiry" for this flow). This is distinct from `contactLeadSource` — `sourceForm` identifies the current form, while `contactLeadSource` at capture is the marketing attribution source.
 
 ---
 

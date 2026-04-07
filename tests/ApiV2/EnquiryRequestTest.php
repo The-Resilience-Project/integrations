@@ -96,6 +96,7 @@ class EnquiryRequestTest extends TestCase
         $this->assertNull($request->contactLeadSource);
         $this->assertNull($request->enquiry);
         $this->assertNull($request->participatingNumOfStudents);
+        $this->assertNull($request->sourceForm);
     }
 
     public function test_throws_when_email_is_empty(): void
@@ -114,6 +115,15 @@ class EnquiryRequestTest extends TestCase
         $data = $this->makeFormData();
         unset($data['contact_email']);
         EnquiryRequest::fromFormData($data);
+    }
+
+    public function test_from_form_data_extracts_source_form(): void
+    {
+        $request = EnquiryRequest::fromFormData($this->makeFormData([
+            'source_form' => 'VACPSP Enquiry 2026',
+        ]));
+
+        $this->assertSame('VACPSP Enquiry 2026', $request->sourceForm);
     }
 
     public function test_to_contact_creates_correct_contact(): void

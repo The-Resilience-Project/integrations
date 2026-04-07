@@ -27,7 +27,7 @@ class SubmitEnquiryHandler
      */
     public function handle(EnquiryRequest $request): bool
     {
-        $sourceForm = 'Enquiry 2026';
+        $sourceForm = $request->sourceForm ?? 'Enquiry 2026';
 
         $contact = $request->toContact();
         $organisation = $request->toOrganisation();

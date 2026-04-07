@@ -105,7 +105,9 @@ The Vtiger workflow "New enquiry — send email to enquirer" automatically sends
 | Source | Form ID | Source Form Example | API Endpoint | Notes |
 |--------|---------|-------------------|--------------|-------|
 | School Enquiries Conferences | 53 | `NSWPDPN Enquiry 2026` | `POST /api/v2/schools/enquiry` or `POST /api/enquiry.php` | Conference-specific GF form with custom validation |
-| Bulk Conference Import | -- | `NSWPDPN Enquiry 2026` | `POST /api/enquiry.php` | Via `apps/conf-uploads/` tool. **Disable email workflow first.** |
+| Bulk Conference Import | -- | `NSWPDPN Enquiry 2026` | `POST /api/v2/schools/enquiry` or `POST /api/enquiry.php` | Via `apps/conf-uploads/` tool. **Disable email workflow first.** |
+
+> **v2 conference support:** The v2 endpoint accepts an optional `source_form` field in the request body. When provided (e.g., `"VACPSP Enquiry 2026"`), it overrides the default `"Enquiry 2026"` value for form tracking on both the contact and organisation. When omitted, defaults to `"Enquiry 2026"`.
 
 **Key form fields:**
 

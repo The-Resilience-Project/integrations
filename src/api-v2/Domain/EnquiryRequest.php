@@ -25,6 +25,7 @@ class EnquiryRequest
         public readonly ?string $contactLeadSource = null,
         public readonly ?string $enquiry = null,
         public readonly ?int $participatingNumOfStudents = null,
+        public readonly ?string $sourceForm = null,
     ) {
         if (trim($this->contactEmail) === '') {
             throw new \InvalidArgumentException('Contact email must not be empty');
@@ -57,6 +58,7 @@ class EnquiryRequest
             contactLeadSource: !empty($data['contact_lead_source']) ? (string) $data['contact_lead_source'] : null,
             enquiry: !empty($data['enquiry']) ? (string) $data['enquiry'] : null,
             participatingNumOfStudents: !empty($data['participating_num_of_students']) ? (int) $data['participating_num_of_students'] : null,
+            sourceForm: !empty($data['source_form']) ? (string) $data['source_form'] : null,
         );
     }
 

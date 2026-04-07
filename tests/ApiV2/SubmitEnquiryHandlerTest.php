@@ -222,7 +222,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $this->assertTrue($client->wasCalled('updateOrganisation'));
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertArrayHasKey('salesEvents2025', $orgBody);
-        $this->assertContains('Enquiry', $orgBody['salesEvents2025']);
+        $this->assertContains('Enquiry 2026', $orgBody['salesEvents2025']);
         $this->assertNotContains('', $orgBody['salesEvents2025'], 'Should not contain empty string');
     }
 
@@ -239,7 +239,7 @@ class SubmitEnquiryHandlerTest extends TestCase
 
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertContains('Registration Form', $orgBody['salesEvents2025']);
-        $this->assertContains('Enquiry', $orgBody['salesEvents2025']);
+        $this->assertContains('Enquiry 2026', $orgBody['salesEvents2025']);
     }
 
     public function test_does_not_duplicate_source_form_in_org_sales_events(): void
@@ -249,7 +249,7 @@ class SubmitEnquiryHandlerTest extends TestCase
             'getOrgDetails',
             StubVtigerWebhookClient::makeOrgDetailsResponse(
                 assignedUserId: UserIds::LAURA,
-                salesEvents: 'Enquiry',
+                salesEvents: 'Enquiry 2026',
             ),
         );
         $client->setResponse(
@@ -278,7 +278,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $this->assertTrue($client->wasCalled('updateContactById'));
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertArrayHasKey('contactLeadSource', $contactBody);
-        $this->assertContains('Enquiry', $contactBody['contactLeadSource']);
+        $this->assertContains('Enquiry 2026', $contactBody['contactLeadSource']);
         $this->assertNotContains('', $contactBody['contactLeadSource'], 'Should not contain empty string');
     }
 
@@ -295,7 +295,7 @@ class SubmitEnquiryHandlerTest extends TestCase
 
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertContains('Registration Form', $contactBody['contactLeadSource']);
-        $this->assertContains('Enquiry', $contactBody['contactLeadSource']);
+        $this->assertContains('Enquiry 2026', $contactBody['contactLeadSource']);
     }
 
     public function test_does_not_duplicate_source_form_in_contact_forms_completed(): void
@@ -305,7 +305,7 @@ class SubmitEnquiryHandlerTest extends TestCase
             'captureCustomerInfoWithAccountNo',
             StubVtigerWebhookClient::makeCaptureResponse(
                 assignedUserId: UserIds::LAURA,
-                formsCompleted: 'Enquiry',
+                formsCompleted: 'Enquiry 2026',
             ),
         );
         $client->setResponse(
@@ -333,6 +333,34 @@ class SubmitEnquiryHandlerTest extends TestCase
 
         $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
         $this->assertArrayHasKey('sourceForm', $captureBody);
-        $this->assertSame('Enquiry', $captureBody['sourceForm']);
+        $this->assertSame('Enquiry 2026', $captureBody['sourceForm']);
+    }
+
+    public function test_conference_source_form_flows_through_to_crm(): void
+    {
+        $client = $this->makeClient();
+        $client->setResponse(
+            'getOrgDetails',
+            StubVtigerWebhookClient::makeOrgDetailsResponse(salesEvents: ''),
+        );
+        $client->setResponse(
+            'captureCustomerInfoWithAccountNo',
+            StubVtigerWebhookClient::makeCaptureResponse(formsCompleted: ''),
+        );
+        $handler = new SubmitEnquiryHandler($client);
+
+        $handler->handle($this->makeRequest(['source_form' => 'VACPSP Enquiry 2026']));
+
+        // Check capture payload
+        $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
+        $this->assertSame('VACPSP Enquiry 2026', $captureBody['sourceForm']);
+
+        // Check org sales events
+        $orgBody = $client->getFirstCallBody('updateOrganisation');
+        $this->assertContains('VACPSP Enquiry 2026', $orgBody['salesEvents2025']);
+
+        // Check contact forms completed
+        $contactBody = $client->getFirstCallBody('updateContactById');
+        $this->assertContains('VACPSP Enquiry 2026', $contactBody['contactLeadSource']);
     }
 }
