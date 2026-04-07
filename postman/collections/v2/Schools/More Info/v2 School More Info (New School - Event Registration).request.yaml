@@ -1,0 +1,21 @@
+$kind: http-request
+name: v2 School More Info (New School - Event Registration)
+url: "{{base_url}}/api/v2/schools/more-info"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: >-
+    {
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "job_title": "Wellbeing Coordinator",
+        "school_name_other": "POSTMAN TEST - New School",
+        "school_name_other_selected": "1",
+        "state": "VIC",
+        "num_of_students": "200"
+    }
+order: 1775533662223
