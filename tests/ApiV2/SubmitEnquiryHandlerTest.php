@@ -121,6 +121,7 @@ class SubmitEnquiryHandlerTest extends TestCase
         $dealBody = $client->getFirstCallBody('getOrCreateDeal');
         $this->assertSame('2027 School Partnership Program', $dealBody['dealName']);
         $this->assertSame('New', $dealBody['dealStage']);
+        $this->assertSame('New Schools', $dealBody['dealPipeline']);
     }
 
     public function test_does_not_create_deal_for_existing_school(): void

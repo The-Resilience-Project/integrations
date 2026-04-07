@@ -89,6 +89,7 @@ class SubmitEnquiryHandler
                 'dealOrgType' => $deal->orgType,
                 'dealStage' => $deal->stage,
                 'dealCloseDate' => $deal->closeDate,
+                'dealPipeline' => $deal->pipeline,
                 'contactId' => $captured->contactId,
                 'organisationId' => $captured->organisationId,
                 'assignee' => AssigneeRules::resolveContactAssignee(

@@ -15,6 +15,7 @@ class Deal
         public readonly ?string $stage = null,
         public readonly ?string $closeDate = null,
         public readonly ?string $state = null,
+        public readonly ?string $pipeline = null,
     ) {
     }
 
@@ -24,6 +25,7 @@ class Deal
             name: self::SCHOOL_DEAL_NAME,
             stage: 'New',
             closeDate: date('d/m/Y', strtotime('+1 Week')),
+            pipeline: 'New Schools',
         );
     }
 
