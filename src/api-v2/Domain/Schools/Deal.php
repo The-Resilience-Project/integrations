@@ -16,6 +16,7 @@ class Deal
         public readonly ?string $closeDate = null,
         public readonly ?string $state = null,
         public readonly ?string $pipeline = null,
+        public readonly ?string $inCampaignRating = null,
     ) {
     }
 
@@ -33,9 +34,10 @@ class Deal
     {
         return new self(
             name: self::SCHOOL_DEAL_NAME,
-            stage: 'Considering',
+            stage: 'In Campaign',
             closeDate: $closeDate,
             pipeline: 'New Schools',
+            inCampaignRating: 'Hot',
         );
     }
 }

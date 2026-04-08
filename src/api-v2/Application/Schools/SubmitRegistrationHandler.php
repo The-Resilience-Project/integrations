@@ -104,6 +104,7 @@ class SubmitRegistrationHandler
                 'dealStage' => $deal->stage,
                 'dealCloseDate' => $deal->closeDate,
                 'dealPipeline' => $deal->pipeline,
+                'dealInCampaignRating' => $deal->inCampaignRating,
                 'contactId' => $captured->contactId,
                 'organisationId' => $captured->organisationId,
                 'assignee' => AssigneeRules::resolveContactAssignee($orgDetails->assignedUserId, $request->state),
@@ -134,9 +135,10 @@ class SubmitRegistrationHandler
             ];
             $updateDealPayload['firstInfoSessionDate'] = $firstInfoSessionDate;
 
-            if (($dealData->sales_stage ?? '') === 'New') {
-                $updateDealPayload['dealStage'] = 'Considering';
+            if (in_array($dealData->sales_stage ?? '', ['New', 'Considering'], true)) {
+                $updateDealPayload['dealStage'] = 'In Campaign';
             }
+            $updateDealPayload['dealInCampaignRating'] = 'Hot';
 
             log_info('Step 7b: Updating deal with info session date', $updateDealPayload);
             $this->client->post('updateDeal', $updateDealPayload);

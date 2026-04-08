@@ -180,8 +180,9 @@ class SubmitRegistrationHandlerTest extends TestCase
 
         $this->assertTrue($client->wasCalled('getOrCreateDeal'));
         $dealBody = $client->getFirstCallBody('getOrCreateDeal');
-        $this->assertSame('Considering', $dealBody['dealStage']);
+        $this->assertSame('In Campaign', $dealBody['dealStage']);
         $this->assertSame('New Schools', $dealBody['dealPipeline']);
+        $this->assertSame('Hot', $dealBody['dealInCampaignRating']);
     }
 
     public function test_updates_deal_with_info_session_date(): void
@@ -198,7 +199,7 @@ class SubmitRegistrationHandlerTest extends TestCase
         $this->assertSame('2026-04-15 10:00', $updateBody['firstInfoSessionDate']);
     }
 
-    public function test_advances_deal_stage_from_new_to_considering(): void
+    public function test_advances_deal_stage_from_new_to_in_campaign(): void
     {
         $client = $this->makeClient();
         $client->setResponse(
@@ -210,10 +211,11 @@ class SubmitRegistrationHandlerTest extends TestCase
         $handler->handle($this->makeRequest());
 
         $updateBody = $client->getFirstCallBody('updateDeal');
-        $this->assertSame('Considering', $updateBody['dealStage']);
+        $this->assertSame('In Campaign', $updateBody['dealStage']);
+        $this->assertSame('Hot', $updateBody['dealInCampaignRating']);
     }
 
-    public function test_does_not_change_deal_stage_when_already_considering(): void
+    public function test_advances_deal_stage_from_considering_to_in_campaign(): void
     {
         $client = $this->makeClient();
         $client->setResponse(
@@ -225,7 +227,24 @@ class SubmitRegistrationHandlerTest extends TestCase
         $handler->handle($this->makeRequest());
 
         $updateBody = $client->getFirstCallBody('updateDeal');
+        $this->assertSame('In Campaign', $updateBody['dealStage']);
+        $this->assertSame('Hot', $updateBody['dealInCampaignRating']);
+    }
+
+    public function test_does_not_change_deal_stage_when_already_in_campaign(): void
+    {
+        $client = $this->makeClient();
+        $client->setResponse(
+            'getOrCreateDeal',
+            StubVtigerWebhookClient::makeDealResponse(salesStage: 'In Campaign'),
+        );
+        $handler = new SubmitRegistrationHandler($client);
+
+        $handler->handle($this->makeRequest());
+
+        $updateBody = $client->getFirstCallBody('updateDeal');
         $this->assertArrayNotHasKey('dealStage', $updateBody);
+        $this->assertSame('Hot', $updateBody['dealInCampaignRating']);
     }
 
     // ── Event registration (new school) ─────────────────────────────
