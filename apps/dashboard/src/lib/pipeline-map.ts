@@ -191,6 +191,28 @@ export const PIPELINE_MAP: Record<string, PipelineEntry> = {
 
   /* ── School operations flows ───────────────────────────────────── */
 
+  'more-info': {
+    label: 'School More Info',
+    journey: 'schools',
+    flowSlug: 'more-info',
+    formIds: [],
+    apiEndpoints: [
+      { version: 'v2', method: 'POST', path: '/api/v2/schools/more-info', docSlug: 'v2/schools' },
+    ],
+    vtapEndpoints: [
+      'setContactsInactive',
+      'captureCustomerInfo',
+      'getOrgDetails',
+      'updateOrganisation',
+      'updateContactById',
+      'getOrCreateDeal',
+      'getEventDetails',
+      'checkContactRegisteredForEvent',
+      'registerContact',
+    ],
+    workflowNames: [],
+  },
+
   registration: {
     label: 'School Registration',
     journey: 'schools',

@@ -35,6 +35,12 @@ const flowMeta: Record<string, FlowInfo> = {
     vtapCount: 7,
     workflow: true,
   },
+  'more-info': {
+    group: 'schools',
+    form: 'GF Webhooks',
+    api: 'v2',
+    vtapCount: 9,
+  },
   registration: {
     group: 'schools',
     form: 'GF Webhooks',

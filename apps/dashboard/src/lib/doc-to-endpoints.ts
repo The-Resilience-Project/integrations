@@ -26,6 +26,7 @@ const DOC_TO_ENDPOINTS: Record<string, string[]> = {
   'v1/events': ['sendInvitation'],
   'v2/schools': [
     '/api/v2/schools/enquiry',
+    '/api/v2/schools/more-info',
     '/api/v2/schools/register',
     '/api/v2/schools/prize-pack',
   ],

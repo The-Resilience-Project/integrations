@@ -18,6 +18,7 @@ API v2 introduces a schools-specific URL structure with a DDD-lite architecture.
 | Endpoint | Method | URL | Description |
 |----------|--------|-----|-------------|
 | School Enquiry | POST | `/api/v2/schools/enquiry` | Submit a school enquiry |
+| School More Info | POST | `/api/v2/schools/more-info` | Request more info — registers for event or creates deal based on school size |
 | School Registration | POST | `/api/v2/schools/register` | Register for an event (info session, recording, Leading TRP, event confirmation) |
 
 ---
@@ -100,6 +101,79 @@ or
 
 1. **New school enquiry (VIC)** — New school submits enquiry. Deal created with stage "New". Enquiry assigned to LAURA. → `Enquiry (New School).request.yaml`
 2. **Existing school enquiry (NSW)** — School with dedicated SPM submits enquiry. No deal created. Enquiry assigned to SPM. → `Enquiry (Existing School).request.yaml`
+
+---
+
+## POST /api/v2/schools/more-info
+
+Request more information about school programs. Captures customer info in CRM, then branches based on student count: large schools (>= 500 students) get a deal created, while smaller schools are registered for a more-info event.
+
+> **v1 equivalent:** This endpoint supersedes the v1 Info Session Recording flow (`POST /api/register.php` with `source_form=Info Session Recording`), though the business logic differs.
+
+### Request
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `contact_email` | string | Yes | Contact's email address |
+| `contact_first_name` | string | Yes | Contact's first name |
+| `contact_last_name` | string | Yes | Contact's last name |
+| `contact_phone` | string | No | Contact's phone number |
+| `org_phone` | string | No | Organisation phone number |
+| `job_title` | string | No | Contact's job title |
+| `contact_type` | string | No | Contact type (e.g. "Teacher", "Principal") |
+| `contact_newsletter` | string | No | Newsletter opt-in |
+| `school_account_no` | string | Conditional | Existing school's Vtiger account number |
+| `school_name_other` | string | Conditional | New school name (when school is not in CRM) |
+| `school_name_other_selected` | string | Conditional | Flag indicating a new school name was entered |
+| `state` | string | No | Australian state for assignee routing |
+| `organisation_sub_type` | string | No | Organisation sub-type |
+| `num_of_students` | integer | No | Number of students — determines branching (>= 500 → deal, < 500 → event registration) |
+| `num_of_employees` | integer | No | Number of employees |
+| `contact_lead_source` | string | No | Lead source for the contact |
+| `source_form` | string | No | Name of the originating form. Defaults to `"More Info 2026"` |
+
+### Control Flow
+
+```mermaid
+flowchart TD
+    A[POST /api/v2/schools/more-info] --> B[Deactivate existing contacts]
+    B --> C[Capture customer info in CRM]
+    C --> D[Get organisation details]
+    D --> E[Update org assignee + sales events]
+    E --> F[Update contact assignee + forms completed]
+    F --> G{num_of_students >= 500?}
+
+    G -->|Yes| H{isNewSchool?}
+    H -->|Yes| I["getOrCreateDeal<br/>Stage: 'New'<br/>Close: +2 weeks"]
+    H -->|No| J[Skip deal creation]
+
+    G -->|No| K[Register contact for<br/>more-info event]
+    K --> L["updateContactById<br/>lifecycleStage = 'Lead'<br/>contactStatus = 'Hot'"]
+
+    I --> M["Response: {status: success}"]
+    J --> M
+    L --> M
+
+    style A fill:#4a90d9,color:#fff
+    style I fill:#f5a623,color:#fff
+    style K fill:#7ed321,color:#fff
+```
+
+### Response
+
+```json
+{"status": "success"}
+```
+or
+```json
+{"status": "fail", "message": "Error processing more info request: ..."}
+```
+
+### Scenarios
+
+1. **More info (new school, >= 500 students)** — Deal created with stage "New". → `v2 School More Info (New School - Deal Creation).request.yaml`
+2. **More info (new school, < 500 students)** — Contact registered for more-info event, lifecycle set to Lead/Hot. → `v2 School More Info (New School - Event Registration).request.yaml`
+3. **More info (existing school)** — Customer info captured and updated, but no deal created regardless of student count.
 
 ---
 

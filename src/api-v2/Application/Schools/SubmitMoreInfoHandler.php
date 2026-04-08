@@ -115,7 +115,7 @@ class SubmitMoreInfoHandler
         } else {
             // 6b. Register contact for more-info event
             log_info('Step 6b: Registering contact for more-info event');
-            $this->registerContactForEvent($contact, $captured->contactId, $sourceForm);
+            $this->registerContactForEvent($contact, $captured->contactId, $sourceForm, $request->state);
 
             // 6c. Set contact lifecycle stage to Lead and status to Hot
             log_info('Step 6c: Updating contact lifecycle stage and status');
@@ -134,7 +134,7 @@ class SubmitMoreInfoHandler
     /**
      * Register the contact for the more-info event in Vtiger.
      */
-    private function registerContactForEvent(\ApiV2\Domain\Contact $contact, string $contactId, string $sourceForm): void
+    private function registerContactForEvent(\ApiV2\Domain\Contact $contact, string $contactId, string $sourceForm, ?string $state): void
     {
         // Fetch event details
         $eventResponse = $this->client->post('getEventDetails', [
@@ -166,6 +166,7 @@ class SubmitMoreInfoHandler
             'registrationName' => $contact->fullName().' | '.$event->event_no,
             'contactId' => $contactId,
             'source' => $sourceForm,
+            'replyTo' => AssigneeRules::resolveRegistrationReplyTo($state),
         ];
 
         log_info('Registering contact for event', $requestBody);

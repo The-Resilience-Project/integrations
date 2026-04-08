@@ -30,6 +30,7 @@ const ENDPOINT_DOC_MAP: Record<string, string> = {
   'createShipment': '/docs/v1/invoices',
   'sendInvitation': '/docs/v1/events',
   '/api/v2/schools/enquiry': '/docs/v2/schools',
+  '/api/v2/schools/more-info': '/docs/v2/schools',
   '/api/v2/schools/register': '/docs/v2/schools',
   '/api/v2/schools/prize-pack': '/docs/v2/schools',
 };

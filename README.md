@@ -189,6 +189,7 @@ School enquiries have been migrated to v2. The v1 school enquiry endpoint is dep
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/v2/schools/enquiry` | POST | Submit a school enquiry |
+| `/api/v2/schools/more-info` | POST | Request more info (supersedes v1 info session recording) |
 
 ### Invoice Endpoints
 
