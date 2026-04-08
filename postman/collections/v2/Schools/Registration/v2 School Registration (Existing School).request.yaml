@@ -1,0 +1,20 @@
+$kind: http-request
+name: v2 School Registration (Existing School)
+url: "{{base_url}}/api/v2/schools/registration"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: >-
+    {
+        "contact_email": "{{test_school_5_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "Five",
+        "contact_phone": "0400000004",
+        "job_title": "Principal",
+        "school_account_no": "{{test_school_5_account_no}}",
+        "state": "NSW",
+        "event_id": "{{test_event_id}}"
+    }
+order: 1963458797685563

@@ -1,0 +1,124 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ApiV2\Domain;
+
+class RegistrationRequest
+{
+    public function __construct(
+        // Contact fields (required)
+        public readonly string $contactEmail,
+        public readonly string $contactFirstName,
+        public readonly string $contactLastName,
+
+        // Event (required)
+        public readonly string $eventId,
+
+        // Contact fields (optional)
+        public readonly ?string $contactPhone = null,
+        public readonly ?string $orgPhone = null,
+        public readonly ?string $jobTitle = null,
+        public readonly ?string $contactType = null,
+        public readonly ?string $contactNewsletter = null,
+
+        // Organisation fields (optional)
+        public readonly ?string $schoolAccountNo = null,
+        public readonly ?string $schoolNameOther = null,
+        public readonly bool $schoolNameOtherSelected = false,
+        public readonly ?string $state = null,
+        public readonly ?string $organisationSubType = null,
+        public readonly ?int $numOfStudents = null,
+        public readonly ?int $numOfEmployees = null,
+        public readonly ?string $contactLeadSource = null,
+
+        // Source form override (optional)
+        public readonly ?string $sourceForm = null,
+    ) {
+        if (trim($this->contactEmail) === '') {
+            throw new \InvalidArgumentException('Contact email must not be empty');
+        }
+
+        if (trim($this->eventId) === '') {
+            throw new \InvalidArgumentException('Event ID must not be empty');
+        }
+    }
+
+    /**
+     * Normalise an event ID by prepending '18x' if not already present.
+     */
+    private static function normaliseEventId(string $eventId): string
+    {
+        if (trim($eventId) === '') {
+            return $eventId;
+        }
+
+        if (strpos($eventId, '18x') === false) {
+            return '18x' . $eventId;
+        }
+
+        return $eventId;
+    }
+
+    /**
+     * Build a RegistrationRequest from raw form submission data.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function fromFormData(array $data): self
+    {
+        return new self(
+            contactEmail: (string) ($data['contact_email'] ?? ''),
+            contactFirstName: (string) ($data['contact_first_name'] ?? ''),
+            contactLastName: (string) ($data['contact_last_name'] ?? ''),
+            eventId: self::normaliseEventId((string) ($data['event_id'] ?? '')),
+            contactPhone: !empty($data['contact_phone']) ? (string) $data['contact_phone'] : null,
+            orgPhone: !empty($data['org_phone']) ? (string) $data['org_phone'] : null,
+            jobTitle: !empty($data['job_title']) ? (string) $data['job_title'] : null,
+            contactType: !empty($data['contact_type']) ? (string) $data['contact_type'] : null,
+            contactNewsletter: !empty($data['contact_newsletter']) ? (string) $data['contact_newsletter'] : null,
+            schoolAccountNo: !empty($data['school_account_no']) ? (string) $data['school_account_no'] : null,
+            schoolNameOther: !empty($data['school_name_other']) ? (string) $data['school_name_other'] : null,
+            schoolNameOtherSelected: !empty($data['school_name_other_selected']),
+            state: !empty($data['state']) ? (string) $data['state'] : null,
+            organisationSubType: !empty($data['organisation_sub_type']) ? (string) $data['organisation_sub_type'] : null,
+            numOfStudents: !empty($data['num_of_students']) ? (int) $data['num_of_students'] : null,
+            numOfEmployees: !empty($data['num_of_employees']) ? (int) $data['num_of_employees'] : null,
+            contactLeadSource: !empty($data['contact_lead_source']) ? (string) $data['contact_lead_source'] : null,
+            sourceForm: !empty($data['source_form']) ? (string) $data['source_form'] : null,
+        );
+    }
+
+    /**
+     * Build a Contact domain object from this request.
+     */
+    public function toContact(): Contact
+    {
+        return new Contact(
+            email: $this->contactEmail,
+            firstName: $this->contactFirstName,
+            lastName: $this->contactLastName,
+            phone: $this->contactPhone,
+            orgPhone: $this->orgPhone,
+            jobTitle: $this->jobTitle,
+            type: $this->contactType,
+            newsletter: $this->contactNewsletter,
+        );
+    }
+
+    /**
+     * Build an Organisation domain object from this request.
+     */
+    public function toOrganisation(): Organisation
+    {
+        return new Organisation(
+            accountNo: $this->schoolAccountNo,
+            name: $this->schoolNameOther,
+            state: $this->state,
+            subType: $this->organisationSubType,
+            numStudents: $this->numOfStudents,
+            numEmployees: $this->numOfEmployees,
+            leadSource: $this->contactLeadSource,
+        );
+    }
+}

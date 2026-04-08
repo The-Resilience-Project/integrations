@@ -29,4 +29,13 @@ class Deal
         );
     }
 
+    public static function forSchoolRegistration(string $closeDate): self
+    {
+        return new self(
+            name: self::SCHOOL_DEAL_NAME,
+            stage: 'Considering',
+            closeDate: $closeDate,
+            pipeline: 'New Schools',
+        );
+    }
 }

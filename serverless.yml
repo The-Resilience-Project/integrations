@@ -255,6 +255,16 @@ functions:
                 path: /api/v2/schools/more-info
                 method: POST
 
+    v2_schools_registration:
+        handler: src/api-v2/endpoints/schools/registration.php
+        timeout: 29
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/registration
+                method: POST
+
     # Webhook endpoints
     woocommerce_order:
         handler: src/Webhooks/Order.php
