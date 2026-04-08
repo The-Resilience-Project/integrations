@@ -46,4 +46,5 @@ return [
     'createOrUpdateInvitation' => 'VvKtda93QJ2Cf6q9Qf8nknGF',
     'createAssessment' => '5prJsecGL2qc8yLU8IAaTize',
     'createOrUpdateSEIP' => '3fcJ9sPNZ91zfozuMVLii6yu',
+    'updateRegistration' => 'CdMZIDnfVGjFS56d8LgzLJwK',
 ];

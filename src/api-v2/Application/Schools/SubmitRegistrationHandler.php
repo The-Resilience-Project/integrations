@@ -143,17 +143,20 @@ class SubmitRegistrationHandler
             log_info('Step 7b: Updating deal with info session date', $updateDealPayload);
             $this->client->post('updateDeal', $updateDealPayload);
 
-            // 7c. Register contact for event
+            // 7c. Attach deal to existing more-info registration (if any)
+            $this->attachDealToMoreInfoRegistration($captured->contactId, $dealId);
+
+            // 7d. Register contact for event
             $replyTo = AssigneeRules::resolveRegistrationReplyTo($request->state);
-            log_info('Step 7c: Registering contact for event', [
+            log_info('Step 7d: Registering contact for event', [
                 'contactId' => $captured->contactId,
                 'eventId' => $request->eventId,
                 'replyTo' => $replyTo,
             ]);
             $this->registerContactForEvent($contact, $captured->contactId, $event, $request->eventId, $sourceForm, $dealId, $replyTo);
         } else {
-            // 7d. Existing school — create enquiry instead
-            log_info('Step 7d: Existing school, creating enquiry');
+            // 7e. Existing school — create enquiry instead
+            log_info('Step 7e: Existing school, creating enquiry');
             $orgName = $orgDetails->name;
             $enquirySubject = $contact->fullName();
             if ($orgName !== null) {
@@ -168,7 +171,7 @@ class SubmitRegistrationHandler
                 assigneeId: AssigneeRules::resolveEnquiryAssignee($orgDetails->assignedUserId, $request->state),
             );
 
-            log_info('Step 7d: Creating enquiry', [
+            log_info('Step 7e: Creating enquiry', [
                 'subject' => $enquiry->subject,
                 'type' => $enquiry->type,
                 'assignee' => $enquiry->assigneeId,
@@ -225,6 +228,44 @@ class SubmitRegistrationHandler
 
         log_info('Registering contact for event', $requestBody);
         $this->client->post('registerContact', $requestBody);
+    }
+
+    /**
+     * Check if the contact has an existing more-info event registration
+     * and attach the deal to it, preventing further more-info comms.
+     */
+    private function attachDealToMoreInfoRegistration(string $contactId, string $dealId): void
+    {
+        $moreInfoEventId = '18x805253';
+
+        // Fetch more-info event details to get the event number
+        $eventResponse = $this->client->post('getEventDetails', [
+            'eventId' => $moreInfoEventId,
+        ], true);
+        $moreInfoEvent = $eventResponse->result[0];
+
+        // Check if contact is registered for the more-info event
+        $checkResponse = $this->client->post('checkContactRegisteredForEvent', [
+            'eventNo' => $moreInfoEvent->event_no,
+            'contactId' => $contactId,
+        ]);
+
+        if (empty($checkResponse->result)) {
+            log_info('Step 7c: No existing more-info registration found, skipping');
+
+            return;
+        }
+
+        $registrationId = $checkResponse->result[0]->id;
+        log_info('Step 7c: Attaching deal to existing more-info registration', [
+            'registrationId' => $registrationId,
+            'dealId' => $dealId,
+        ]);
+
+        $this->client->post('updateRegistration', [
+            'registrationId' => $registrationId,
+            'dealId' => $dealId,
+        ]);
     }
 
     private function addOneDay(string $dateString): string

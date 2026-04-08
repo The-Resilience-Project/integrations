@@ -63,6 +63,12 @@ class SubmitRegistrationHandlerTest extends TestCase
             (object) ['result' => []],
         );
 
+        // More-info registration update
+        $client->setResponse(
+            'updateRegistration',
+            (object) ['result' => []],
+        );
+
         // Existing school path
         $client->setResponse(
             'createEnquiry',
@@ -288,6 +294,37 @@ class SubmitRegistrationHandlerTest extends TestCase
 
         $this->assertTrue($client->wasCalled('checkContactRegisteredForEvent'));
         $this->assertFalse($client->wasCalled('registerContact'));
+    }
+
+    // ── More-info registration update ─────────────────────────────
+
+    public function test_attaches_deal_to_existing_more_info_registration(): void
+    {
+        $client = $this->makeClient();
+        // Contact is registered for more-info event
+        $client->setResponse(
+            'checkContactRegisteredForEvent',
+            (object) ['result' => [(object) ['id' => '50x999']]],
+        );
+        $handler = new SubmitRegistrationHandler($client);
+
+        $handler->handle($this->makeRequest());
+
+        $this->assertTrue($client->wasCalled('updateRegistration'));
+        $updateBody = $client->getFirstCallBody('updateRegistration');
+        $this->assertSame('50x999', $updateBody['registrationId']);
+        $this->assertSame('2x300', $updateBody['dealId']);
+    }
+
+    public function test_does_not_update_registration_when_no_more_info_registration(): void
+    {
+        $client = $this->makeClient();
+        // Default: checkContactRegisteredForEvent returns empty
+        $handler = new SubmitRegistrationHandler($client);
+
+        $handler->handle($this->makeRequest());
+
+        $this->assertFalse($client->wasCalled('updateRegistration'));
     }
 
     // ── Existing school path ────────────────────────────────────────

@@ -1,45 +1,68 @@
 name: AWS-TRP-Integrations
 values:
   - key: base_url
-    value: https://m9x7q0thrd.execute-api.ap-southeast-2.amazonaws.com
+    value: 'https://m9x7q0thrd.execute-api.ap-southeast-2.amazonaws.com'
     enabled: true
   - key: test_school_1_id
-    value: "3x802914"
+    value: 3x802914
+    enabled: true
   - key: test_school_1_account_no
     value: ACC66267
+    enabled: true
   - key: test_school_1_contact_primary
     value: ian.newmarch+postman-bayside1@theresilienceproject.com.au
+    enabled: true
   - key: test_school_1_contact_billing
     value: ian.newmarch+postman-bayside2@theresilienceproject.com.au
+    enabled: true
   - key: test_school_1_contact_teacher
     value: ian.newmarch+postman-bayside3@theresilienceproject.com.au
+    enabled: true
   - key: test_school_2_id
-    value: "3x802915"
+    value: 3x802915
+    enabled: true
   - key: test_school_2_account_no
     value: ACC66268
+    enabled: true
   - key: test_school_2_contact_primary
     value: ian.newmarch+postman-northside1@theresilienceproject.com.au
+    enabled: true
   - key: test_school_2_contact_billing
     value: ian.newmarch+postman-northside2@theresilienceproject.com.au
+    enabled: true
   - key: test_school_2_contact_ambassador
     value: ian.newmarch+postman-northside3@theresilienceproject.com.au
+    enabled: true
   - key: test_school_3_id
-    value: "3x802916"
+    value: 3x802916
+    enabled: true
   - key: test_school_3_account_no
     value: ACC66269
+    enabled: true
   - key: test_school_3_contact_primary
     value: ian.newmarch+postman-riverside1@theresilienceproject.com.au
+    enabled: true
   - key: test_school_3_contact_billing
     value: ian.newmarch+postman-riverside2@theresilienceproject.com.au
+    enabled: true
   - key: test_school_4_id
-    value: "TODO"
+    value: TODO
+    enabled: true
   - key: test_school_4_account_no
     value: TODO
+    enabled: true
   - key: test_school_4_contact_primary
     value: ian.newmarch+postman-maddie1@theresilienceproject.com.au
+    enabled: true
   - key: test_school_5_id
-    value: "TODO"
+    value: TODO
+    enabled: true
   - key: test_school_5_account_no
     value: TODO
+    enabled: true
   - key: test_school_5_contact_primary
     value: ian.newmarch+postman-emma1@theresilienceproject.com.au
+    enabled: true
+  - key: test_event_id
+    value: ''
+    enabled: true
