@@ -28,7 +28,7 @@ class SubmitRegistrationHandler
      */
     public function handle(RegistrationRequest $request): bool
     {
-        $sourceForm = $request->sourceForm ?? 'Info Session Registration';
+        $sourceForm = $request->sourceForm ?? 'Info Session Registration 2026';
 
         $contact = $request->toContact();
         $organisation = $request->toOrganisation();

@@ -260,7 +260,7 @@ class SubmitRegistrationHandlerTest extends TestCase
         $regBody = $client->getFirstCallBody('registerContact');
         $this->assertArrayHasKey('replyTo', $regBody);
         $this->assertSame('2x300', $regBody['dealId']);
-        $this->assertSame('Info Session Registration', $regBody['source']);
+        $this->assertSame('Info Session Registration 2026', $regBody['source']);
     }
 
     public function test_registration_payload_includes_reply_to(): void
@@ -342,7 +342,7 @@ class SubmitRegistrationHandlerTest extends TestCase
 
         $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
         $this->assertArrayHasKey('sourceForm', $captureBody);
-        $this->assertSame('Info Session Registration', $captureBody['sourceForm']);
+        $this->assertSame('Info Session Registration 2026', $captureBody['sourceForm']);
     }
 
     public function test_custom_source_form_flows_through(): void
