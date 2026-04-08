@@ -4,6 +4,8 @@ School registrations are handled by `SchoolVTController.submit_event_registratio
 
 ## Info Session Registration
 
+> **Deprecated:** The v1 Info Session Registration flow is deprecated. Use `POST /api/v2/schools/registration` instead. See [v2 Schools Endpoints](../../v2/schools.md#post-apiv2schoolsregistration).
+
 When `source_form` is `Info Session Registration`:
 
 1. Calls `capture_customer_info()` to find or create the contact and organisation.

@@ -19,7 +19,7 @@ API v2 introduces a schools-specific URL structure with a DDD-lite architecture.
 |----------|--------|-----|-------------|
 | School Enquiry | POST | `/api/v2/schools/enquiry` | Submit a school enquiry |
 | School More Info | POST | `/api/v2/schools/more-info` | Request more info — registers for event or creates deal based on school size |
-| School Registration | POST | `/api/v2/schools/register` | Register for an event (info session, recording, Leading TRP, event confirmation) |
+| School Registration | POST | `/api/v2/schools/registration` | Register for a live info session (new schools get deal + event registration, existing schools get enquiry) |
 
 ---
 
@@ -177,79 +177,71 @@ or
 
 ---
 
-## POST /api/v2/schools/register
+## POST /api/v2/schools/registration
 
-Register a school contact for an event. Behaviour varies based on `source_form`:
+Register a school for a live information session. Captures customer info in CRM, then branches based on whether the school is new or existing.
 
-- **Info Session Registration** — Capture customer info, create deal (new schools), register for event
-- **Info Session Recording** — Same as above with 4-week close date
-- **Leading TRP Registration** — Capture customer info, update org with Leading TRP date
-- **Event Confirmation** — Confirm attendance (ambassador via `contact_id` or teacher/parent via contact details)
+> **Deprecates:** The v1 Info Session Registration flow (`POST /api/register.php` with `source_form=Info Session Registration`). Other v1 registration flows (Info Session Recording, Leading TRP Registration, Event Confirmation) remain on v1 for now.
 
 ### Request
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `contact_email` | string | Conditional | Contact's email (not needed for Ambassador Event Confirmation) |
-| `contact_first_name` | string | Conditional | Contact's first name |
-| `contact_last_name` | string | Conditional | Contact's last name |
+| `contact_email` | string | Yes | Contact's email address |
+| `contact_first_name` | string | Yes | Contact's first name |
+| `contact_last_name` | string | Yes | Contact's last name |
+| `event_id` | string | Yes | Vtiger event ID (with or without `18x` prefix — normalised automatically) |
 | `contact_phone` | string | No | Contact's phone number |
-| `contact_type` | string | No | Contact type (e.g. "Teacher") — used for Event Confirmation |
-| `contact_id` | string | Conditional | Existing contact ID (Ambassador Event Confirmation only) |
-| `school_account_no` | string | Conditional | School's Vtiger account number |
-| `school_name_other` | string | Conditional | New school name |
-| `school_name_other_selected` | string | Conditional | Flag for new school name |
+| `org_phone` | string | No | Organisation phone number |
+| `job_title` | string | No | Contact's job title |
+| `contact_type` | string | No | Contact type (e.g. "Teacher", "Principal") |
+| `contact_newsletter` | string | No | Newsletter opt-in |
+| `school_account_no` | string | Conditional | Existing school's Vtiger account number |
+| `school_name_other` | string | Conditional | New school name (when school is not in CRM) |
+| `school_name_other_selected` | string | Conditional | Flag indicating a new school name was entered |
 | `state` | string | No | Australian state for assignee routing |
-| `event_id` | string | Yes | Vtiger event ID (with or without `18x` prefix) |
-| `source_form` | string | Yes | One of: `Info Session Registration`, `Info Session Recording`, `Leading TRP Registration`, `Event Confirmation` |
-| `attendance_type` | string | No | e.g. "Attending Live" |
-| `event_name_display` | string | Conditional | Display name for Event Confirmation |
-| `num_of_students` | integer | No | Number of students |
+| `organisation_sub_type` | string | No | Organisation sub-type |
+| `num_of_students` | integer | No | Number of students at the school |
+| `num_of_employees` | integer | No | Number of employees |
+| `contact_lead_source` | string | No | Lead source for the contact |
+| `source_form` | string | No | Defaults to `"Info Session Registration 2026"` |
 
 ### Control Flow
 
 ```mermaid
 flowchart TD
-    A[POST /api/v2/schools/register] --> B[Get event details]
-    B --> C{source_form?}
+    A[POST /api/v2/schools/registration] --> GED["Get event details"]
+    GED --> B[Deactivate existing contacts]
+    B --> C[Capture customer info in CRM]
+    C --> D[Get organisation details]
+    D --> E[Update org assignee + sales events]
+    E --> F[Update contact assignee + forms completed]
+    F --> G{isNewSchool?}
 
-    C -->|Info Session Registration| D[capture_customer_info]
-    C -->|Info Session Recording| E[capture_customer_info]
-    C -->|Leading TRP Registration| F[capture_customer_info]
-    C -->|Event Confirmation| G{contact_id provided?}
+    G -->|Yes| H["getOrCreateDeal<br/>Stage: 'In Campaign'<br/>Rating: Hot<br/>Close: event date + 1 day"]
+    H --> I["updateDeal<br/>Set firstInfoSessionDate<br/>Advance stage → In Campaign<br/>Set rating: Hot"]
+    I --> J["registerContact<br/>with replyTo + dealId"]
 
-    D --> D1{isNewSchool?}
-    D1 -->|Yes| D2["getOrCreateDeal<br/>Stage: 'Considering'<br/>Close: event date + 1 day"]
-    D1 -->|No| D3["Create enquiry instead<br/>'Request for live Info Session'"]
-    D2 --> D4[updateDeal with<br/>firstInfoSessionDate]
-    D4 --> D5[registerContact<br/>with replyTo]
+    G -->|No| K["createEnquiry<br/>'Request for live Info Session'"]
 
-    E --> E1{isNewSchool?}
-    E1 -->|Yes| E2["getOrCreateDeal<br/>Stage: 'Considering'<br/>Close: +4 weeks"]
-    E1 -->|No| E3["Create enquiry instead<br/>'Request for Info Session Recording'"]
-    E2 --> E4[updateDeal]
-    E4 --> E5[registerContact<br/>with replyTo]
-
-    F --> F1["updateOrganisation<br/>leadingTrp = event datetime"]
-    F1 --> F2[registerContact]
-
-    G -->|Yes Ambassador| G1[getContactById]
-    G -->|No Teacher/Parent| G2["captureOtherContactInfo<br/>attendance_type = 'Attending Live'"]
-    G1 --> G3[createOrUpdateInvitation]
-    G2 --> G3
-    G3 --> G4[registerContact]
-
-    D3 --> Z["Response: {status: success}"]
-    D5 --> Z
-    E3 --> Z
-    E5 --> Z
-    F2 --> Z
-    G4 --> Z
+    J --> Z["Response: {status: success}"]
+    K --> Z
 
     style A fill:#4a90d9,color:#fff
-    style D2 fill:#f5a623,color:#fff
-    style E2 fill:#f5a623,color:#fff
+    style H fill:#f5a623,color:#fff
+    style I fill:#f5a623,color:#fff
+    style J fill:#7ed321,color:#fff
+    style K fill:#7ed321,color:#fff
 ```
+
+### Assignee Routing
+
+Same rules as [School Enquiry](#post-apiv2schoolsenquiry). Additionally, the `replyTo` field on the registration is set via `AssigneeRules::resolveRegistrationReplyTo()`:
+
+| State | Reply To |
+|-------|----------|
+| NSW, QLD | BRENDAN |
+| Other | LAURA |
 
 ### Response
 
@@ -263,11 +255,7 @@ or
 
 ### Scenarios
 
-1. **Info Session Registration (new school)** — Creates deal, updates with info session date, registers for event. → `Info Session Registration.request.yaml`
-2. **Info Session Registration (existing school)** — Creates enquiry "Request for live Info Session" instead of registering. No deal created.
-3. **Info Session Recording (new school)** — Creates deal with 4-week close, registers for event. → `Info Session Recording.request.yaml`
-4. **Info Session Recording (existing school)** — Creates enquiry "Request for Info Session Recording" instead.
-5. **Leading TRP Registration** — Updates org with Leading TRP event datetime, registers for event. → `Leading TRP Registration.request.yaml`
-6. **Event Confirmation (Ambassador)** — Looks up existing contact by ID, creates invitation, registers. → `Event Confirmation (Ambassador).request.yaml`
-7. **Event Confirmation (Teacher)** — Captures new contact, sets attendance to "Attending Live", creates invitation, registers. → `Event Confirmation (Teacher).request.yaml`
+1. **New school (VIC)** — Deal created with stage "In Campaign" + rating "Hot", deal updated with info session date, contact registered for event with replyTo=LAURA. → `v2 School Registration (New School).request.yaml`
+2. **New school (NSW)** — Same as above but replyTo=BRENDAN and assignee routing to BRENDAN. → `v2 School Registration (New School - NSW).request.yaml`
+3. **Existing school** — Enquiry created with body "Request for live Info Session". No deal created, no event registration. → `v2 School Registration (Existing School).request.yaml`
 
