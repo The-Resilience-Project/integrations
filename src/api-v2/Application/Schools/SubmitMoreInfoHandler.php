@@ -116,6 +116,14 @@ class SubmitMoreInfoHandler
             // 6b. Register contact for more-info event
             log_info('Step 6b: Registering contact for more-info event');
             $this->registerContactForEvent($contact, $captured->contactId, $sourceForm);
+
+            // 6c. Set contact lifecycle stage to Lead and status to Hot
+            log_info('Step 6c: Updating contact lifecycle stage and status');
+            $this->client->post('updateContactById', [
+                'contactId' => $captured->contactId,
+                'lifecycleStage' => 'Lead',
+                'contactStatus' => 'Hot',
+            ]);
         }
 
         log_info('All steps complete');

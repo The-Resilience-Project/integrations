@@ -259,8 +259,11 @@ class SubmitMoreInfoHandlerTest extends TestCase
 
         $handler->handle($this->makeRequest());
 
-        // Contact update should not be called since assignee matches and form already exists
-        $this->assertFalse($client->wasCalled('updateContactById'));
+        // Only lifecycle stage update should be called — forms-completed update is skipped
+        $calls = $client->getCallsTo('updateContactById');
+        $this->assertCount(1, $calls);
+        $this->assertArrayNotHasKey('contactLeadSource', $calls[0]['body']);
+        $this->assertSame('Lead', $calls[0]['body']['lifecycleStage']);
     }
 
     // ── Deal creation (>= 500 students) ─────────────────────────────
@@ -376,6 +379,38 @@ class SubmitMoreInfoHandlerTest extends TestCase
 
         $this->assertTrue($client->wasCalled('checkContactRegisteredForEvent'));
         $this->assertFalse($client->wasCalled('registerContact'));
+    }
+
+    // ── Contact lifecycle stage and status ─────────────────────────
+
+    public function test_sets_contact_lifecycle_stage_and_status_for_small_school(): void
+    {
+        $client = $this->makeClient();
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '200']));
+
+        $calls = $client->getCallsTo('updateContactById');
+        $lastCall = end($calls);
+        $this->assertSame('Lead', $lastCall['body']['lifecycleStage']);
+        $this->assertSame('Hot', $lastCall['body']['contactStatus']);
+    }
+
+    public function test_does_not_set_lifecycle_stage_for_large_school(): void
+    {
+        $client = $this->makeClient();
+        $client->setResponse(
+            'getOrgDetails',
+            StubVtigerWebhookClient::makeOrgDetailsResponse(assignedUserId: UserIds::MADDIE),
+        );
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '500']));
+
+        $calls = $client->getCallsTo('updateContactById');
+        foreach ($calls as $call) {
+            $this->assertArrayNotHasKey('lifecycleStage', $call['body']);
+        }
     }
 
     // ── No enquiry record ───────────────────────────────────────────
