@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/form_ids.php';
 
 /**
  * Theme functions and definitions
@@ -109,7 +110,7 @@ function ele_disable_page_title($return)
 add_filter('hello_elementor_page_title', 'ele_disable_page_title');
 
 // Date acceptance form
-add_filter('gform_pre_render_70', 'populate_date_acceptance');
+add_filter('gform_pre_render_' . FORM_DATE_ACCEPTANCE_2025, 'populate_date_acceptance');
 function populate_date_acceptance($form)
 {
     if (GFFormDisplay::get_current_page($form['id']) == 2) {
@@ -122,7 +123,7 @@ function populate_date_acceptance($form)
 }
 
 // Event confirmation form
-add_filter('gform_pre_render_72', 'populate_event_acceptance');
+add_filter('gform_pre_render_' . FORM_EVENT_CONFIRMATION_2025, 'populate_event_acceptance');
 function populate_event_acceptance($form)
 {
     if (GFFormDisplay::get_current_page($form['id']) == 2) {
@@ -135,25 +136,25 @@ function populate_event_acceptance($form)
 }
 
 // Populate 2025 school confirmation form fields
-add_filter('gform_pre_render_76', 'populate_deal_confirmed');
-add_filter('gform_pre_render_80', 'populate_deal_confirmed');
-add_filter('gform_pre_render_29', 'populate_deal_confirmed');
+add_filter('gform_pre_render_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026, 'populate_deal_confirmed');
+add_filter('gform_pre_render_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026, 'populate_deal_confirmed');
+add_filter('gform_pre_render_' . FORM_EARLY_YEARS_CONFIRMATION_2025, 'populate_deal_confirmed');
 function populate_deal_confirmed($form)
 {
     $form_id = $form['id'];
-    if ($form_id == 76) {
+    if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026) {
         $school_account_no_field = 'input_226';
         $school_name_field = 'input_229';
-        $deal_confirmed_input = '"#input_76_183"';
-    } elseif ($form_id == 80) {
+        $deal_confirmed_input = '"#input_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026 . '_183"';
+    } elseif ($form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
         $school_account_no_field = 'input_5';
         $school_name_field = 'input_8';
-        $deal_confirmed_input = '"#input_80_49"';
-    } elseif ($form_id == 29) {
-        $deal_confirmed_input = '"#input_29_183"';
+        $deal_confirmed_input = '"#input_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 . '_49"';
+    } elseif ($form_id == FORM_EARLY_YEARS_CONFIRMATION_2025) {
+        $deal_confirmed_input = '"#input_' . FORM_EARLY_YEARS_CONFIRMATION_2025 . '_183"';
     }
     if (GFFormDisplay::get_current_page($form_id) == 2) {
-        if ($form_id == 76 or $form_id == 80) {
+        if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026 or $form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
             $school_account_no = rgpost($school_account_no_field);
             $school_name = rgpost($school_name_field);
             $url;
@@ -189,13 +190,13 @@ function populate_deal_confirmed($form)
 						// deal_status
 						const dealConfirmed = ["Deal Won", "Closed INV"].includes(prepopulateData.deal_status) ? "YES" : "NO"
 						jQuery(dealConfirmedInput).val(dealConfirmed);
-						if(formId === 80){
+						if(formId === <?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>){
 							const freeTravel = prepopulateData.free_travel === "1" ? "YES" : "NO"
 							const f2f = prepopulateData.f2f ? "YES" : "NO"
 							const funded = prepopulateData.funded_years.includes("2026") ? "YES" : "NO"
-							jQuery("#input_80_61").val(freeTravel);
-							jQuery("#input_80_62").val(f2f);
-							jQuery("#input_80_118").val(funded);
+							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_61").val(freeTravel);
+							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_62").val(f2f);
+							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_118").val(funded);
 						}
 						jQuery(document).trigger('gform_post_render', [formId, 1]);
 					}
@@ -208,7 +209,7 @@ function populate_deal_confirmed($form)
     return $form;
 }
 
-add_filter('gform_progress_steps_86', 'add_one_more_step', 10, 3);
+add_filter('gform_progress_steps_' . FORM_LTRP_AND_CA_2026, 'add_one_more_step', 10, 3);
 function add_one_more_step($progress_steps, $form, $page)
 {
     $search = '</div>';
@@ -224,7 +225,7 @@ function add_one_more_step($progress_steps, $form, $page)
 }
 
 // culture assessment disable save and continue for first two pages
-add_filter('gform_savecontinue_link_86', function ($save_button, $form) {
+add_filter('gform_savecontinue_link_' . FORM_LTRP_AND_CA_2026, function ($save_button, $form) {
     $form_id            = $form['id'];
     // $button             = rgars( $form, 'save/button' );
     // $button['type']     = 'image';
@@ -238,7 +239,7 @@ add_filter('gform_savecontinue_link_86', function ($save_button, $form) {
 
 }, 10, 2);
 
-add_filter('gform_pre_render_86', 'populate_org_name_state_ltrp');
+add_filter('gform_pre_render_' . FORM_LTRP_AND_CA_2026, 'populate_org_name_state_ltrp');
 function populate_org_name_state_ltrp($form)
 {
     $form_id = $form['id'];
@@ -293,7 +294,7 @@ function populate_org_name_state_ltrp($form)
     return $form;
 }
 
-add_filter('gform_field_content_86', function ($field_content, $field) {
+add_filter('gform_field_content_' . FORM_LTRP_AND_CA_2026, function ($field_content, $field) {
     if ($field->id == 28) {
         return str_replace('fortnight', "<span class='emph-wording'>fortnight</span>", $field_content);
     }
@@ -354,7 +355,7 @@ add_filter('gform_field_content_86', function ($field_content, $field) {
     return $field_content;
 }, 10, 2);
 
-add_filter('gform_pre_render_63', 'populate_curric_form_data');
+add_filter('gform_pre_render_' . FORM_CURRICULUM_RESOURCE_ORDERING_2025, 'populate_curric_form_data');
 function populate_curric_form_data($form)
 {
     $form_id = $form['id'];
@@ -573,7 +574,7 @@ function populate_curric_form_data($form)
     return $form;
 }
 
-add_filter('gform_pre_render_89', 'populate_curric_form_data_2026');
+add_filter('gform_pre_render_' . FORM_CURRICULUM_RESOURCE_ORDERING_2026, 'populate_curric_form_data_2026');
 function populate_curric_form_data_2026($form)
 {
     $form_id = $form['id'];
@@ -836,7 +837,7 @@ function populate_curric_form_data_2026($form)
     return $form;
 }
 
-add_filter('gform_pre_render_69', 'calculate_shipping_for_spms');
+add_filter('gform_pre_render_' . FORM_SHIPPING_CALCULATOR, 'calculate_shipping_for_spms');
 function calculate_shipping_for_spms($form)
 {
     $form_id = $form['id'];
@@ -849,8 +850,8 @@ function calculate_shipping_for_spms($form)
     return $form;
 }
 
-add_filter('gform_validation_63', 'curric_ordering_validation');
-add_filter('gform_validation_89', 'curric_ordering_validation');
+add_filter('gform_validation_' . FORM_CURRICULUM_RESOURCE_ORDERING_2025, 'curric_ordering_validation');
+add_filter('gform_validation_' . FORM_CURRICULUM_RESOURCE_ORDERING_2026, 'curric_ordering_validation');
 function curric_ordering_validation($validation_result)
 {
     $form = $validation_result['form'];
@@ -940,7 +941,7 @@ function curric_ordering_validation($validation_result)
 
     }
 
-    if ($form['id'] === 63) {
+    if ($form['id'] === FORM_CURRICULUM_RESOURCE_ORDERING_2025) {
         $validation_result['form'] = $form;
         return $validation_result;
     }
@@ -1021,9 +1022,9 @@ function curric_ordering_validation($validation_result)
 
 
 // update new schools price page
-add_filter('gform_pre_render_76', 'new_schools_confirmation_pricing_page');
-add_filter('gform_pre_render_80', 'new_schools_confirmation_pricing_page');
-add_filter('gform_pre_render_29', 'new_schools_confirmation_pricing_page');
+add_filter('gform_pre_render_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026, 'new_schools_confirmation_pricing_page');
+add_filter('gform_pre_render_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026, 'new_schools_confirmation_pricing_page');
+add_filter('gform_pre_render_' . FORM_EARLY_YEARS_CONFIRMATION_2025, 'new_schools_confirmation_pricing_page');
 
 
 function new_schools_confirmation_pricing_page($form)
@@ -1033,11 +1034,11 @@ function new_schools_confirmation_pricing_page($form)
     $students_label = 'students';
     $using_journals = true;
     $using_planners = false;
-    if ($form_id == 76) {
+    if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026) {
         $total_page = 5;
         $engage_field = 221;
         $num_participating_students = rgpost('input_219');
-    } elseif ($form_id == 80) {
+    } elseif ($form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
         $total_page = 6;
         $engage_field = 54;
         $school_type = rgpost('input_117');
@@ -1065,7 +1066,7 @@ function new_schools_confirmation_pricing_page($form)
                 $num_participating_planner_students = rgpost('input_128');
             }
         }
-    } elseif ($form_id == 29) {
+    } elseif ($form_id == FORM_EARLY_YEARS_CONFIRMATION_2025) {
         $total_page = 4;
         $engage_field = 44;
         $num_participating_students = rgpost('input_210');
@@ -1090,7 +1091,7 @@ function new_schools_confirmation_pricing_page($form)
     return $form;
 }
 
-add_filter('gform_field_content_80', function ($field_content, $field) {
+add_filter('gform_field_content_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026, function ($field_content, $field) {
     if ($field->id == 127) {
         return str_replace('primary school', "<span class='emph-engage'>primary school</span>", $field_content);
     }
@@ -1102,7 +1103,7 @@ add_filter('gform_field_content_80', function ($field_content, $field) {
 }, 10, 2);
 
 
-add_filter('gform_pre_render_80', 'list_extend_options');
+add_filter('gform_pre_render_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026, 'list_extend_options');
 
 function list_extend_options($form)
 {
@@ -1309,7 +1310,7 @@ function validate_school_name_input($validation_result)
     $service_type = 'a school';
     $test_page = rgpost('gform_source_page_number_' . $_POST['gform_submit']) ? rgpost('gform_target_page_number_' . $_POST['gform_submit']) : 1;
 
-    if ($form_id == 51 and rgpost('gform_source_page_number_' . $_POST['gform_submit']) == 2) {
+    if ($form_id == FORM_ENQUIRIES and rgpost('gform_source_page_number_' . $_POST['gform_submit']) == 2) {
 
         ?> <script>console.log("--------(", "<?php echo rgpost('input_14') ?>")</script><?php
         // general enquiries form
@@ -1325,64 +1326,64 @@ function validate_school_name_input($validation_result)
         } else {
             return $validation_result;
         }
-    } elseif ($form_id == 53) {
+    } elseif ($form_id == FORM_SCHOOL_ENQUIRIES_CONFERENCES) {
         // school enquiries page
         $dropdown_name = '22';
         $checkbox_name = 'input_23_1';
-    } elseif ($form_id == 52) {
+    } elseif ($form_id == FORM_SCHOOL_INFO_SESSION_2026) {
         // info session page
         $dropdown_name = '10';
         $checkbox_name = 'input_11_1';
-    } elseif ($form_id == 55) {
+    } elseif ($form_id == FORM_SCHOOL_PRIZE_PACK) {
         // prize pack
         $dropdown_name = '5';
         $checkbox_name = 'input_7_1';
-    } elseif ($form_id == 51 and GFFormDisplay::get_current_page($form_id) == 2 and rgpost('input_14') == 'School') {
+    } elseif ($form_id == FORM_ENQUIRIES and GFFormDisplay::get_current_page($form_id) == 2 and rgpost('input_14') == 'School') {
         // All enquiries page
         $dropdown_name = '21';
         $checkbox_name = 'input_22_1';
-    } elseif ($form_id == 76 and GFFormDisplay::get_current_page($form_id) == 1) {
+    } elseif ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026 and GFFormDisplay::get_current_page($form_id) == 1) {
         // new school confirmation page
         $dropdown_name = '226';
         $checkbox_name = 'input_227_1';
-    } elseif ($form_id == 80 and GFFormDisplay::get_current_page($form_id) == 1) {
+    } elseif ($form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 and GFFormDisplay::get_current_page($form_id) == 1) {
         // existing school confirmation page
         $dropdown_name = '5';
         $checkbox_name = 'input_7_1';
-    } elseif ($form_id == 61 and GFFormDisplay::get_current_page($form_id) == 1) {
+    } elseif ($form_id == FORM_LEADING_TRP_SESSIONS and GFFormDisplay::get_current_page($form_id) == 1) {
         // leading trp page
         $dropdown_name = '10';
         $checkbox_name = 'input_11_1';
-    } elseif ($form_id == 60) {
+    } elseif ($form_id == FORM_WORKPLACE_QUALIFIER) {
         // workplace qualifier page
         $dropdown_name = '12';
         $checkbox_name = 'input_13_1';
         $service_type = 'an organisation';
-    } elseif ($form_id == 29) {
+    } elseif ($form_id == FORM_EARLY_YEARS_CONFIRMATION_2025) {
         // ey conf page
         $dropdown_name = '233';
         $checkbox_name = 'input_235_1';
         $service_type = 'a service';
-    } elseif ($form_id == 67) {
+    } elseif ($form_id == FORM_EY_INFO_SESSION) {
         // ey info session reg
         $dropdown_name = '10';
         $checkbox_name = 'input_11_1';
         $service_type = 'a service';
-    } elseif ($form_id == 75) {
+    } elseif ($form_id == FORM_SCHOOL_INFO_SESSION_RECORDING_2026) {
         // school info session recording
         $dropdown_name = '10';
         $checkbox_name = 'input_11_1';
-    } elseif ($form_id == 77) {
+    } elseif ($form_id == FORM_WORKPLACE_WEBINAR_RECORDING) {
         // workplace webinar recording
         $dropdown_name = '20';
         $checkbox_name = 'input_21_1';
         $service_type = 'an organisation';
-    } elseif ($form_id == 81) {
+    } elseif ($form_id == FORM_EY_PRIZE_PACK) {
         // ey prize pack
         $dropdown_name = '5';
         $checkbox_name = 'input_7_1';
         $service_type = 'a service';
-    } elseif ($form_id == 82) {
+    } elseif ($form_id == FORM_EY_ENQUIRIES_CONFERENCES) {
         // ey conference enquiry
         $dropdown_name = '22';
         $checkbox_name = 'input_23_1';
@@ -1435,10 +1436,10 @@ function endo_set_default_quantity()
 }
 
 // Populate School Info Session Times
-add_filter('gform_pre_render_52', 'populate_info_sessions');
-add_filter('gform_pre_validation_52', 'populate_info_sessions');
-add_filter('gform_pre_submission_filter_52', 'populate_info_sessions');
-add_filter('gform_admin_pre_render_52', 'populate_info_sessions');
+add_filter('gform_pre_render_' . FORM_SCHOOL_INFO_SESSION_2026, 'populate_info_sessions');
+add_filter('gform_pre_validation_' . FORM_SCHOOL_INFO_SESSION_2026, 'populate_info_sessions');
+add_filter('gform_pre_submission_filter_' . FORM_SCHOOL_INFO_SESSION_2026, 'populate_info_sessions');
+add_filter('gform_admin_pre_render_' . FORM_SCHOOL_INFO_SESSION_2026, 'populate_info_sessions');
 function populate_info_sessions($form)
 {
     foreach ($form['fields'] as &$field) {
@@ -1454,7 +1455,7 @@ function populate_info_sessions($form)
 				dataType: "JSON",
 				success: function(result){
 					if(result.optionContent) {
-						jQuery('#input_52_5').append(result.optionContent);
+						jQuery('#input_<?php echo FORM_SCHOOL_INFO_SESSION_2026 ?>_5').append(result.optionContent);
 					}
 				}
 			});
@@ -1467,10 +1468,10 @@ function populate_info_sessions($form)
 }
 
 // Populate Leading TRP
-add_filter('gform_pre_render_61', 'populate_leading_trp_sessions');
-add_filter('gform_pre_validation_61', 'populate_leading_trp_sessions');
-add_filter('gform_pre_submission_filter_61', 'populate_leading_trp_sessions');
-add_filter('gform_admin_pre_render_61', 'populate_leading_trp_sessions');
+add_filter('gform_pre_render_' . FORM_LEADING_TRP_SESSIONS, 'populate_leading_trp_sessions');
+add_filter('gform_pre_validation_' . FORM_LEADING_TRP_SESSIONS, 'populate_leading_trp_sessions');
+add_filter('gform_pre_submission_filter_' . FORM_LEADING_TRP_SESSIONS, 'populate_leading_trp_sessions');
+add_filter('gform_admin_pre_render_' . FORM_LEADING_TRP_SESSIONS, 'populate_leading_trp_sessions');
 function populate_leading_trp_sessions($form)
 {
     foreach ($form['fields'] as &$field) {
@@ -1492,10 +1493,10 @@ function populate_leading_trp_sessions($form)
 }
 
 // Populate EY info sessions
-add_filter('gform_pre_render_67', 'populate_ey_info_sessions');
-add_filter('gform_pre_validation_67', 'populate_ey_info_sessions');
-add_filter('gform_pre_submission_filter_67', 'populate_ey_info_sessions');
-add_filter('gform_admin_pre_render_67', 'populate_ey_info_sessions');
+add_filter('gform_pre_render_' . FORM_EY_INFO_SESSION, 'populate_ey_info_sessions');
+add_filter('gform_pre_validation_' . FORM_EY_INFO_SESSION, 'populate_ey_info_sessions');
+add_filter('gform_pre_submission_filter_' . FORM_EY_INFO_SESSION, 'populate_ey_info_sessions');
+add_filter('gform_admin_pre_render_' . FORM_EY_INFO_SESSION, 'populate_ey_info_sessions');
 function populate_ey_info_sessions($form)
 {
     foreach ($form['fields'] as &$field) {
