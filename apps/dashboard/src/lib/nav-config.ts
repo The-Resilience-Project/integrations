@@ -49,6 +49,7 @@ export const NAV_CONFIG: NavEntry[] = [
   {
     label: 'Reference',
     items: [
+      { label: 'Monitor', href: '/monitor', icon: Activity },
       { label: 'Pipeline', href: '/pipeline', icon: Layers },
       { label: 'Forms', href: '/forms', icon: FileText },
       { label: 'Docs', href: '/docs', icon: BookOpen },
