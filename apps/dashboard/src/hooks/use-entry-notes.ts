@@ -10,7 +10,7 @@ export function useEntryNotes(entryId: string | null) {
   return useQuery<EntryNotesResponse | null>({
     queryKey: ['gf-entry-notes', entryId],
     queryFn: async () => {
-      const res = await fetch(`/api/gf/entries/${entryId}/notes`);
+      const res = await fetch(`/api/gf/entries/detail/${entryId}/notes`);
       if (res.status === 503) return null;
       if (!res.ok) throw new Error(`Failed to fetch notes for entry ${entryId}`);
       return res.json();

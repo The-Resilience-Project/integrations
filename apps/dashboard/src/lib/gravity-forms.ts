@@ -131,7 +131,16 @@ export interface EntryNote {
 }
 
 export async function getEntryNotes(entryId: number): Promise<EntryNote[]> {
-  const data = await gfFetch<Record<string, EntryNote>>(`/entries/${entryId}/notes`);
+  // Use cache: 'no-store' — note responses are small but numerous in bulk operations,
+  // and Next.js fetch cache can return stale data for dynamic per-entry requests.
+  const response = await fetch(`${GF_BASE_URL}/entries/${entryId}/notes`, {
+    headers: { Authorization: getAuthHeader() },
+    cache: 'no-store',
+  });
+  if (!response.ok) {
+    throw new Error(`GF API error: ${response.status} ${response.statusText}`);
+  }
+  const data = await response.json() as Record<string, EntryNote>;
   return Object.values(data);
 }
 
@@ -174,21 +183,31 @@ export async function getRecentWebhookErrors(): Promise<WebhookError[]> {
   }
 
   const forms = await listForms();
-  const activeForms = forms.filter((f) => f.is_active === '1');
+
+  // Use direct fetch with cache: 'no-store' for bulk operations —
+  // Next.js fetch cache causes issues with many per-entry requests.
+  const headers = { Authorization: getAuthHeader() };
 
   const errorsByForm = await Promise.all(
-    activeForms.map(async (form) => {
+    forms.map(async (form) => {
       try {
-        const { entries } = await getEntries({
-          formId: form.id,
-          pageSize: 5,
-          currentPage: 1,
-        });
+        const eRes = await fetch(
+          `${GF_BASE_URL}/entries?form_ids[]=${Number(form.id)}&paging[page_size]=5&sorting[key]=date_created&sorting[direction]=DESC`,
+          { headers, cache: 'no-store' },
+        );
+        if (!eRes.ok) return [];
+        const { entries } = await eRes.json() as { entries: GFEntry[] };
 
         const errorsByEntry = await Promise.all(
           entries.map(async (entry) => {
             try {
-              const notes = await getEntryNotes(Number(entry.id));
+              const nRes = await fetch(
+                `${GF_BASE_URL}/entries/${entry.id}/notes`,
+                { headers, cache: 'no-store' },
+              );
+              if (!nRes.ok) return [];
+              const notesData = await nRes.json() as Record<string, EntryNote>;
+              const notes = Object.values(notesData);
               return notes
                 .filter(
                   (note) =>
@@ -207,7 +226,7 @@ export async function getRecentWebhookErrors(): Promise<WebhookError[]> {
                       : note.value;
 
                   return {
-                    formId: form.id,
+                    formId: Number(form.id),
                     formTitle: form.title,
                     entryId: entry.id,
                     feedName,
