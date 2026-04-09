@@ -368,3 +368,37 @@ export function getAllPipelines(): PipelineEntry[] {
 export function getAllPipelineEntries(): [string, PipelineEntry][] {
   return Object.entries(PIPELINE_MAP);
 }
+
+/* ── Journey routing helpers ─────────────────────────────────────── */
+
+export type JourneySlug = 'schools' | 'early-years' | 'workplaces' | 'shared';
+
+export interface JourneyConfig {
+  slug: JourneySlug;
+  label: string;
+  description: string;
+}
+
+export const JOURNEYS: JourneyConfig[] = [
+  { slug: 'schools', label: 'Schools', description: 'School partnership program flows' },
+  { slug: 'early-years', label: 'Early Years', description: 'Early years program flows' },
+  { slug: 'workplaces', label: 'Workplaces', description: 'Workplace program flows' },
+  { slug: 'shared', label: 'Shared', description: 'Cross-program flows' },
+];
+
+export function getJourney(slug: string): JourneyConfig | null {
+  return JOURNEYS.find((j) => j.slug === slug) ?? null;
+}
+
+export function getFlowsForJourney(journeySlug: JourneySlug): [string, PipelineEntry][] {
+  const journeyMap: Record<JourneySlug, PipelineEntry['journey'][]> = {
+    schools: ['schools'],
+    'early-years': [],
+    workplaces: [],
+    shared: ['enquiries', 'conference'],
+  };
+  const journeys = journeyMap[journeySlug];
+  return Object.entries(PIPELINE_MAP).filter(
+    ([, entry]) => journeys.includes(entry.journey),
+  );
+}

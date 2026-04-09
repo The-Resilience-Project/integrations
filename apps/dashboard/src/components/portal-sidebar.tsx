@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PanelLeftClose, PanelLeft, X } from 'lucide-react';
-import { NAV_SECTIONS } from '@/lib/nav-config';
+import { NAV_CONFIG, isGroup } from '@/lib/nav-config';
+import type { NavItem, NavEntry } from '@/lib/nav-config';
 import { SearchBar } from '@/components/search-bar';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { cn } from '@/lib/utils';
@@ -22,14 +23,58 @@ export function PortalSidebar({
   onMobileClose,
 }: PortalSidebarProps) {
   const pathname = usePathname();
+  const showLabels = !collapsed || mobileOpen;
+
+  function renderNavItem(item: NavItem) {
+    const isActive =
+      pathname === item.href || pathname.startsWith(item.href + '/');
+
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={onMobileClose}
+        className={cn(
+          'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
+          isActive
+            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+            : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+        )}
+        title={!showLabels ? item.label : undefined}
+      >
+        <item.icon className="h-4 w-4 shrink-0" />
+        {showLabels && <span>{item.label}</span>}
+      </Link>
+    );
+  }
+
+  function renderEntry(entry: NavEntry, index: number) {
+    if (!isGroup(entry)) {
+      return renderNavItem(entry);
+    }
+
+    return (
+      <div key={entry.label} className={index > 0 ? 'pt-2' : ''}>
+        {showLabels && (
+          <p className="px-2.5 pb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/50">
+            {entry.label}
+          </p>
+        )}
+        {!showLabels && index > 0 && (
+          <div className="mx-2 mb-1 border-t border-sidebar-border" />
+        )}
+        <div className="space-y-0.5">
+          {entry.items.map((item) => renderNavItem(item))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <aside
       className={cn(
         'fixed inset-y-0 left-0 z-40 flex flex-col border-r border-sidebar-border bg-sidebar transition-all duration-200',
-        // Desktop: respect collapsed state
         collapsed ? 'md:w-[52px]' : 'md:w-[220px]',
-        // Mobile: always full width when open, hidden when closed
         mobileOpen ? 'w-[260px] translate-x-0' : '-translate-x-full md:translate-x-0',
       )}
     >
@@ -51,7 +96,7 @@ export function PortalSidebar({
             />
           </svg>
         </div>
-        {(!collapsed || mobileOpen) && (
+        {showLabels && (
           <div className="flex flex-col flex-1">
             <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">
               TRP Dev Portal
@@ -61,7 +106,6 @@ export function PortalSidebar({
             </span>
           </div>
         )}
-        {/* Mobile close button */}
         {mobileOpen && (
           <button
             onClick={onMobileClose}
@@ -80,32 +124,10 @@ export function PortalSidebar({
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-2 py-2">
-        {NAV_SECTIONS.map((section) => {
-          const isActive =
-            pathname === section.href ||
-            pathname.startsWith(section.href + '/');
-
-          return (
-            <Link
-              key={section.href}
-              href={section.href}
-              onClick={onMobileClose}
-              className={cn(
-                'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                  : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
-              )}
-              title={collapsed && !mobileOpen ? section.label : undefined}
-            >
-              <section.icon className="h-4 w-4 shrink-0" />
-              {(!collapsed || mobileOpen) && <span>{section.label}</span>}
-            </Link>
-          );
-        })}
+        {NAV_CONFIG.map((entry, i) => renderEntry(entry, i))}
       </nav>
 
-      {/* Footer — theme toggle + collapse */}
+      {/* Footer */}
       <div className="border-t border-sidebar-border p-2 space-y-1">
         <ThemeToggle collapsed={collapsed && !mobileOpen} />
         <button
