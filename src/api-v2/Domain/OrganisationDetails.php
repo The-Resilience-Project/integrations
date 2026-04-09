@@ -14,6 +14,7 @@ class OrganisationDetails
         public readonly string $confirmationStatus2024,
         public readonly string $confirmationStatus2025,
         public readonly string $confirmationStatus2026,
+        public readonly string $yearsWithTrp = '',
     ) {
     }
 
@@ -27,6 +28,7 @@ class OrganisationDetails
             confirmationStatus2024: $this->confirmationStatus2024,
             confirmationStatus2025: $this->confirmationStatus2025,
             confirmationStatus2026: $this->confirmationStatus2026,
+            yearsWithTrp: $this->yearsWithTrp,
         );
     }
 }

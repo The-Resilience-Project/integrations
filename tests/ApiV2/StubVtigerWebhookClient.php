@@ -124,6 +124,7 @@ class StubVtigerWebhookClient implements VtigerWebhookClientInterface
         string $assignedUserId = '19x1',
         string $salesEvents = '',
         string $confirmationStatus2026 = '',
+        string $yearsWithTrp = '',
     ): object {
         return (object) [
             'result' => [
@@ -132,7 +133,7 @@ class StubVtigerWebhookClient implements VtigerWebhookClientInterface
                     'assigned_user_id' => $assignedUserId,
                     'cf_accounts_2025salesevents' => $salesEvents,
                     'cf_accounts_freetravel' => '',
-                    'cf_accounts_yearswithtrp' => '',
+                    'cf_accounts_yearswithtrp' => $yearsWithTrp,
                     'cf_accounts_2024inspire' => '',
                     'cf_accounts_2025inspire' => '',
                     'cf_accounts_2025confirmationstatus' => '',

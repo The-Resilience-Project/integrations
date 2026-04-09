@@ -72,6 +72,7 @@ class CustomerService
             confirmationStatus2024: $org->cf_accounts_2024confirmationstatus ?? '',
             confirmationStatus2025: $org->cf_accounts_2025confirmationstatus ?? '',
             confirmationStatus2026: $org->cf_accounts_2026confirmationstatus ?? '',
+            yearsWithTrp: $org->cf_accounts_yearswithtrp ?? '',
         );
     }
 

@@ -1,0 +1,28 @@
+$kind: http-request
+name: v2 School Confirmation (Standard)
+url: "{{base_url}}/api/v2/schools/confirm"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: >-
+    {
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "job_title": "Wellbeing Coordinator",
+        "school_account_no": "{{test_school_1_account_no}}",
+        "state": "VIC",
+        "address": "45 Collins Street",
+        "suburb": "Melbourne",
+        "postcode": "3000",
+        "participating_num_of_students": "320",
+        "different_billing_contact": "No",
+        "mental_health_funding": "No",
+        "engage": "Journals",
+        "inspire": "Inspire 1",
+        "selected_year_levels": ["Foundation", "Year 1", "Year 2"]
+    }
+order: 1775533662223
