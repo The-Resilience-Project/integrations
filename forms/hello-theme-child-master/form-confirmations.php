@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Confirmation Forms (76, 80, 29)
+ * Confirmation Forms (76, 80, 29, 93)
  *
  * Deal prepopulation, pricing page logic, field content filters,
  * and extend options for school and early years confirmation forms.
@@ -16,15 +16,16 @@ require_once __DIR__ . '/form_fields.php';
 
 // Populate school confirmation form fields
 add_filter('gform_pre_render_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026, 'populate_deal_confirmed');
+add_filter('gform_pre_render_' . FORM_NEW_SCHOOLS_CONFIRMATION_2027, 'populate_deal_confirmed');
 add_filter('gform_pre_render_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026, 'populate_deal_confirmed');
 add_filter('gform_pre_render_' . FORM_EARLY_YEARS_CONFIRMATION_2025, 'populate_deal_confirmed');
 function populate_deal_confirmed($form)
 {
     $form_id = $form['id'];
-    if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026) {
+    if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026 or $form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2027) {
         $school_account_no_field = 'input_' . FIELD_NEW_CONF_SELECT_SCHOOL;
         $school_name_field = 'input_' . FIELD_NEW_CONF_SCHOOL_NAME;
-        $deal_confirmed_input = '"#input_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026 . '_' . FIELD_NEW_CONF_DEAL_CONFIRMED . '"';
+        $deal_confirmed_input = '"#input_' . $form_id . '_' . FIELD_NEW_CONF_DEAL_CONFIRMED . '"';
     } elseif ($form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
         $school_account_no_field = 'input_' . FIELD_EXIST_CONF_SELECT_SCHOOL;
         $school_name_field = 'input_' . FIELD_EXIST_CONF_SCHOOL_NAME;
@@ -33,7 +34,7 @@ function populate_deal_confirmed($form)
         $deal_confirmed_input = '"#input_' . FORM_EARLY_YEARS_CONFIRMATION_2025 . '_' . FIELD_EY_CONF_DEAL_CONFIRMED . '"';
     }
     if (GFFormDisplay::get_current_page($form_id) == 2) {
-        if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026 or $form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
+        if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026 or $form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2027 or $form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
             $school_account_no = rgpost($school_account_no_field);
             $school_name = rgpost($school_name_field);
             $url;
@@ -89,6 +90,7 @@ function populate_deal_confirmed($form)
  *------------------------------------------------------------------------*/
 
 add_filter('gform_pre_render_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026, 'new_schools_confirmation_pricing_page');
+add_filter('gform_pre_render_' . FORM_NEW_SCHOOLS_CONFIRMATION_2027, 'new_schools_confirmation_pricing_page');
 add_filter('gform_pre_render_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026, 'new_schools_confirmation_pricing_page');
 add_filter('gform_pre_render_' . FORM_EARLY_YEARS_CONFIRMATION_2025, 'new_schools_confirmation_pricing_page');
 
@@ -100,7 +102,7 @@ function new_schools_confirmation_pricing_page($form)
     $students_label = 'students';
     $using_journals = true;
     $using_planners = false;
-    if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026) {
+    if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026 or $form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2027) {
         $total_page = 5;
         $engage_field = FIELD_NEW_CONF_ENGAGE;
         $num_participating_students = rgpost('input_' . FIELD_NEW_CONF_NUM_STUDENTS);

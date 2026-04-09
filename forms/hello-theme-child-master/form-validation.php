@@ -39,8 +39,11 @@ function validate_school_name_input($validation_result)
         $form_field_map = [
             FORM_SCHOOL_ENQUIRIES_CONFERENCES      => ['dropdown' => '22',  'checkbox' => 'input_23_1'],
             FORM_SCHOOL_INFO_SESSION_2026           => ['dropdown' => '10',  'checkbox' => 'input_11_1'],
+            FORM_SCHOOL_INFO_SESSION_2027           => ['dropdown' => '10',  'checkbox' => 'input_11_1'],
+            FORM_MORE_INFO_REQUEST_2027             => ['dropdown' => '10',  'checkbox' => 'input_11_1'],
             FORM_SCHOOL_PRIZE_PACK                  => ['dropdown' => '5',   'checkbox' => 'input_7_1'],
             FORM_NEW_SCHOOLS_CONFIRMATION_2026      => ['dropdown' => '226', 'checkbox' => 'input_227_1', 'page' => 1],
+            FORM_NEW_SCHOOLS_CONFIRMATION_2027      => ['dropdown' => '226', 'checkbox' => 'input_227_1', 'page' => 1],
             FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 => ['dropdown' => '5',   'checkbox' => 'input_7_1',   'page' => 1],
             FORM_LEADING_TRP_SESSIONS               => ['dropdown' => '10',  'checkbox' => 'input_11_1',  'page' => 1],
             FORM_EARLY_YEARS_CONFIRMATION_2025      => ['dropdown' => '233', 'checkbox' => 'input_235_1', 'service_type' => 'a service'],

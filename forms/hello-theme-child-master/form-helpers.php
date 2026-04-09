@@ -46,9 +46,12 @@ function populate_sessions_from_api($form, $field_id, $api_type = null)
     return $form;
 }
 
-// School Info Sessions
+// School Info Sessions (2026 + 2027)
 foreach (['gform_pre_render_', 'gform_pre_validation_', 'gform_pre_submission_filter_', 'gform_admin_pre_render_'] as $hook) {
     add_filter($hook . FORM_SCHOOL_INFO_SESSION_2026, function ($form) {
+        return populate_sessions_from_api($form, 5);
+    });
+    add_filter($hook . FORM_SCHOOL_INFO_SESSION_2027, function ($form) {
         return populate_sessions_from_api($form, 5);
     });
 }
