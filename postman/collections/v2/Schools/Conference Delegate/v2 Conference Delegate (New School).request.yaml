@@ -1,0 +1,21 @@
+$kind: http-request
+name: v2 Conference Delegate (New School)
+url: "{{base_url}}/api/v2/schools/conference-delegate"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: >-
+    {
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "Test Primary",
+        "contact_last_name": "One",
+        "contact_phone": "0400000000",
+        "school_name_other": "POSTMAN TEST - Bayside Primary",
+        "school_name_other_selected": "1",
+        "state": "VIC",
+        "num_of_students": "320",
+        "source_form": "NSWPDPN Delegate 2026"
+    }
+order: 1963458797685571

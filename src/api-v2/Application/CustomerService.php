@@ -150,6 +150,29 @@ class CustomerService
     }
 
     /**
+     * Mark the organisation as a 2026 Lead if it has no existing confirmation status.
+     */
+    public function markOrgAsLead(OrganisationDetails $orgDetails): void
+    {
+        if ($orgDetails->confirmationStatus2026 !== '') {
+            log_info('markOrgAsLead: Organisation already has 2026 status, skipping', [
+                'organisationId' => $orgDetails->organisationId,
+                'confirmationStatus2026' => $orgDetails->confirmationStatus2026,
+            ]);
+
+            return;
+        }
+
+        $requestBody = [
+            'organisationId' => $orgDetails->organisationId,
+            'organisation2026Status' => 'Lead',
+        ];
+
+        log_info('markOrgAsLead: Calling updateOrganisation', $requestBody);
+        $this->client->post('updateOrganisation', $requestBody);
+    }
+
+    /**
      * Build the customer info payload for Vtiger.
      *
      * @return array<string, mixed>

@@ -275,6 +275,24 @@ functions:
                 path: /api/v2/schools/confirm
                 method: POST
 
+    v2_schools_conference_delegate:
+        handler: src/api-v2/endpoints/schools/conference-delegate.php
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/conference-delegate
+                method: POST
+
+    v2_schools_conference_prize_pack:
+        handler: src/api-v2/endpoints/schools/conference-prize-pack.php
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/conference-prize-pack
+                method: POST
+
     # Webhook endpoints
     woocommerce_order:
         handler: src/Webhooks/Order.php

@@ -20,6 +20,8 @@ API v2 introduces a schools-specific URL structure with a DDD-lite architecture.
 | School Enquiry | POST | `/api/v2/schools/enquiry` | Submit a school enquiry |
 | School More Info | POST | `/api/v2/schools/more-info` | Request more info — registers for event or creates deal based on school size |
 | School Registration | POST | `/api/v2/schools/registration` | Register for a live info session (new schools get deal + event registration, existing schools get enquiry) |
+| Conference Delegate | POST | `/api/v2/schools/conference-delegate` | Capture a conference delegate's details in CRM |
+| Conference Prize Pack | POST | `/api/v2/schools/conference-prize-pack` | Capture a conference prize pack recipient's details in CRM |
 
 ---
 
@@ -259,3 +261,103 @@ or
 2. **New school (NSW)** — Same as above but replyTo=BRENDAN and assignee routing to BRENDAN. → `v2 School Registration (New School - NSW).request.yaml`
 3. **Existing school** — Enquiry created with body "Request for live Info Session". No deal created, no event registration. → `v2 School Registration (Existing School).request.yaml`
 
+---
+
+## POST /api/v2/schools/conference-delegate
+
+Capture a conference delegate's details in CRM. Creates or updates the contact and organisation, routes assignees, tracks the source form, and marks the organisation as a 2026 Lead if not already marked.
+
+> **v1 equivalent:** Uses the same business logic as `POST /api/prize_pack.php` with `source_form` set to a delegate-specific value (e.g. "NSWPDPN Delegate 2026"). This v2 endpoint provides a dedicated URL for clarity.
+
+### Request
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `contact_email` | string | Yes | Contact's email address |
+| `contact_first_name` | string | Yes | Contact's first name |
+| `contact_last_name` | string | Yes | Contact's last name |
+| `contact_phone` | string | No | Contact's phone number |
+| `org_phone` | string | No | Organisation phone number |
+| `job_title` | string | No | Contact's job title |
+| `contact_type` | string | No | Contact type (e.g. "Teacher", "Principal") |
+| `contact_newsletter` | string | No | Newsletter opt-in |
+| `school_account_no` | string | Conditional | Existing school's Vtiger account number |
+| `school_name_other` | string | Conditional | New school name (when school is not in CRM) |
+| `school_name_other_selected` | string | Conditional | Flag indicating a new school name was entered |
+| `state` | string | No | Australian state for assignee routing |
+| `organisation_sub_type` | string | No | Organisation sub-type |
+| `num_of_students` | integer | No | Number of students at the school |
+| `num_of_employees` | integer | No | Number of employees |
+| `contact_lead_source` | string | No | Lead source for the contact |
+| `source_form` | string | No | Defaults to `"Conference Delegate 2026"`. Override for conference-specific values (e.g. "NSWPDPN Delegate 2026") |
+
+### Control Flow
+
+```mermaid
+flowchart TD
+    A[POST /api/v2/schools/conference-delegate] --> B[Deactivate existing contacts]
+    B --> C[Capture customer info in CRM]
+    C --> D[Get organisation details]
+    D --> E[Update org assignee + sales events]
+    E --> F[Update contact assignee + forms completed]
+    F --> G{confirmationStatus2026 empty?}
+
+    G -->|Yes| H["Mark org as Lead<br/>organisation2026Status = 'Lead'"]
+    G -->|No| I[Skip — already marked]
+
+    H --> Z["Response: {status: success}"]
+    I --> Z
+
+    style A fill:#4a90d9,color:#fff
+    style H fill:#f5a623,color:#fff
+```
+
+### Assignee Routing
+
+Same rules as [School Enquiry](#post-apiv2schoolsenquiry).
+
+### Response
+
+```json
+{"status": "success"}
+```
+or
+```json
+{"status": "fail", "message": "Error processing school conference delegate: ..."}
+```
+
+### Scenarios
+
+1. **Existing school delegate** — Contact captured with existing account number, org and contact assignees updated, source form tracked, org marked as Lead. → `v2 Conference Delegate (Existing School).request.yaml`
+2. **New school delegate** — New school name provided, contact captured with organisation name, custom source form override. → `v2 Conference Delegate (New School).request.yaml`
+
+---
+
+## POST /api/v2/schools/conference-prize-pack
+
+Capture a conference prize pack recipient's details in CRM. Identical business logic to [Conference Delegate](#post-apiv2schoolsconference-delegate) but with a different default `source_form`.
+
+> **v1 equivalent:** `POST /api/prize_pack.php` with `source_form=Prize Pack`.
+
+### Request
+
+Same fields as [Conference Delegate](#post-apiv2schoolsconference-delegate). The only difference is the default `source_form` value: `"Prize Pack 2026"`.
+
+### Control Flow
+
+Same as [Conference Delegate](#post-apiv2schoolsconference-delegate).
+
+### Response
+
+```json
+{"status": "success"}
+```
+or
+```json
+{"status": "fail", "message": "Error processing school conference prize pack: ..."}
+```
+
+### Scenarios
+
+1. **Existing school prize pack** — Contact captured with existing account number. → `v2 Prize Pack (Existing School).request.yaml`
+2. **New school prize pack** — New school name provided. → `v2 Prize Pack (New School).request.yaml`
