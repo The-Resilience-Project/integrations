@@ -11,6 +11,8 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { useGFEntry } from '@/hooks/use-gf-entry';
+import { useEntryNotes } from '@/hooks/use-entry-notes';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import type { FormField } from '@/lib/types';
 
 interface EntryDetailDrawerProps {
@@ -27,9 +29,13 @@ export function EntryDetailDrawer({
   onOpenChange,
 }: EntryDetailDrawerProps) {
   const { data, isLoading } = useGFEntry(open ? entryId : null);
+  const { data: notesData } = useEntryNotes(open ? entryId : null);
   const [showRaw, setShowRaw] = useState(false);
 
   const entry = data?.entry;
+  const webhookNotes = (notesData?.notes ?? []).filter(
+    (n) => n.note_type === 'gravityformswebhooks',
+  );
 
   // Build field values from entry, matching field IDs to labels
   const fieldValues = entry
@@ -116,6 +122,32 @@ export function EntryDetailDrawer({
                 </dl>
               ) : (
                 <p className="text-xs text-muted-foreground">No field data available.</p>
+              )}
+
+              {/* Webhook status */}
+              {webhookNotes.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Webhook Status
+                  </p>
+                  {webhookNotes.map((note) => (
+                    <div
+                      key={note.id}
+                      className={`flex items-start gap-2 rounded-lg border p-2.5 text-xs ${
+                        note.sub_type === 'error'
+                          ? 'border-[var(--rose-accent)]/20 bg-[var(--rose-accent)]/5'
+                          : 'border-[var(--teal-accent)]/20 bg-[var(--teal-accent)]/5'
+                      }`}
+                    >
+                      {note.sub_type === 'error' ? (
+                        <AlertTriangle className="h-3.5 w-3.5 text-[var(--rose-accent)] shrink-0 mt-0.5" />
+                      ) : (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-[var(--teal-accent)] shrink-0 mt-0.5" />
+                      )}
+                      <span className="break-words">{note.value}</span>
+                    </div>
+                  ))}
+                </div>
               )}
 
               {/* Raw data toggle */}
