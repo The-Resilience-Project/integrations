@@ -265,16 +265,6 @@ functions:
                 path: /api/v2/schools/registration
                 method: POST
 
-    v2_schools_confirm:
-        handler: src/api-v2/endpoints/schools/confirm.php
-        timeout: 29
-        layers:
-            - ${bref:layer.php-82-fpm}
-        events:
-            - httpApi:
-                path: /api/v2/schools/confirm
-                method: POST
-
     v2_schools_conference_delegate:
         handler: src/api-v2/endpoints/schools/conference-delegate.php
         layers:

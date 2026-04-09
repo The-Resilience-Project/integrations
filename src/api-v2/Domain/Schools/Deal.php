@@ -40,14 +40,4 @@ class Deal
             inCampaignRating: 'Hot',
         );
     }
-
-    public static function forSchoolConfirmation(): self
-    {
-        return new self(
-            name: self::SCHOOL_DEAL_NAME,
-            stage: 'Deal Won',
-            closeDate: date('d/m/Y'),
-            pipeline: 'New Schools',
-        );
-    }
 }
