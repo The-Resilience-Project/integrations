@@ -150,6 +150,95 @@ export async function getFormResults(formId: number): Promise<GFFormResults> {
   return gfFetch<GFFormResults>(`/forms/${formId}/results`);
 }
 
+export interface WebhookError {
+  formId: number;
+  formTitle: string;
+  entryId: string;
+  feedName: string;
+  error: string;
+  dateCreated: string;
+}
+
+const WEBHOOK_ERRORS_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+let webhookErrorsCache: { errors: WebhookError[]; expiresAt: number } | null = null;
+
+/**
+ * Fetch recent webhook errors across all active forms.
+ * Checks the last 5 entries per form for webhook error notes.
+ * Results are cached in-memory for 5 minutes.
+ */
+export async function getRecentWebhookErrors(): Promise<WebhookError[]> {
+  if (webhookErrorsCache && Date.now() < webhookErrorsCache.expiresAt) {
+    return webhookErrorsCache.errors;
+  }
+
+  const forms = await listForms();
+  const activeForms = forms.filter((f) => f.is_active === '1');
+
+  const errorsByForm = await Promise.all(
+    activeForms.map(async (form) => {
+      try {
+        const { entries } = await getEntries({
+          formId: form.id,
+          pageSize: 5,
+          currentPage: 1,
+        });
+
+        const errorsByEntry = await Promise.all(
+          entries.map(async (entry) => {
+            try {
+              const notes = await getEntryNotes(Number(entry.id));
+              return notes
+                .filter(
+                  (note) =>
+                    note.note_type === 'gravityformswebhooks' &&
+                    note.sub_type === 'error',
+                )
+                .map((note): WebhookError => {
+                  const colonIndex = note.value.indexOf(':');
+                  const feedName =
+                    colonIndex >= 0
+                      ? note.value.substring(0, colonIndex).trim()
+                      : 'Unknown';
+                  const error =
+                    colonIndex >= 0
+                      ? note.value.substring(colonIndex + 1).trim()
+                      : note.value;
+
+                  return {
+                    formId: form.id,
+                    formTitle: form.title,
+                    entryId: entry.id,
+                    feedName,
+                    error,
+                    dateCreated: note.date_created,
+                  };
+                });
+            } catch {
+              return [];
+            }
+          }),
+        );
+
+        return errorsByEntry.flat();
+      } catch {
+        return [];
+      }
+    }),
+  );
+
+  const errors = errorsByForm
+    .flat()
+    .sort(
+      (a, b) =>
+        new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
+    );
+
+  webhookErrorsCache = { errors, expiresAt: Date.now() + WEBHOOK_ERRORS_TTL_MS };
+  return errors;
+}
+
 // Feed types returned by the GF REST API
 export interface GFFeed {
   id: string;
