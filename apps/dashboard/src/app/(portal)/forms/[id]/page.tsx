@@ -44,6 +44,12 @@ export default function FormDetailPage({
     return (webhookData?.errors ?? []).filter((e) => e.formId === formId);
   }, [webhookData, formId]);
 
+  // Recent errors (last 7 days) for header badge
+  const recentErrorCount = useMemo(() => {
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    return formErrors.filter((e) => new Date(e.dateCreated + 'Z').getTime() > cutoff).length;
+  }, [formErrors]);
+
   // Resolve which Lambda function this form's webhook calls
   const functionName = useMemo(() => {
     if (!form) return null;
@@ -115,10 +121,10 @@ export default function FormDetailPage({
           <Badge variant="secondary" className="text-[10px] font-mono">
             ID {form.id}
           </Badge>
-          {formErrors.length > 0 && (
+          {recentErrorCount > 0 && (
             <Badge variant="secondary" className="text-[10px] bg-[var(--rose-accent)]/10 text-[var(--rose-accent)]">
               <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
-              {formErrors.length} webhook {formErrors.length === 1 ? 'error' : 'errors'}
+              {recentErrorCount} recent {recentErrorCount === 1 ? 'error' : 'errors'}
             </Badge>
           )}
         </div>

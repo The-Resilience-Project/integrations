@@ -87,11 +87,14 @@ export function FormsExplorer() {
     return { total: forms.length, totalEntries, mapped, unmapped: forms.length - mapped, active };
   }, [forms]);
 
-  // Webhook error counts per form
+  // Webhook error counts per form (last 7 days only)
   const errorCounts = useMemo(() => {
     const counts = new Map<number, number>();
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
     for (const err of (webhookData?.errors ?? [])) {
-      counts.set(err.formId, (counts.get(err.formId) ?? 0) + 1);
+      if (new Date(err.dateCreated + 'Z').getTime() > cutoff) {
+        counts.set(err.formId, (counts.get(err.formId) ?? 0) + 1);
+      }
     }
     return counts;
   }, [webhookData]);
