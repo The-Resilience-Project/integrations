@@ -120,6 +120,17 @@ export async function getEntry(entryId: number): Promise<GFEntry> {
   return gfFetch<GFEntry>(`/entries/${entryId}`);
 }
 
+export async function getLastEntryDate(formId: number): Promise<string | null> {
+  const qs = new URLSearchParams();
+  qs.set('paging[page_size]', '1');
+  qs.set('paging[current_page]', '1');
+  qs.set('sorting[key]', 'date_created');
+  qs.set('sorting[direction]', 'DESC');
+
+  const data = await gfFetch<{ entries: GFEntry[] }>(`/forms/${formId}/entries?${qs.toString()}`);
+  return data.entries?.[0]?.date_created ?? null;
+}
+
 export async function getFormResults(formId: number): Promise<GFFormResults> {
   return gfFetch<GFFormResults>(`/forms/${formId}/results`);
 }

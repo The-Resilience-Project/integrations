@@ -41,40 +41,12 @@ class SubmitConfirmationHandler
         $organisation = $request->toOrganisation();
         $participatingStudents = $request->participatingNumOfStudents ?? 0;
 
-        // Step 1: Deactivate + capture main customer
+        // Step 1: Capture and update main customer
         $customerService = new CustomerService($this->client);
-        log_info('Step 1: Deactivating existing contacts', ['email' => $contact->email]);
-        $customerService->deactivateExistingContacts($contact->email);
-
-        log_info('Step 1: Capturing contact and organisation');
-        $captured = $customerService->captureContact($contact, $organisation, $sourceForm);
-        log_info('Step 1 complete: Contact captured', [
-            'contactId' => $captured->contactId,
-            'organisationId' => $captured->organisationId,
-            'assignedUserId' => $captured->assignedUserId,
-            'formsCompleted' => $captured->formsCompleted,
-        ]);
-
-        // Fetch org details
-        log_info('Step 1: Fetching organisation details', ['organisationId' => $captured->organisationId]);
-        $orgDetails = $customerService->fetchOrganisationDetails($captured->organisationId);
-        log_info('Step 1 complete: Organisation details fetched', [
-            'orgName' => $orgDetails->name,
-            'assignedUserId' => $orgDetails->assignedUserId,
-        ]);
-
-        // Update org + contact
-        log_info('Step 1: Updating org assignee and sales events', [
-            'sourceForm' => $sourceForm,
-            'state' => $request->state,
-        ]);
-        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $sourceForm, $request->state);
-        log_info('Step 1 complete: Org updated', [
-            'assignedUserId' => $orgDetails->assignedUserId,
-        ]);
-
-        log_info('Step 1: Updating contact assignee and forms completed');
-        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $sourceForm, $request->state);
+        log_info('Capturing and updating customer');
+        $result = $customerService->captureAndUpdateCustomer($contact, $organisation, $sourceForm, $request->state);
+        $captured = $result->captured;
+        $orgDetails = $result->orgDetails;
 
         // Step 2: Create/get deal with "Deal Won"
         $deal = Deal::forSchoolConfirmation();

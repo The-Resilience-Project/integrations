@@ -7,6 +7,7 @@ namespace ApiV2\Application;
 use ApiV2\Domain\Schools\AssigneeRules;
 use ApiV2\Domain\CapturedContact;
 use ApiV2\Domain\Contact;
+use ApiV2\Domain\CustomerCaptureResult;
 use ApiV2\Domain\Organisation;
 use ApiV2\Domain\OrganisationDetails;
 use ApiV2\Infrastructure\VtigerWebhookClientInterface;
@@ -18,6 +19,45 @@ class CustomerService
     public function __construct(VtigerWebhookClientInterface $client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * Full customer capture flow: deactivate existing contacts, capture contact
+     * and organisation, fetch org details, update org assignee/sales events,
+     * and update contact assignee/forms completed.
+     */
+    public function captureAndUpdateCustomer(
+        Contact $contact,
+        Organisation $organisation,
+        string $sourceForm,
+        ?string $state,
+    ): CustomerCaptureResult {
+        log_info('Deactivating existing contacts', ['email' => $contact->email]);
+        $this->deactivateExistingContacts($contact->email);
+
+        log_info('Capturing contact and organisation');
+        $captured = $this->captureContact($contact, $organisation, $sourceForm);
+        log_info('Contact captured', [
+            'contactId' => $captured->contactId,
+            'organisationId' => $captured->organisationId,
+            'assignedUserId' => $captured->assignedUserId,
+            'formsCompleted' => $captured->formsCompleted,
+        ]);
+
+        log_info('Fetching organisation details', ['organisationId' => $captured->organisationId]);
+        $orgDetails = $this->fetchOrganisationDetails($captured->organisationId);
+        log_info('Organisation details fetched', [
+            'orgName' => $orgDetails->name,
+            'assignedUserId' => $orgDetails->assignedUserId,
+        ]);
+
+        log_info('Updating org assignee and sales events');
+        $orgDetails = $this->updateOrgAssigneeAndSalesEvents($orgDetails, $sourceForm, $state);
+
+        log_info('Updating contact assignee and forms completed');
+        $this->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $sourceForm, $state);
+
+        return new CustomerCaptureResult($captured, $orgDetails);
     }
 
     /**

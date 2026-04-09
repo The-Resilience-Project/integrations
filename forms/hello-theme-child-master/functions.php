@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/form_ids.php';
+require_once __DIR__ . '/form_fields.php';
 
 /*==========================================================================
  * Table of Contents
@@ -169,15 +170,15 @@ function populate_deal_confirmed($form)
 {
     $form_id = $form['id'];
     if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026) {
-        $school_account_no_field = 'input_226';
-        $school_name_field = 'input_229';
-        $deal_confirmed_input = '"#input_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026 . '_183"';
+        $school_account_no_field = 'input_' . FIELD_NEW_CONF_SELECT_SCHOOL;
+        $school_name_field = 'input_' . FIELD_NEW_CONF_SCHOOL_NAME;
+        $deal_confirmed_input = '"#input_' . FORM_NEW_SCHOOLS_CONFIRMATION_2026 . '_' . FIELD_NEW_CONF_DEAL_CONFIRMED . '"';
     } elseif ($form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
-        $school_account_no_field = 'input_5';
-        $school_name_field = 'input_8';
-        $deal_confirmed_input = '"#input_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 . '_49"';
+        $school_account_no_field = 'input_' . FIELD_EXIST_CONF_SELECT_SCHOOL;
+        $school_name_field = 'input_' . FIELD_EXIST_CONF_SCHOOL_NAME;
+        $deal_confirmed_input = '"#input_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 . '_' . FIELD_EXIST_CONF_DEAL_CONFIRMED . '"';
     } elseif ($form_id == FORM_EARLY_YEARS_CONFIRMATION_2025) {
-        $deal_confirmed_input = '"#input_' . FORM_EARLY_YEARS_CONFIRMATION_2025 . '_183"';
+        $deal_confirmed_input = '"#input_' . FORM_EARLY_YEARS_CONFIRMATION_2025 . '_' . FIELD_EY_CONF_DEAL_CONFIRMED . '"';
     }
     if (GFFormDisplay::get_current_page($form_id) == 2) {
         if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026 or $form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
@@ -190,8 +191,8 @@ function populate_deal_confirmed($form)
                 $url = '"https://theresilienceproject.com.au/resilience/api/school_confirmation_form_details.php/?school_name='.$school_name.'"';
             }
         } else {
-            $school_account_no = rgpost('input_233');
-            $school_name = rgpost('input_5');
+            $school_account_no = rgpost('input_' . FIELD_EY_CONF_SELECT_SERVICE);
+            $school_name = rgpost('input_' . FIELD_EXIST_CONF_SELECT_SCHOOL);
             if (!empty($school_account_no)) {
                 $url = '"https://theresilienceproject.com.au/resilience/api/ey_confirmation_form_details.php/?school_account_no='.$school_account_no.'"';
             } else {
@@ -216,9 +217,9 @@ function populate_deal_confirmed($form)
 							const freeTravel = prepopulateData.free_travel === "1" ? "YES" : "NO"
 							const f2f = prepopulateData.f2f ? "YES" : "NO"
 							const funded = prepopulateData.funded_years.includes("2026") ? "YES" : "NO"
-							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_61").val(freeTravel);
-							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_62").val(f2f);
-							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_118").val(funded);
+							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_<?php echo FIELD_EXIST_CONF_FREE_TRAVEL ?>").val(freeTravel);
+							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_<?php echo FIELD_EXIST_CONF_FACE_TO_FACE ?>").val(f2f);
+							jQuery("#input_<?php echo FORM_EXISTING_SCHOOLS_CONFIRMATION_2026 ?>_<?php echo FIELD_EXIST_CONF_FUNDED_2026 ?>").val(funded);
 						}
 						jQuery(document).trigger('gform_post_render', [formId, 1]);
 					}
@@ -268,7 +269,7 @@ function populate_org_name_state_ltrp($form)
     $form_id = $form['id'];
     if (GFFormDisplay::get_current_page($form_id) == 2) {
 
-        $org_id = rgpost('input_13');
+        $org_id = rgpost('input_' . FIELD_LTRP_ACCOUNT_ID);
 
         $request_header = [];
         $request_method = 'GET';
@@ -287,22 +288,22 @@ function populate_org_name_state_ltrp($form)
 
 
         if ($json_response['data']['error']) {
-            $_POST['input_86'] = 'YES';
+            $_POST['input_' . FIELD_LTRP_ERROR] = 'YES';
             return $form;
         }
 
 
 
-        $_POST['input_14'] = $json_response['data']['state'];
-        $_POST['input_3'] = $json_response['data']['name'];
-        $_POST['input_67'] = $json_response['data']['id'];
-        $_POST['input_10'] = $json_response['data']['ltrp'] ? 'YES' : 'NO';
-        $_POST['input_85'] = $json_response['data']['ca'] ? 'YES' : 'NO';
-        $_POST['input_89'] = $json_response['data']['participants'];
-        $_POST['input_86'] = 'NO'; // error field
+        $_POST['input_' . FIELD_LTRP_STATE] = $json_response['data']['state'];
+        $_POST['input_' . FIELD_LTRP_SCHOOL] = $json_response['data']['name'];
+        $_POST['input_' . FIELD_LTRP_ORG_ID] = $json_response['data']['id'];
+        $_POST['input_' . FIELD_LTRP_LTRP_WATCHED] = $json_response['data']['ltrp'] ? 'YES' : 'NO';
+        $_POST['input_' . FIELD_LTRP_CA_COMPLETED] = $json_response['data']['ca'] ? 'YES' : 'NO';
+        $_POST['input_' . FIELD_LTRP_PARTICIPANTS] = $json_response['data']['participants'];
+        $_POST['input_' . FIELD_LTRP_ERROR] = 'NO'; // error field
 
         foreach ($form['fields'] as &$field) {
-            if ($field['id'] == 18) {
+            if ($field['id'] == FIELD_LTRP_WELCOME_HEADING) {
                 $field['content'] = 'Welcome, ' . $json_response['data']['name'];
             }
         }
@@ -314,60 +315,60 @@ function populate_org_name_state_ltrp($form)
 }
 
 add_filter('gform_field_content_' . FORM_LTRP_AND_CA_2026, function ($field_content, $field) {
-    if ($field->id == 28) {
+    if ($field->id == FIELD_LTRP_SCORE_FORTNIGHT) {
         return str_replace('fortnight', "<span class='emph-wording'>fortnight</span>", $field_content);
     }
 
-    if ($field->id == 32) {
+    if ($field->id == FIELD_LTRP_SCORE_WEEK) {
         return str_replace('week', "<span class='emph-wording'>week</span>", $field_content);
     }
 
-    if ($field->id == 37) {
+    if ($field->id == FIELD_LTRP_SCORE_WEEKLY) {
         return str_replace('weekly', "<span class='emph-wording'>weekly</span>", $field_content);
     }
 
-    if ($field->id == 41) {
+    if ($field->id == FIELD_LTRP_SCORE_DAILY) {
         return str_replace('daily', "<span class='emph-wording'>daily</span>", $field_content);
     }
 
-    if ($field->id == 39) {
+    if ($field->id == FIELD_LTRP_SCORE_SOME) {
         return str_replace('some', "<span class='emph-wording'>some</span>", $field_content);
     }
 
-    if ($field->id == 43) {
+    if ($field->id == FIELD_LTRP_SCORE_MOST) {
         return str_replace('most', "<span class='emph-wording'>most</span>", $field_content);
     }
 
-    if ($field->id == 47) {
+    if ($field->id == FIELD_LTRP_SCORE_SEMESTERLY) {
         return str_replace('semesterly', "<span class='emph-wording'>semesterly</span>", $field_content);
     }
 
-    if ($field->id == 49) {
+    if ($field->id == FIELD_LTRP_SCORE_TERMLY) {
         return str_replace('termly', "<span class='emph-wording'>termly</span>", $field_content);
     }
 
-    if ($field->id == 48) {
+    if ($field->id == FIELD_LTRP_SCORE_SOME_CAPS) {
         return str_replace('Some', "<span class='emph-wording'>Some</span>", $field_content);
     }
 
-    if ($field->id == 51) {
+    if ($field->id == FIELD_LTRP_SCORE_ALL) {
         return str_replace('All', "<span class='emph-wording'>All</span>", $field_content);
     }
 
-    if ($field->id == 53) {
+    if ($field->id == FIELD_LTRP_SCORE_YEAR) {
         return str_replace('year', "<span class='emph-wording'>year</span>", $field_content);
     }
-    if ($field->id == 55) {
+    if ($field->id == FIELD_LTRP_SCORE_SEMESTER) {
         return str_replace('semester', "<span class='emph-wording'>semester</span>", $field_content);
     }
 
-    if ($field->id == 58) {
+    if ($field->id == FIELD_LTRP_SCORE_TERMLY_2) {
         return str_replace('termly', "<span class='emph-wording'>termly</span>", $field_content);
     }
-    if ($field->id == 60) {
+    if ($field->id == FIELD_LTRP_SCORE_FORTNIGHTLY) {
         return str_replace('fortnightly', "<span class='emph-wording'>fortnightly</span>", $field_content);
     }
-    if ($field->id == 61) {
+    if ($field->id == FIELD_LTRP_SCORE_EACH_SEMESTER) {
         return str_replace('each semester', "<span class='emph-wording'>each semester</span>", $field_content);
     }
 
@@ -382,7 +383,7 @@ add_filter('gform_pre_render_' . FORM_CURRICULUM_RESOURCE_ORDERING_2026, 'popula
 function populate_curric_form_data_2026($form)
 {
     $form_id = $form['id'];
-    $school_account_no_field = 'input_174';
+    $school_account_no_field = 'input_' . FIELD_CURRIC_SELECT_SCHOOL;
     if (GFFormDisplay::get_current_page($form_id) == 2) {
         $school_account_no = rgpost($school_account_no_field);
         $url = '"https://theresilienceproject.com.au/resilience/api/school_curric_ordering_details.php/?school_account_no='.$school_account_no.'&for_2026=1"';
@@ -404,10 +405,10 @@ function populate_curric_form_data_2026($form)
 						const freeShipping = prepopulateData.free_shipping ? "YES" : "NO";
 						const fundedSchool = prepopulateData.funded_years.includes("2026") ? "YES" : "NO"
 						const newSchool = prepopulateData.deal_type === "School - New" ? "YES" : "NO"
-						jQuery("#input_89_152").val(engageCombo);
-						jQuery("#input_89_154").val(freeShipping);
-						jQuery("#input_89_158").val(fundedSchool);
-						jQuery("#input_89_169").val(newSchool);
+						jQuery("#input_<?php echo FORM_CURRICULUM_RESOURCE_ORDERING_2026 ?>_<?php echo FIELD_CURRIC_ENGAGE_COMBO ?>").val(engageCombo);
+						jQuery("#input_<?php echo FORM_CURRICULUM_RESOURCE_ORDERING_2026 ?>_<?php echo FIELD_CURRIC_FREE_SHIPPING ?>").val(freeShipping);
+						jQuery("#input_<?php echo FORM_CURRICULUM_RESOURCE_ORDERING_2026 ?>_<?php echo FIELD_CURRIC_FUNDED_SCHOOL ?>").val(fundedSchool);
+						jQuery("#input_<?php echo FORM_CURRICULUM_RESOURCE_ORDERING_2026 ?>_<?php echo FIELD_CURRIC_NEW_SCHOOL ?>").val(newSchool);
 						jQuery(document).trigger('gform_post_render', [89, 2]);
 					}
 				}
@@ -418,7 +419,7 @@ function populate_curric_form_data_2026($form)
 
 
     if (GFFormDisplay::get_current_page($form_id) == 5) {
-        $free_shipping = rgpost('input_154');
+        $free_shipping = rgpost('input_' . FIELD_CURRIC_FREE_SHIPPING);
         require_once('calculate_shipping.php');
 
         if ($free_shipping === 'YES') {
@@ -433,41 +434,41 @@ function populate_curric_form_data_2026($form)
                 $displayed_shipping_price = '$ ' . number_format($shipping_price, 2);
             }
         }
-        $_POST['input_161'] = $shipping_price;
+        $_POST['input_' . FIELD_CURRIC_SHIPPING_COST] = $shipping_price;
 
         $fields = $form['fields'];
         $description = '';
 
         $description .= '<h4>School Details</h4>';
         $description .= "<table class='school-details'>";
-        $description .= '<tr><td>School Name</td><td>'.GFAPI::get_field($form_id, 174)->choices[0]['text'].'</td></tr>';
-        $description .= '<tr><td>Your Name</td><td>'.rgpost('input_170_3'). ' '. rgpost('input_170_6').'</td></tr>';
+        $description .= '<tr><td>School Name</td><td>'.GFAPI::get_field($form_id, FIELD_CURRIC_SELECT_SCHOOL)->choices[0]['text'].'</td></tr>';
+        $description .= '<tr><td>Your Name</td><td>'.rgpost('input_' . FIELD_CURRIC_CONTACT_NAME . '_3'). ' '. rgpost('input_' . FIELD_CURRIC_CONTACT_NAME . '_6').'</td></tr>';
 
         $description .= '<tr><td>Shipping Address</td><td>';
-        $description .= rgpost('input_99_1') .'<br/>';
-        if (rgpost('input_99_2')) {
-            $description .= rgpost('input_99_2') .'<br/>';
+        $description .= rgpost('input_' . FIELD_CURRIC_SHIPPING_ADDRESS . '_1') .'<br/>';
+        if (rgpost('input_' . FIELD_CURRIC_SHIPPING_ADDRESS . '_2')) {
+            $description .= rgpost('input_' . FIELD_CURRIC_SHIPPING_ADDRESS . '_2') .'<br/>';
         }
-        $description .= rgpost('input_99_3') .'<br/>';
-        $description .= rgpost('input_100') .' ';
-        $description .= rgpost('input_99_5');
+        $description .= rgpost('input_' . FIELD_CURRIC_SHIPPING_ADDRESS . '_3') .'<br/>';
+        $description .= rgpost('input_' . FIELD_CURRIC_SHIPPING_STATE) .' ';
+        $description .= rgpost('input_' . FIELD_CURRIC_SHIPPING_ADDRESS . '_5');
         $description .= '</td></tr>';
 
         $description .= '<tr><td>Billing Address</td><td>';
-        if (rgpost('input_101_1')) {
+        if (rgpost('input_' . FIELD_CURRIC_SAME_AS_SHIPPING . '_1')) {
             $description .= 'Same as Shipping Address';
         } else {
-            $description .= rgpost('input_102_1') .'<br/>';
-            if (rgpost('input_102_2')) {
-                $description .= rgpost('input_102_2') .'<br/>';
+            $description .= rgpost('input_' . FIELD_CURRIC_BILLING_ADDRESS . '_1') .'<br/>';
+            if (rgpost('input_' . FIELD_CURRIC_BILLING_ADDRESS . '_2')) {
+                $description .= rgpost('input_' . FIELD_CURRIC_BILLING_ADDRESS . '_2') .'<br/>';
             }
-            $description .= rgpost('input_102_3') .'<br/>';
-            $description .= rgpost('input_103') .' ';
-            $description .= rgpost('input_102_5');
+            $description .= rgpost('input_' . FIELD_CURRIC_BILLING_ADDRESS . '_3') .'<br/>';
+            $description .= rgpost('input_' . FIELD_CURRIC_BILLING_STATE) .' ';
+            $description .= rgpost('input_' . FIELD_CURRIC_BILLING_ADDRESS . '_5');
             $description .= '</td></tr>';
         }
 
-        $description .= '<tr><td>PO Number</td><td>'.rgpost('input_109').'</td></tr>';
+        $description .= '<tr><td>PO Number</td><td>'.rgpost('input_' . FIELD_CURRIC_PO_NUMBER).'</td></tr>';
 
         $description .= '</table><br/>';
 
@@ -580,23 +581,23 @@ function populate_curric_form_data_2026($form)
                 $extra_table .= '<tr><td>'.$shop_item.'</td><td>'.$num.'</td></tr>';
             }
         }
-        $teacher_planner_num = rgpost('input_143_3');
+        $teacher_planner_num = rgpost('input_' . FIELD_CURRIC_TEACHER_PLANNER . '_3');
         if ($teacher_planner_num > 0) {
-            $teacher_planner_details = explode(' - ', rgpost('input_144'));
+            $teacher_planner_details = explode(' - ', rgpost('input_' . FIELD_CURRIC_TEACHER_PLANNER_VAR));
             $teacher_planner_type = $teacher_planner_details[0];
             $extra_table .= '<tr><td>Teacher Planner ('.$teacher_planner_type.')</td><td>'.$teacher_planner_num.'</td></tr>';
         }
 
-        $senior_planner_num = rgpost('input_175_3');
+        $senior_planner_num = rgpost('input_' . FIELD_CURRIC_SENIOR_PLANNER . '_3');
         if ($senior_planner_num > 0) {
-            $senior_planner_details = explode(' - ', rgpost('input_176'));
+            $senior_planner_details = explode(' - ', rgpost('input_' . FIELD_CURRIC_SENIOR_PLANNER_VAR));
             $senior_planner_type = $senior_planner_details[0];
             $extra_table .= '<tr><td>Senior Planner '.$senior_planner_type.'</td><td>'.$senior_planner_num.'</td></tr>';
         }
 
-        $teacher_seminar_num = rgpost('input_179_3');
+        $teacher_seminar_num = rgpost('input_' . FIELD_CURRIC_TEACHER_SEMINAR . '_3');
         if ($teacher_seminar_num > 0) {
-            $teacher_seminar_details = explode('|', rgpost('input_181'));
+            $teacher_seminar_details = explode('|', rgpost('input_' . FIELD_CURRIC_TEACHER_SEMINAR_VAR));
             $teacher_seminar_type = $teacher_seminar_details[0];
             $extra_table .= '<tr><td>Teacher Seminar Pre-Order Ticket ('.$teacher_seminar_type.')</td><td>'.$teacher_seminar_num.'</td></tr>';
         }
@@ -611,7 +612,7 @@ function populate_curric_form_data_2026($form)
             $description .= '<p><i>Great news! Since you placed your first order early, this order qualifies for free shipping!</i></p>';
         }
         $description .= '<table><tr><th>Description</th><th>Unit Price (excl GST)</th></tr>';
-        if (rgpost('input_158') === 'YES') {
+        if (rgpost('input_' . FIELD_CURRIC_FUNDED_SCHOOL) === 'YES') {
             // free shipping for funded schools
             $description .= '<tr><td>Shipping</td><td>$0.00</td></tr>';
         } else {
@@ -620,7 +621,7 @@ function populate_curric_form_data_2026($form)
         $description .= '</table>';
 
         foreach ($form['fields'] as &$field) {
-            if ($field['id'] == 160) {
+            if ($field['id'] == FIELD_CURRIC_ORDER_SUMMARY) {
                 $field['content'] = $description;
             }
         }
@@ -650,8 +651,8 @@ function curric_ordering_validation($validation_result)
 
 
     // last date in 2025
-    if (!empty(rgpost('input_106'))) {
-        $is_valid = DateTime::createFromFormat('d/m/Y', rgpost('input_106')) <= DateTime::createFromFormat('d/m/Y', '31/12/2025');
+    if (!empty(rgpost('input_' . FIELD_CURRIC_LAST_DATE_2025))) {
+        $is_valid = DateTime::createFromFormat('d/m/Y', rgpost('input_' . FIELD_CURRIC_LAST_DATE_2025)) <= DateTime::createFromFormat('d/m/Y', '31/12/2025');
         if (!$is_valid) {
             // set the form validation to false
             $validation_result['is_valid'] = false;
@@ -660,7 +661,7 @@ function curric_ordering_validation($validation_result)
             foreach ($form['fields'] as &$field) {
 
                 //NOTE: replace 1 with the field you would like to validate
-                if ($field->id == '106') {
+                if ($field->id == FIELD_CURRIC_LAST_DATE_2025) {
                     $field->failed_validation = true;
                     $field->validation_message = 'Please enter a date before 31/12/2025';
                     break;
@@ -672,8 +673,8 @@ function curric_ordering_validation($validation_result)
     }
 
     // first date in 2026
-    if (!empty(rgpost('input_107'))) {
-        $is_valid = DateTime::createFromFormat('d/m/Y', rgpost('input_107')) >= DateTime::createFromFormat('d/m/Y', '01/01/2026');
+    if (!empty(rgpost('input_' . FIELD_CURRIC_FIRST_DATE_2026))) {
+        $is_valid = DateTime::createFromFormat('d/m/Y', rgpost('input_' . FIELD_CURRIC_FIRST_DATE_2026)) >= DateTime::createFromFormat('d/m/Y', '01/01/2026');
         if (!$is_valid) {
             // set the form validation to false
             $validation_result['is_valid'] = false;
@@ -682,7 +683,7 @@ function curric_ordering_validation($validation_result)
             foreach ($form['fields'] as &$field) {
 
                 //NOTE: replace 1 with the field you would like to validate
-                if ($field->id == '107') {
+                if ($field->id == FIELD_CURRIC_FIRST_DATE_2026) {
                     $field->failed_validation = true;
                     $field->validation_message = 'Please enter a date after 01/01/2026';
                     break;
@@ -696,7 +697,7 @@ function curric_ordering_validation($validation_result)
 
 
     // primary reading log min qty = 10
-    if (rgpost('input_28_3') < 10 and !empty(rgpost('input_28_3'))) {
+    if (rgpost('input_' . FIELD_CURRIC_READING_LOG . '_3') < 10 and !empty(rgpost('input_' . FIELD_CURRIC_READING_LOG . '_3'))) {
 
         // set the form validation to false
         $validation_result['is_valid'] = false;
@@ -705,7 +706,7 @@ function curric_ordering_validation($validation_result)
         foreach ($form['fields'] as &$field) {
 
             //NOTE: replace 1 with the field you would like to validate
-            if ($field->id == '28') {
+            if ($field->id == FIELD_CURRIC_READING_LOG) {
                 $field->failed_validation = true;
                 $field->validation_message = 'Minumum 10 items are required';
                 break;
@@ -715,7 +716,7 @@ function curric_ordering_validation($validation_result)
     }
 
     // primary student planner min qty = 10
-    if (rgpost('input_36_3') < 10 and !empty(rgpost('input_36_3'))) {
+    if (rgpost('input_' . FIELD_CURRIC_STUDENT_PLANNER . '_3') < 10 and !empty(rgpost('input_' . FIELD_CURRIC_STUDENT_PLANNER . '_3'))) {
 
         // set the form validation to false
         $validation_result['is_valid'] = false;
@@ -724,7 +725,7 @@ function curric_ordering_validation($validation_result)
         foreach ($form['fields'] as &$field) {
 
             //NOTE: replace 1 with the field you would like to validate
-            if ($field->id == '36') {
+            if ($field->id == FIELD_CURRIC_STUDENT_PLANNER) {
                 $field->failed_validation = true;
                 $field->validation_message = 'Minumum 10 items are required';
                 break;
@@ -734,7 +735,7 @@ function curric_ordering_validation($validation_result)
     }
 
     // senior student planner min qty = 10
-    if (rgpost('input_175_3') < 10 and !empty(rgpost('input_175_3'))) {
+    if (rgpost('input_' . FIELD_CURRIC_SENIOR_PLANNER . '_3') < 10 and !empty(rgpost('input_' . FIELD_CURRIC_SENIOR_PLANNER . '_3'))) {
 
         // set the form validation to false
         $validation_result['is_valid'] = false;
@@ -743,7 +744,7 @@ function curric_ordering_validation($validation_result)
         foreach ($form['fields'] as &$field) {
 
             //NOTE: replace 1 with the field you would like to validate
-            if ($field->id == '175') {
+            if ($field->id == FIELD_CURRIC_SENIOR_PLANNER) {
                 $field->failed_validation = true;
                 $field->validation_message = 'Minumum 10 items are required';
                 break;

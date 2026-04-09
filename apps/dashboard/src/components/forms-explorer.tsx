@@ -24,7 +24,7 @@ import {
 import { useForms } from '@/hooks/use-forms';
 import type { GravityForm } from '@/lib/types';
 
-type SortKey = 'id' | 'purpose' | 'entryCount' | 'fields';
+type SortKey = 'id' | 'purpose' | 'entryCount' | 'fields' | 'lastEntry';
 type SortDir = 'asc' | 'desc';
 type FilterType = 'all' | 'mapped' | 'unmapped' | 'active' | 'inactive';
 
@@ -128,6 +128,9 @@ export function FormsExplorer() {
           break;
         case 'fields':
           cmp = a.fields.length - b.fields.length;
+          break;
+        case 'lastEntry':
+          cmp = (a.lastEntryDate ?? '').localeCompare(b.lastEntryDate ?? '');
           break;
       }
       return sortDir === 'desc' ? -cmp : cmp;
@@ -305,6 +308,11 @@ export function FormsExplorer() {
                       </button>
                     </TableHead>
                     <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Page</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground w-28">
+                      <button onClick={() => toggleSort('lastEntry')} className="flex items-center hover:text-foreground transition-colors">
+                        Last Entry<SortIcon column="lastEntry" />
+                      </button>
+                    </TableHead>
                     <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Endpoints</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -378,6 +386,9 @@ function FormRow({ form }: { form: GravityForm }) {
           <span className="text-xs text-muted-foreground/40">—</span>
         )}
       </TableCell>
+      <TableCell className="text-xs text-muted-foreground font-mono">
+        {form.lastEntryDate ? formatRelativeDate(form.lastEntryDate) : '—'}
+      </TableCell>
       <TableCell>
         <div className="flex flex-wrap gap-1.5">
           {inbound && (
@@ -400,4 +411,18 @@ function truncateEndpoint(endpoint: string): string {
   const parts = endpoint.split('/');
   const last = parts[parts.length - 1] || parts[parts.length - 2] || endpoint;
   return last.length > 30 ? last.slice(0, 27) + '...' : last;
+}
+
+function formatRelativeDate(dateStr: string): string {
+  const date = new Date(dateStr + 'Z'); // GF dates are UTC
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'today';
+  if (diffDays === 1) return 'yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
+  return `${Math.floor(diffDays / 365)}y ago`;
 }

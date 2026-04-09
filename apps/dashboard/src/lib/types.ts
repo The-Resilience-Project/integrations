@@ -69,4 +69,5 @@ export interface GravityForm {
   fields: FormField[];
   endpoints: FormEndpoint[];
   wordpressPage?: { id: number; title: string; url: string; slug: string };
+  lastEntryDate?: string;
 }

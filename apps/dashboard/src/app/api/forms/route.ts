@@ -4,6 +4,7 @@ import {
   listForms,
   getForm,
   getFeeds,
+  getLastEntryDate,
   extractWebhookEndpoints,
 } from '@/lib/gravity-forms';
 import { INBOUND_OVERRIDES } from '@/lib/forms-inbound-overrides';
@@ -31,9 +32,10 @@ export async function GET() {
     // Fetch full details + feeds for each form in parallel
     const forms: GravityForm[] = await Promise.all(
       formSummaries.map(async (summary) => {
-        const [detail, feeds] = await Promise.all([
+        const [detail, feeds, lastEntryDate] = await Promise.all([
           getForm(summary.id),
           getFeeds(summary.id),
+          getLastEntryDate(Number(summary.id)).catch(() => null),
         ]);
 
         const webhooks = extractWebhookEndpoints(feeds);
@@ -92,6 +94,7 @@ export async function GET() {
           })),
           endpoints,
           wordpressPage: pageMap.get(Number(summary.id)),
+          lastEntryDate: lastEntryDate ?? undefined,
         };
       }),
     );

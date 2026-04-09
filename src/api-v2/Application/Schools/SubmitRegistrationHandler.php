@@ -44,47 +44,12 @@ class SubmitRegistrationHandler
             'eventStartDatetime' => $eventStartDatetime,
         ]);
 
-        // 2. Deactivate existing contacts with this email
+        // 2. Capture and update customer
         $customerService = new CustomerService($this->client);
-        log_info('Step 2: Deactivating existing contacts', ['email' => $contact->email]);
-        $customerService->deactivateExistingContacts($contact->email);
-
-        // 3. Create/update contact and organisation in CRM
-        log_info('Step 3: Capturing contact and organisation');
-        $captured = $customerService->captureContact($contact, $organisation, $sourceForm);
-        log_info('Step 3 complete: Contact captured', [
-            'contactId' => $captured->contactId,
-            'organisationId' => $captured->organisationId,
-            'assignedUserId' => $captured->assignedUserId,
-            'formsCompleted' => $captured->formsCompleted,
-        ]);
-
-        // 4. Fetch organisation details
-        log_info('Step 4: Fetching organisation details', ['organisationId' => $captured->organisationId]);
-        $orgDetails = $customerService->fetchOrganisationDetails($captured->organisationId);
-        log_info('Step 4 complete: Organisation details fetched', [
-            'orgName' => $orgDetails->name,
-            'assignedUserId' => $orgDetails->assignedUserId,
-        ]);
-
-        // 5. Update org assignee routing and sales event tracking
-        log_info('Step 5: Updating org assignee and sales events', [
-            'sourceForm' => $sourceForm,
-            'state' => $request->state ?? '',
-        ]);
-        $orgDetails = $customerService->updateOrgAssigneeAndSalesEvents($orgDetails, $sourceForm, $request->state);
-        log_info('Step 5 complete: Org updated', [
-            'assignedUserId' => $orgDetails->assignedUserId,
-        ]);
-
-        // 6. Update contact assignee routing and forms-completed tracking
-        log_info('Step 6: Updating contact assignee and forms completed', [
-            'sourceForm' => $sourceForm,
-            'capturedAssignee' => $captured->assignedUserId,
-            'capturedFormsCompleted' => $captured->formsCompleted,
-            'orgAssignee' => $orgDetails->assignedUserId,
-        ]);
-        $customerService->updateContactAssigneeAndFormsCompleted($captured, $orgDetails, $sourceForm, $request->state);
+        log_info('Capturing and updating customer');
+        $result = $customerService->captureAndUpdateCustomer($contact, $organisation, $sourceForm, $request->state);
+        $captured = $result->captured;
+        $orgDetails = $result->orgDetails;
 
         // 7. Branch on new/existing school
         log_info('Step 7: Checking if new school', [
