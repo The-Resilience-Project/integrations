@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ExternalLink, ArrowUpDown, Globe } from 'lucide-react';
+import { ExternalLink, ArrowUpDown, Globe, AlertTriangle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,6 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useForms } from '@/hooks/use-forms';
+import { useWebhookErrors } from '@/hooks/use-webhook-errors';
 import type { GravityForm } from '@/lib/types';
 
 type SortKey = 'id' | 'purpose' | 'entryCount' | 'fields' | 'lastEntry';
@@ -70,6 +71,7 @@ function getFormGroup(form: GravityForm): FormGroup {
 
 export function FormsExplorer() {
   const { data, isLoading, error } = useForms();
+  const { data: webhookData } = useWebhookErrors();
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('entryCount');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
@@ -84,6 +86,15 @@ export function FormsExplorer() {
     const active = forms.filter((f) => f.isActive).length;
     return { total: forms.length, totalEntries, mapped, unmapped: forms.length - mapped, active };
   }, [forms]);
+
+  // Webhook error counts per form
+  const errorCounts = useMemo(() => {
+    const counts = new Map<number, number>();
+    for (const err of (webhookData?.errors ?? [])) {
+      counts.set(err.formId, (counts.get(err.formId) ?? 0) + 1);
+    }
+    return counts;
+  }, [webhookData]);
 
   // Filter
   const filtered = useMemo(() => {
@@ -318,7 +329,7 @@ export function FormsExplorer() {
                 </TableHeader>
                 <TableBody>
                   {groupForms.map((form) => (
-                    <FormRow key={form.id} form={form} />
+                    <FormRow key={form.id} form={form} errorCount={errorCounts.get(form.id) ?? 0} />
                   ))}
                 </TableBody>
               </Table>
@@ -330,7 +341,7 @@ export function FormsExplorer() {
   );
 }
 
-function FormRow({ form }: { form: GravityForm }) {
+function FormRow({ form, errorCount }: { form: GravityForm; errorCount: number }) {
   const inbound = form.endpoints.find((e) => e.direction === 'inbound');
   const outbound = form.endpoints.find((e) => e.direction === 'outbound');
   const hasEndpoints = form.endpoints.length > 0;
@@ -358,6 +369,12 @@ function FormRow({ form }: { form: GravityForm }) {
             {!form.isActive && (
               <Badge variant="secondary" className="text-[10px] bg-[var(--rose-accent)]/10 text-[var(--rose-accent)]">
                 inactive
+              </Badge>
+            )}
+            {errorCount > 0 && (
+              <Badge variant="secondary" className="text-[10px] bg-[var(--rose-accent)]/10 text-[var(--rose-accent)]">
+                <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+                {errorCount}
               </Badge>
             )}
           </div>
