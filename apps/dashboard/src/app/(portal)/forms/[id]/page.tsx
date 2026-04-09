@@ -2,7 +2,7 @@
 
 import { use, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, FileText, GitBranch, ArrowRight, Globe } from 'lucide-react';
+import { ArrowLeft, FileText, GitBranch, ArrowRight, Globe, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/table';
 import { useForms } from '@/hooks/use-forms';
 import { useGFFeeds } from '@/hooks/use-gf-feeds';
+import { useWebhookErrors } from '@/hooks/use-webhook-errors';
 import { FormFlowDiagram } from '@/components/form-flow-diagram';
 import { EntriesTable } from '@/components/entries-table';
 import { FormResults } from '@/components/form-results';
@@ -34,8 +35,14 @@ export default function FormDetailPage({
   const formId = parseInt(id, 10);
   const { data: formsData, isLoading } = useForms();
   const { data: feedsData } = useGFFeeds(formId);
+  const { data: webhookData } = useWebhookErrors();
 
   const form = formsData?.forms?.find((f: GravityForm) => f.id === formId);
+
+  // Filter webhook errors for this form
+  const formErrors = useMemo(() => {
+    return (webhookData?.errors ?? []).filter((e) => e.formId === formId);
+  }, [webhookData, formId]);
 
   // Resolve which Lambda function this form's webhook calls
   const functionName = useMemo(() => {
@@ -108,6 +115,12 @@ export default function FormDetailPage({
           <Badge variant="secondary" className="text-[10px] font-mono">
             ID {form.id}
           </Badge>
+          {formErrors.length > 0 && (
+            <Badge variant="secondary" className="text-[10px] bg-[var(--rose-accent)]/10 text-[var(--rose-accent)]">
+              <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+              {formErrors.length} webhook {formErrors.length === 1 ? 'error' : 'errors'}
+            </Badge>
+          )}
         </div>
         {form.title !== form.purpose && (
           <p className="text-sm text-muted-foreground mt-1">{form.title}</p>
@@ -256,6 +269,14 @@ export default function FormDetailPage({
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="entries">Entries</TabsTrigger>
+          <TabsTrigger value="errors" className="relative">
+            Errors
+            {formErrors.length > 0 && (
+              <span className="ml-1.5 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full text-[10px] font-mono bg-[var(--rose-accent)]/15 text-[var(--rose-accent)]">
+                {formErrors.length}
+              </span>
+            )}
+          </TabsTrigger>
         </TabsList>
 
         {/* Overview tab */}
@@ -385,6 +406,49 @@ export default function FormDetailPage({
             emailFieldId={emailFieldId}
             functionName={functionName}
           />
+        </TabsContent>
+
+        {/* Errors tab */}
+        <TabsContent value="errors" className="pt-4">
+          {formErrors.length === 0 ? (
+            <div className="rounded-xl border border-border/50 bg-card p-8 text-center">
+              <p className="text-sm text-muted-foreground">No recent webhook errors for this form.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-xs text-muted-foreground">
+                {formErrors.length} webhook {formErrors.length === 1 ? 'error' : 'errors'} from the last 5 entries
+              </p>
+              {formErrors.map((err, i) => (
+                <div
+                  key={`${err.entryId}-${i}`}
+                  className="rounded-xl border border-[var(--rose-accent)]/20 bg-[var(--rose-accent)]/5 p-4 space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-3.5 w-3.5 text-[var(--rose-accent)]" />
+                      <span className="text-sm font-medium">{err.feedName}</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-muted-foreground">
+                      Entry #{err.entryId}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground break-words">
+                    {err.error}
+                  </p>
+                  <p className="text-[10px] font-mono text-muted-foreground/60">
+                    {new Date(err.dateCreated + 'Z').toLocaleString('en-AU', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
 
