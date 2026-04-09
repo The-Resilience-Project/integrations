@@ -3,12 +3,14 @@ import {
   BookOpen,
   Code2,
   FileText,
+  Globe,
   GraduationCap,
-  Heart,
   Layers,
   Building2,
   Share2,
   Baby,
+  Workflow,
+  Zap,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -45,15 +47,15 @@ export const NAV_CONFIG: NavEntry[] = [
     ],
   },
 
-  // Reference
+  // Reference — follows the data flow: Forms → Functions → VTAP → Workflows
   {
     label: 'Reference',
     items: [
-      { label: 'Monitor', href: '/monitor', icon: Activity },
-      { label: 'Pipeline', href: '/pipeline', icon: Layers },
       { label: 'Forms', href: '/forms', icon: FileText },
+      { label: 'Functions', href: '/monitor', icon: Zap },
+      { label: 'Pipeline', href: '/pipeline', icon: Layers },
+      { label: 'Workflows', href: '/workflows', icon: Workflow },
       { label: 'Docs', href: '/docs', icon: BookOpen },
-      { label: 'API Reference', href: '/api-reference', icon: Code2 },
     ],
   },
 ];

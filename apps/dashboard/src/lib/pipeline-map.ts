@@ -390,15 +390,21 @@ export function getJourney(slug: string): JourneyConfig | null {
   return JOURNEYS.find((j) => j.slug === slug) ?? null;
 }
 
+/** Map pipeline keys to the journey they belong to, using key prefixes and labels. */
+function getJourneyForKey(key: string, entry: PipelineEntry): JourneySlug {
+  if (key.startsWith('workplace') || entry.label.toLowerCase().includes('workplace')) return 'workplaces';
+  if (key.startsWith('early-years') || entry.label.toLowerCase().includes('early years')) return 'early-years';
+  if (key.startsWith('conference')) return 'shared';
+  if (key === 'general-enquiry') return 'shared';
+  if (entry.journey === 'schools') return 'schools';
+  if (entry.journey === 'enquiries' && entry.label.toLowerCase().includes('school')) return 'schools';
+  // Default school enquiry to schools
+  if (key === 'enquiry') return 'schools';
+  return 'shared';
+}
+
 export function getFlowsForJourney(journeySlug: JourneySlug): [string, PipelineEntry][] {
-  const journeyMap: Record<JourneySlug, PipelineEntry['journey'][]> = {
-    schools: ['schools'],
-    'early-years': [],
-    workplaces: [],
-    shared: ['enquiries', 'conference'],
-  };
-  const journeys = journeyMap[journeySlug];
   return Object.entries(PIPELINE_MAP).filter(
-    ([, entry]) => journeys.includes(entry.journey),
+    ([key, entry]) => getJourneyForKey(key, entry) === journeySlug,
   );
 }
