@@ -120,6 +120,21 @@ export async function getEntry(entryId: number): Promise<GFEntry> {
   return gfFetch<GFEntry>(`/entries/${entryId}`);
 }
 
+export interface EntryNote {
+  id: string;
+  entry_id: string;
+  note_type: string;
+  sub_type: string;
+  value: string;
+  date_created: string;
+  user_name: string;
+}
+
+export async function getEntryNotes(entryId: number): Promise<EntryNote[]> {
+  const data = await gfFetch<Record<string, EntryNote>>(`/entries/${entryId}/notes`);
+  return Object.values(data);
+}
+
 export async function getLastEntryDate(formId: number): Promise<string | null> {
   const qs = new URLSearchParams();
   qs.set('paging[page_size]', '1');
