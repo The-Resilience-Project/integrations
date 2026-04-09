@@ -7,6 +7,7 @@ import {
   extractWebhookEndpoints,
 } from '@/lib/gravity-forms';
 import { INBOUND_OVERRIDES } from '@/lib/forms-inbound-overrides';
+import { fetchFormPageMap } from '@/lib/wordpress-pages';
 import type { GravityForm, FormEndpoint } from '@/lib/types';
 
 export async function GET() {
@@ -18,8 +19,14 @@ export async function GET() {
   }
 
   try {
-    // Fetch all form IDs
-    const formSummaries = await listForms();
+    // Fetch all form IDs + WordPress page map in parallel
+    const [formSummaries, pageMap] = await Promise.all([
+      listForms(),
+      fetchFormPageMap().catch((err) => {
+        console.error('Failed to fetch WordPress pages:', err);
+        return new Map<number, { id: number; title: string; url: string; slug: string }>();
+      }),
+    ]);
 
     // Fetch full details + feeds for each form in parallel
     const forms: GravityForm[] = await Promise.all(
@@ -84,6 +91,7 @@ export async function GET() {
             choices: f.choices,
           })),
           endpoints,
+          wordpressPage: pageMap.get(Number(summary.id)),
         };
       }),
     );

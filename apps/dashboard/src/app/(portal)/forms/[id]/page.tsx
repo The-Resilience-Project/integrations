@@ -2,7 +2,7 @@
 
 import { use, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, FileText, GitBranch, ArrowRight } from 'lucide-react';
+import { ArrowLeft, FileText, GitBranch, ArrowRight, Globe } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -113,6 +113,32 @@ export default function FormDetailPage({
           <p className="text-sm text-muted-foreground mt-1">{form.title}</p>
         )}
       </header>
+
+      {/* WordPress page link */}
+      {form.wordpressPage && (
+        <a
+          href={form.wordpressPage.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-3 rounded-xl border border-[var(--cyan-glow)]/20 bg-[var(--cyan-glow)]/5 px-4 py-3 hover:bg-[var(--cyan-glow)]/10 transition-colors"
+        >
+          <div
+            className="flex items-center justify-center h-8 w-8 rounded-lg shrink-0"
+            style={{ backgroundColor: 'color-mix(in oklch, var(--cyan-glow) 15%, transparent)' }}
+          >
+            <Globe className="h-4 w-4 text-[var(--cyan-glow)]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium group-hover:text-[var(--cyan-glow)] transition-colors">
+              {form.wordpressPage.title}
+            </p>
+            <p className="text-[11px] text-muted-foreground truncate">
+              {form.wordpressPage.url}
+            </p>
+          </div>
+          <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-[var(--cyan-glow)] group-hover:translate-x-0.5 transition-all shrink-0" />
+        </a>
+      )}
 
       {/* Overview cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

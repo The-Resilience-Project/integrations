@@ -68,4 +68,5 @@ export interface GravityForm {
   isActive: boolean;
   fields: FormField[];
   endpoints: FormEndpoint[];
+  wordpressPage?: { id: number; title: string; url: string; slug: string };
 }

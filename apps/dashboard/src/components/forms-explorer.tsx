@@ -2,10 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ExternalLink, ArrowUpDown } from 'lucide-react';
+import { ExternalLink, ArrowUpDown, Globe } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Select,
@@ -28,6 +27,46 @@ import type { GravityForm } from '@/lib/types';
 type SortKey = 'id' | 'purpose' | 'entryCount' | 'fields';
 type SortDir = 'asc' | 'desc';
 type FilterType = 'all' | 'mapped' | 'unmapped' | 'active' | 'inactive';
+
+type FormGroup = 'schools' | 'early-years' | 'workplaces' | 'shared';
+
+const GROUP_ORDER: FormGroup[] = ['schools', 'early-years', 'workplaces', 'shared'];
+
+const GROUP_LABELS: Record<FormGroup, string> = {
+  schools: 'Schools',
+  'early-years': 'Early Years',
+  workplaces: 'Workplaces',
+  shared: 'Shared',
+};
+
+const GROUP_COLOURS: Record<FormGroup, string> = {
+  schools: 'var(--cyan-glow)',
+  'early-years': 'var(--teal-accent)',
+  workplaces: 'var(--violet-accent)',
+  shared: 'var(--amber-accent)',
+};
+
+function getFormGroup(form: GravityForm): FormGroup {
+  const t = form.title.toLowerCase();
+  if (t.includes('ey ') || t.includes('early year')) return 'early-years';
+  if (t.includes('workplace')) return 'workplaces';
+  if (
+    t.includes('school') ||
+    t.includes('confirmation') ||
+    t.includes('curriculum') ||
+    t.includes('ltrp') ||
+    t.includes('date acceptance') ||
+    t.includes('event confirmation') ||
+    t.includes('info session') ||
+    t.includes('more info') ||
+    t.includes('prize pack') && !t.includes('workplace') && !t.includes('ey ')
+  )
+    return 'schools';
+  if (t.includes('enquiries') && !t.includes('school') && !t.includes('ey ') && !t.includes('workplace'))
+    return 'shared';
+  if (t.includes('shipping')) return 'shared';
+  return 'schools';
+}
 
 export function FormsExplorer() {
   const { data, isLoading, error } = useForms();
@@ -58,7 +97,8 @@ export function FormsExplorer() {
           f.title.toLowerCase().includes(q) ||
           f.purpose.toLowerCase().includes(q) ||
           String(f.id).includes(q) ||
-          f.endpoints.some((e) => e.endpoint.toLowerCase().includes(q)),
+          f.endpoints.some((e) => e.endpoint.toLowerCase().includes(q)) ||
+          (f.wordpressPage?.title.toLowerCase().includes(q) ?? false),
       );
     }
 
@@ -73,8 +113,8 @@ export function FormsExplorer() {
 
   // Sort
   const sorted = useMemo(() => {
-    const sorted = [...filtered];
-    sorted.sort((a, b) => {
+    const s = [...filtered];
+    s.sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
         case 'id':
@@ -92,8 +132,22 @@ export function FormsExplorer() {
       }
       return sortDir === 'desc' ? -cmp : cmp;
     });
-    return sorted;
+    return s;
   }, [filtered, sortKey, sortDir]);
+
+  // Group
+  const grouped = useMemo(() => {
+    const groups: Record<FormGroup, GravityForm[]> = {
+      schools: [],
+      'early-years': [],
+      workplaces: [],
+      shared: [],
+    };
+    for (const form of sorted) {
+      groups[getFormGroup(form)].push(form);
+    }
+    return groups;
+  }, [sorted]);
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -181,7 +235,7 @@ export function FormsExplorer() {
       <div className="flex flex-wrap items-center gap-2">
         <Input
           type="search"
-          placeholder="Search forms by name, ID, or endpoint..."
+          placeholder="Search forms by name, ID, page, or endpoint..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm h-8 text-xs bg-secondary border-border/50 placeholder:text-muted-foreground/50"
@@ -208,41 +262,62 @@ export function FormsExplorer() {
         </span>
       </div>
 
-      {/* Table */}
-      <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border/50 hover:bg-transparent">
-              <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground w-16">
-                <button onClick={() => toggleSort('id')} className="flex items-center hover:text-foreground transition-colors">
-                  ID<SortIcon column="id" />
-                </button>
-              </TableHead>
-              <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                <button onClick={() => toggleSort('purpose')} className="flex items-center hover:text-foreground transition-colors">
-                  Purpose<SortIcon column="purpose" />
-                </button>
-              </TableHead>
-              <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground text-right w-24">
-                <button onClick={() => toggleSort('entryCount')} className="flex items-center justify-end w-full hover:text-foreground transition-colors">
-                  Entries<SortIcon column="entryCount" />
-                </button>
-              </TableHead>
-              <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground text-center w-20">
-                <button onClick={() => toggleSort('fields')} className="flex items-center justify-center w-full hover:text-foreground transition-colors">
-                  Fields<SortIcon column="fields" />
-                </button>
-              </TableHead>
-              <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Endpoints</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sorted.map((form) => (
-              <FormRow key={form.id} form={form} />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      {/* Grouped tables */}
+      {GROUP_ORDER.map((group) => {
+        const groupForms = grouped[group];
+        if (groupForms.length === 0) return null;
+        return (
+          <div key={group} className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: GROUP_COLOURS[group] }}
+              />
+              <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {GROUP_LABELS[group]}
+              </h3>
+              <span className="text-[10px] font-mono text-muted-foreground/50">
+                {groupForms.length}
+              </span>
+            </div>
+            <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50 hover:bg-transparent">
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground w-16">
+                      <button onClick={() => toggleSort('id')} className="flex items-center hover:text-foreground transition-colors">
+                        ID<SortIcon column="id" />
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      <button onClick={() => toggleSort('purpose')} className="flex items-center hover:text-foreground transition-colors">
+                        Purpose<SortIcon column="purpose" />
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground text-right w-24">
+                      <button onClick={() => toggleSort('entryCount')} className="flex items-center justify-end w-full hover:text-foreground transition-colors">
+                        Entries<SortIcon column="entryCount" />
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground text-center w-20">
+                      <button onClick={() => toggleSort('fields')} className="flex items-center justify-center w-full hover:text-foreground transition-colors">
+                        Fields<SortIcon column="fields" />
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Page</TableHead>
+                    <TableHead className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Endpoints</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {groupForms.map((form) => (
+                    <FormRow key={form.id} form={form} />
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -287,6 +362,21 @@ function FormRow({ form }: { form: GravityForm }) {
       </TableCell>
       <TableCell className="text-center font-mono text-sm text-muted-foreground">
         {form.fields.length || '—'}
+      </TableCell>
+      <TableCell>
+        {form.wordpressPage ? (
+          <a
+            href={form.wordpressPage.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-[var(--cyan-glow)] transition-colors"
+          >
+            <Globe className="h-3 w-3 shrink-0" />
+            <span className="truncate max-w-[160px]">{form.wordpressPage.title}</span>
+          </a>
+        ) : (
+          <span className="text-xs text-muted-foreground/40">—</span>
+        )}
       </TableCell>
       <TableCell>
         <div className="flex flex-wrap gap-1.5">
