@@ -754,7 +754,7 @@ function curric_ordering_validation($validation_result)
     }
 
     // teacher sem max qty = 10
-    if (rgpost('input_179_3') > 30 and !empty(rgpost('input_179_3'))) {
+    if (rgpost('input_' . FIELD_CURRIC_TEACHER_SEMINAR . '_3') > 30 and !empty(rgpost('input_' . FIELD_CURRIC_TEACHER_SEMINAR . '_3'))) {
 
         // set the form validation to false
         $validation_result['is_valid'] = false;
@@ -763,7 +763,7 @@ function curric_ordering_validation($validation_result)
         foreach ($form['fields'] as &$field) {
 
             //NOTE: replace 1 with the field you would like to validate
-            if ($field->id == '179') {
+            if ($field->id == FIELD_CURRIC_TEACHER_SEMINAR) {
                 $field->failed_validation = true;
                 $field->validation_message = 'Maxiumum 10 tickets can be purchased';
                 break;
@@ -827,40 +827,40 @@ function new_schools_confirmation_pricing_page($form)
     $using_planners = false;
     if ($form_id == FORM_NEW_SCHOOLS_CONFIRMATION_2026) {
         $total_page = 5;
-        $engage_field = 221;
-        $num_participating_students = rgpost('input_219');
+        $engage_field = FIELD_NEW_CONF_ENGAGE;
+        $num_participating_students = rgpost('input_' . FIELD_NEW_CONF_NUM_STUDENTS);
     } elseif ($form_id == FORM_EXISTING_SCHOOLS_CONFIRMATION_2026) {
         $total_page = 6;
-        $engage_field = 54;
-        $school_type = rgpost('input_117');
+        $engage_field = FIELD_EXIST_CONF_ENGAGE;
+        $school_type = rgpost('input_' . FIELD_EXIST_CONF_SCHOOL_TYPE);
         if ($school_type === 'Primary') {
-            $num_participating_students = rgpost('input_27');
+            $num_participating_students = rgpost('input_' . FIELD_EXIST_CONF_NUM_STUDENTS);
         } elseif ($school_type === 'Secondary') {
-            if (rgpost('input_29') === 'Journals') {
+            if (rgpost('input_' . FIELD_EXIST_CONF_LESSON_FORMAT) === 'Journals') {
                 $using_journals = true;
-                $num_participating_students = rgpost('input_27');
+                $num_participating_students = rgpost('input_' . FIELD_EXIST_CONF_NUM_STUDENTS);
             } else {
                 $using_journals = false;
                 $using_planners = true;
-                $num_participating_planner_students = rgpost('input_27');
+                $num_participating_planner_students = rgpost('input_' . FIELD_EXIST_CONF_NUM_STUDENTS);
             }
 
         } else {
-            if (rgpost('input_29') === 'Journals') {
+            if (rgpost('input_' . FIELD_EXIST_CONF_LESSON_FORMAT) === 'Journals') {
                 // whole school using journals
                 $using_journals = true;
-                $num_participating_students = rgpost('input_27');
+                $num_participating_students = rgpost('input_' . FIELD_EXIST_CONF_NUM_STUDENTS);
             } else {
                 // primary using journals, secondary using planners;
                 $using_planners = true;
-                $num_participating_students = rgpost('input_127');
-                $num_participating_planner_students = rgpost('input_128');
+                $num_participating_students = rgpost('input_' . FIELD_EXIST_CONF_PRIMARY_STUDENTS);
+                $num_participating_planner_students = rgpost('input_' . FIELD_EXIST_CONF_SECONDARY_STUDENTS);
             }
         }
     } elseif ($form_id == FORM_EARLY_YEARS_CONFIRMATION_2025) {
         $total_page = 4;
-        $engage_field = 44;
-        $num_participating_students = rgpost('input_210');
+        $engage_field = FIELD_EY_CONF_ENGAGE;
+        $num_participating_students = rgpost('input_' . FIELD_EY_CONF_NUM_CHILDREN);
         $students_label = 'children';
     }
 
@@ -873,7 +873,7 @@ function new_schools_confirmation_pricing_page($form)
                 }
             }
             if ($using_planners) {
-                if ($field->id == 121) {
+                if ($field->id == FIELD_EXIST_CONF_PLANNER_PRICE) {
                     $field->description = '$14 x '.$num_participating_planner_students.' participating '.$students_label;
                 }
             }
@@ -883,10 +883,10 @@ function new_schools_confirmation_pricing_page($form)
 }
 
 add_filter('gform_field_content_' . FORM_EXISTING_SCHOOLS_CONFIRMATION_2026, function ($field_content, $field) {
-    if ($field->id == 127) {
+    if ($field->id == FIELD_EXIST_CONF_PRIMARY_STUDENTS) {
         return str_replace('primary school', "<span class='emph-engage'>primary school</span>", $field_content);
     }
-    if ($field->id == 128) {
+    if ($field->id == FIELD_EXIST_CONF_SECONDARY_STUDENTS) {
         return str_replace('secondary school', "<span class='emph-engage'>secondary school</span>", $field_content);
     }
 
@@ -950,10 +950,10 @@ function list_extend_options($form)
 
     $fields = $form['fields'];
     foreach ($form['fields'] as &$field) {
-        if ($field->id == 111) {
+        if ($field->id == FIELD_EXIST_CONF_EXTEND_SUMMARY) {
             $field->description = implode('<br/>', $extend_description);
         }
-        if ($field->id == 15 and $travel_costs) {
+        if ($field->id == FIELD_EXIST_CONF_TOTAL_EXCL and $travel_costs) {
             $field->description = 'Excluding applicable travel costs for In Person Workshops and GST';
         }
     }
