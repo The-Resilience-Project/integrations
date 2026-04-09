@@ -95,7 +95,7 @@ class TrpSingleDates
             'TRP in Practice' => ['TRP in Practice', 'Staff'],
             'Teaching TRP' => ['Teaching TRP', 'Staff'],
             'Building Resilience at Home for Parents and Carers' => ['Building Resilience at Home for Parents/Carers', 'Parents / Carers'],
-            'Parent/Carer Authentic Connection' => ['Authentic Connection for Parents/Carers', 'Parents / Carers'],
+            'Parenting with ACE' => ['Parenting with ACE - Authenticity, Connection & Self Esteem', 'Parents / Carers'],
             'Connected Parenting' => ['Connected Parenting with Lael Stone', 'Parents / Carers'],
             'Digital Wellbeing for Families' => ['Digital Wellbeing for Families', 'Parents / Carers'],
             'Parenting with ACE' => ['Parenting with ACE', 'Parents / Carers'],
@@ -103,7 +103,9 @@ class TrpSingleDates
 
 
         $delivery = $this->event['activitytype'];
-        $field_data = isset($id_lookup[$this->event['cf_events_presentationworkshoptype']]) ? $id_lookup[$this->event['cf_events_presentationworkshoptype']] : [$this->event['cf_events_presentationworkshoptype'], ''];
+
+        $field_data = isset($id_lookup[$this->event['cf_events_presentationworkshoptype']])
+                ? $id_lookup[$this->event['cf_events_presentationworkshoptype']] : [$this->event['cf_events_presentationworkshoptype'], ''];
         $name = $field_data[0];
         $audience = $field_data[1];
 

@@ -671,8 +671,8 @@ function populate_curric_form_data_2026($form)
             $description .= '</td></tr>';
         }
 
-        // $description .= "<tr><td>Last date for deliveries in 2025</td><td>".rgpost("input_106")."</td></tr>";
-        // $description .= "<tr><td>First date for deliveries in 2026</td><td>".rgpost("input_107")."</td></tr>";
+        // 		$description .= "<tr><td>Last date for deliveries in 2025</td><td>".rgpost("input_106")."</td></tr>";
+        // 		$description .= "<tr><td>First date for deliveries in 2026</td><td>".rgpost("input_107")."</td></tr>";
         $description .= '<tr><td>PO Number</td><td>'.rgpost('input_109').'</td></tr>';
 
         $description .= '</table><br/>';
