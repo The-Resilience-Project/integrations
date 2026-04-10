@@ -28,7 +28,7 @@ class SubmitMoreInfoHandler
      */
     public function handle(MoreInfoRequest $request): bool
     {
-        $sourceForm = $request->sourceForm ?? 'More Info 2026';
+        $sourceForm = $request->sourceForm ?? 'More Info 2027';
 
         $contact = $request->toContact();
         $organisation = $request->toOrganisation();

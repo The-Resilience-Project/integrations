@@ -28,7 +28,7 @@ class SubmitRegistrationHandler
      */
     public function handle(RegistrationRequest $request): bool
     {
-        $sourceForm = $request->sourceForm ?? 'Info Session Registration 2026';
+        $sourceForm = $request->sourceForm ?? 'Info Session Registration 2027';
 
         $contact = $request->toContact();
         $organisation = $request->toOrganisation();
@@ -118,7 +118,7 @@ class SubmitRegistrationHandler
                 'eventId' => $request->eventId,
                 'replyTo' => $replyTo,
             ]);
-            $this->registerContactForEvent($contact, $captured->contactId, $event, $request->eventId, $sourceForm, $dealId, $replyTo);
+            $this->registerContactForEvent($contact, $captured->contactId, $event, $request->eventId, $sourceForm, $dealId, $replyTo, $request->question);
         } else {
             // 7e. Existing school — create enquiry instead
             log_info('Step 7e: Existing school, creating enquiry');
@@ -163,6 +163,7 @@ class SubmitRegistrationHandler
         string $sourceForm,
         string $dealId,
         string $replyTo,
+        ?string $question = null,
     ): void {
         // Check if already registered
         $checkResponse = $this->client->post('checkContactRegisteredForEvent', [
@@ -190,6 +191,10 @@ class SubmitRegistrationHandler
             'source' => $sourceForm,
             'replyTo' => $replyTo,
         ];
+
+        if ($question !== null) {
+            $requestBody['question'] = $question;
+        }
 
         log_info('Registering contact for event', $requestBody);
         $this->client->post('registerContact', $requestBody);

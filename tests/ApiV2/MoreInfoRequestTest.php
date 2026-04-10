@@ -55,10 +55,10 @@ class MoreInfoRequestTest extends TestCase
     public function test_from_form_data_extracts_source_form(): void
     {
         $request = MoreInfoRequest::fromFormData($this->makeFormData([
-            'source_form' => 'VACPSP More Info 2026',
+            'source_form' => 'VACPSP More Info 2027',
         ]));
 
-        $this->assertSame('VACPSP More Info 2026', $request->sourceForm);
+        $this->assertSame('VACPSP More Info 2027', $request->sourceForm);
     }
 
     public function test_optional_fields_default_to_null(): void

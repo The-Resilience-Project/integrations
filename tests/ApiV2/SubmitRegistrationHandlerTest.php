@@ -266,7 +266,29 @@ class SubmitRegistrationHandlerTest extends TestCase
         $regBody = $client->getFirstCallBody('registerContact');
         $this->assertArrayHasKey('replyTo', $regBody);
         $this->assertSame('2x300', $regBody['dealId']);
-        $this->assertSame('Info Session Registration 2026', $regBody['source']);
+        $this->assertSame('Info Session Registration 2027', $regBody['source']);
+    }
+
+    public function test_registration_payload_includes_question_when_provided(): void
+    {
+        $client = $this->makeClient();
+        $handler = new SubmitRegistrationHandler($client);
+
+        $handler->handle($this->makeRequest(['question' => 'How does the program integrate with our existing wellbeing curriculum?']));
+
+        $regBody = $client->getFirstCallBody('registerContact');
+        $this->assertSame('How does the program integrate with our existing wellbeing curriculum?', $regBody['question']);
+    }
+
+    public function test_registration_payload_omits_question_when_not_provided(): void
+    {
+        $client = $this->makeClient();
+        $handler = new SubmitRegistrationHandler($client);
+
+        $handler->handle($this->makeRequest());
+
+        $regBody = $client->getFirstCallBody('registerContact');
+        $this->assertArrayNotHasKey('question', $regBody);
     }
 
     public function test_registration_payload_includes_reply_to(): void
@@ -379,7 +401,7 @@ class SubmitRegistrationHandlerTest extends TestCase
 
         $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
         $this->assertArrayHasKey('sourceForm', $captureBody);
-        $this->assertSame('Info Session Registration 2026', $captureBody['sourceForm']);
+        $this->assertSame('Info Session Registration 2027', $captureBody['sourceForm']);
     }
 
     public function test_custom_source_form_flows_through(): void

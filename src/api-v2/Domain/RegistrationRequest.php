@@ -32,6 +32,9 @@ class RegistrationRequest
         public readonly ?int $numOfEmployees = null,
         public readonly ?string $contactLeadSource = null,
 
+        // Registration-specific (optional)
+        public readonly ?string $question = null,
+
         // Source form override (optional)
         public readonly ?string $sourceForm = null,
     ) {
@@ -85,6 +88,7 @@ class RegistrationRequest
             numOfStudents: !empty($data['num_of_students']) ? (int) $data['num_of_students'] : null,
             numOfEmployees: !empty($data['num_of_employees']) ? (int) $data['num_of_employees'] : null,
             contactLeadSource: !empty($data['contact_lead_source']) ? (string) $data['contact_lead_source'] : null,
+            question: !empty($data['question']) ? (string) $data['question'] : null,
             sourceForm: !empty($data['source_form']) ? (string) $data['source_form'] : null,
         );
     }

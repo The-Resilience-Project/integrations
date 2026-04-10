@@ -146,7 +146,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
 
         $captureBody = $client->getFirstCallBody('captureCustomerInfoWithAccountNo');
         $this->assertArrayHasKey('sourceForm', $captureBody);
-        $this->assertSame('More Info 2026', $captureBody['sourceForm']);
+        $this->assertSame('More Info 2027', $captureBody['sourceForm']);
     }
 
     public function test_updates_org_sales_events_with_source_form(): void
@@ -163,7 +163,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $this->assertTrue($client->wasCalled('updateOrganisation'));
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertArrayHasKey('salesEvents2025', $orgBody);
-        $this->assertContains('More Info 2026', $orgBody['salesEvents2025']);
+        $this->assertContains('More Info 2027', $orgBody['salesEvents2025']);
     }
 
     public function test_appends_source_form_to_existing_org_sales_events(): void
@@ -179,7 +179,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
 
         $orgBody = $client->getFirstCallBody('updateOrganisation');
         $this->assertContains('Enquiry', $orgBody['salesEvents2025']);
-        $this->assertContains('More Info 2026', $orgBody['salesEvents2025']);
+        $this->assertContains('More Info 2027', $orgBody['salesEvents2025']);
     }
 
     public function test_does_not_duplicate_source_form_in_org_sales_events(): void
@@ -189,7 +189,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
             'getOrgDetails',
             StubVtigerWebhookClient::makeOrgDetailsResponse(
                 assignedUserId: UserIds::LAURA,
-                salesEvents: 'More Info 2026',
+                salesEvents: 'More Info 2027',
             ),
         );
         $client->setResponse(
@@ -218,7 +218,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $this->assertTrue($client->wasCalled('updateContactById'));
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertArrayHasKey('contactLeadSource', $contactBody);
-        $this->assertContains('More Info 2026', $contactBody['contactLeadSource']);
+        $this->assertContains('More Info 2027', $contactBody['contactLeadSource']);
     }
 
     public function test_appends_source_form_to_existing_contact_forms_completed(): void
@@ -234,7 +234,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
 
         $contactBody = $client->getFirstCallBody('updateContactById');
         $this->assertContains('Enquiry', $contactBody['contactLeadSource']);
-        $this->assertContains('More Info 2026', $contactBody['contactLeadSource']);
+        $this->assertContains('More Info 2027', $contactBody['contactLeadSource']);
     }
 
     public function test_does_not_duplicate_source_form_in_contact_forms_completed(): void
@@ -244,7 +244,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
             'captureCustomerInfoWithAccountNo',
             StubVtigerWebhookClient::makeCaptureResponse(
                 assignedUserId: UserIds::LAURA,
-                formsCompleted: 'More Info 2026',
+                formsCompleted: 'More Info 2027',
             ),
         );
         $client->setResponse(
@@ -363,7 +363,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $this->assertSame('https://zoom.us/j/123456', $regBody['eventZoomLink']);
         $this->assertSame('Jane Smith | EVT-001', $regBody['registrationName']);
         $this->assertSame('4x100', $regBody['contactId']);
-        $this->assertSame('More Info 2026', $regBody['source']);
+        $this->assertSame('More Info 2027', $regBody['source']);
     }
 
     public function test_skips_registration_when_contact_already_registered(): void
