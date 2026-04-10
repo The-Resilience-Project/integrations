@@ -4,8 +4,8 @@
  * Info Session Registration Pre-fill (form 91)
  *
  * When a contact_id URL parameter is present, fetches the contact's
- * details from Vtiger and pre-fills form fields (name, email, phone,
- * school, state).
+ * details from Vtiger and pre-fills form fields via JavaScript
+ * (name, email, phone, school, state, student count).
  */
 
 require_once __DIR__ . '/form_ids.php';
@@ -25,23 +25,54 @@ function prefill_info_session_from_contact($form)
         return $form;
     }
 
-    // Pre-fill contact fields
-    $_POST['input_3_3'] = $contact['firstname'] ?? '';
-    $_POST['input_3_6'] = $contact['lastname'] ?? '';
-    $_POST['input_4'] = $contact['email'] ?? '';
-    $_POST['input_6'] = $contact['mobile'] ?? $contact['phone'] ?? '';
+    $firstname = esc_js($contact['firstname'] ?? '');
+    $lastname = esc_js($contact['lastname'] ?? '');
+    $email = esc_js($contact['email'] ?? '');
+    $mobile = esc_js($contact['mobile'] ?? $contact['phone'] ?? '');
 
     // Fetch the contact's organisation for school details
+    $account_no = '';
+    $state = '';
+    $students = '';
     $account_id = $contact['account_id'] ?? '';
     if (!empty($account_id)) {
         $org = vtap_get_org_details($account_id);
         if ($org) {
-            // Dropdown value is the ACC-format account number
-            $_POST['input_10'] = $org['account_no'] ?? '';
-            $_POST['input_7'] = $org['cf_accounts_statenew'] ?? '';
-            $_POST['input_12'] = $org['cf_accounts_totalstudents'] ?? '';
+            $account_no = esc_js($org['account_no'] ?? '');
+            $state = esc_js($org['cf_accounts_statenew'] ?? '');
+            $students = esc_js($org['cf_accounts_totalstudents'] ?? '');
         }
     }
+
+    $form_id = FORM_SCHOOL_INFO_SESSION_2027;
+    ?>
+    <script>
+    jQuery(document).on('gform_post_render', function(event, formId) {
+        if (formId != <?php echo $form_id; ?>) return;
+
+        // Contact details
+        jQuery('#input_<?php echo $form_id; ?>_3_3').val('<?php echo $firstname; ?>');
+        jQuery('#input_<?php echo $form_id; ?>_3_6').val('<?php echo $lastname; ?>');
+        jQuery('#input_<?php echo $form_id; ?>_4').val('<?php echo $email; ?>');
+        jQuery('#input_<?php echo $form_id; ?>_6').val('<?php echo $mobile; ?>');
+
+        // School dropdown (value is ACC-format account number)
+        <?php if (!empty($account_no)) : ?>
+        jQuery('#input_<?php echo $form_id; ?>_10').val('<?php echo $account_no; ?>').trigger('change');
+        <?php endif; ?>
+
+        // State dropdown
+        <?php if (!empty($state)) : ?>
+        jQuery('#input_<?php echo $form_id; ?>_7').val('<?php echo $state; ?>').trigger('change');
+        <?php endif; ?>
+
+        // Number of students
+        <?php if (!empty($students)) : ?>
+        jQuery('#input_<?php echo $form_id; ?>_12').val('<?php echo $students; ?>');
+        <?php endif; ?>
+    });
+    </script>
+    <?php
 
     return $form;
 }
