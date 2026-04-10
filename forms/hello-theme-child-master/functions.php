@@ -137,4 +137,5 @@ require_once __DIR__ . '/form-ltrp.php';
 require_once __DIR__ . '/form-curriculum.php';
 require_once __DIR__ . '/form-validation.php';
 require_once __DIR__ . '/form-helpers.php';
+require_once __DIR__ . '/form-info-session-prefill.php';
 require_once __DIR__ . '/footer-assets.php';
