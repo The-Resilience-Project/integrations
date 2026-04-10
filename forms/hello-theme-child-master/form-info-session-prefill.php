@@ -14,13 +14,13 @@ add_filter('gform_pre_render_' . FORM_SCHOOL_INFO_SESSION_2027, 'prefill_info_se
 
 function prefill_info_session_from_contact($form)
 {
-    $contact_id = isset($_GET['contact_id']) ? sanitize_text_field($_GET['contact_id']) : '';
-    if (empty($contact_id)) {
+    $contact_no = isset($_GET['contact_id']) ? sanitize_text_field($_GET['contact_id']) : '';
+    if (empty($contact_no)) {
         return $form;
     }
 
-    // Fetch contact from Vtiger
-    $contact = vtap_get_contact($contact_id);
+    // Fetch contact from Vtiger by CON number
+    $contact = vtap_get_contact_by_contact_no($contact_no);
     if (!$contact) {
         return $form;
     }
@@ -31,14 +31,14 @@ function prefill_info_session_from_contact($form)
     $mobile = esc_js($contact['mobile'] ?? $contact['phone'] ?? '');
 
     // Fetch the contact's organisation for school details
-    $account_no = '';
+    $school_name = '';
     $state = '';
     $students = '';
     $account_id = $contact['account_id'] ?? '';
     if (!empty($account_id)) {
         $org = vtap_get_org_details($account_id);
         if ($org) {
-            $account_no = esc_js($org['account_no'] ?? '');
+            $school_name = esc_js($org['accountname'] ?? '');
             $state = esc_js($org['cf_accounts_statenew'] ?? '');
             $students = esc_js($org['cf_accounts_totalstudents'] ?? '');
         }
@@ -56,9 +56,11 @@ function prefill_info_session_from_contact($form)
         jQuery('#input_<?php echo $form_id; ?>_4').val('<?php echo $email; ?>');
         jQuery('#input_<?php echo $form_id; ?>_6').val('<?php echo $mobile; ?>');
 
-        // School dropdown (value is ACC-format account number)
-        <?php if (!empty($account_no)) : ?>
-        jQuery('#input_<?php echo $form_id; ?>_10').val('<?php echo $account_no; ?>').trigger('change');
+        // School — tick "not in list" checkbox and set the name in the text field
+        // (the dropdown is an autocomplete widget that can't be set programmatically)
+        <?php if (!empty($school_name)) : ?>
+        jQuery('#choice_<?php echo $form_id; ?>_11_1').prop('checked', true).trigger('change');
+        jQuery('#input_<?php echo $form_id; ?>_1').val('<?php echo $school_name; ?>');
         <?php endif; ?>
 
         // State dropdown
@@ -78,19 +80,17 @@ function prefill_info_session_from_contact($form)
 }
 
 /**
- * Fetch a contact record from Vtiger by internal ID.
+ * Fetch a contact record from Vtiger by contact number (CON format).
  *
- * @param string $contact_id The numeric contact ID (without the 4x prefix)
+ * @param string $contact_no The contact number (e.g. 'CON106897')
  * @return array|null The contact record, or null on failure
  */
-function vtap_get_contact($contact_id)
+function vtap_get_contact_by_contact_no($contact_no)
 {
-    $vtiger_id = '4x' . $contact_id;
-
     $response = vtap_webhook_call(
-        'https://theresilienceproject.od2.vtiger.com/restapi/vtap/webhook/getContactById',
-        'RjlLbIhNjmR92dtek5YQfAcg',
-        ['contactId' => $vtiger_id]
+        'https://theresilienceproject.od2.vtiger.com/restapi/vtap/webhook/getContactByContactNo',
+        'subrqX9z6F1xqy3rDTWNfPOT',
+        ['contactNo' => $contact_no]
     );
 
     if (!$response || empty($response['result'])) {
