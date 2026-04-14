@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRP Workflow: School Request for Info</title>
+<style>
+  :root { --blue: #1a56db; --light-blue: #e8f0fe; --green: #0d7a3f; --orange: #c05621; --grey: #f8f9fa; --border: #dee2e6; --text: #212529; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { color: var(--blue); margin-bottom: 0.25rem; font-size: 1.75rem; }
+  .subtitle { color: #6c757d; margin-bottom: 2rem; font-size: 0.95rem; }
+  h2 { color: var(--blue); margin: 2rem 0 1rem; font-size: 1.3rem; border-bottom: 2px solid var(--light-blue); padding-bottom: 0.3rem; }
+  h3 { margin: 1.25rem 0 0.5rem; font-size: 1.05rem; }
+  p, li { font-size: 0.95rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+  li { margin-bottom: 0.3rem; }
+  .callout { background: var(--light-blue); border-left: 4px solid var(--blue); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .callout-orange { background: #fff3e0; border-left: 4px solid var(--orange); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .callout-green { background: #e8f5e9; border-left: 4px solid var(--green); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.6rem 0.75rem; border: 1px solid var(--border); text-align: left; }
+  th { background: var(--grey); font-weight: 600; }
+  .branch { display: flex; gap: 1.5rem; margin: 1.5rem 0; }
+  .branch-box { flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+  .branch-box h3 { margin-top: 0; }
+  .branch-a { border-color: var(--blue); }
+  .branch-a h3 { color: var(--blue); }
+  .branch-b { border-color: var(--orange); }
+  .branch-b h3 { color: var(--orange); }
+  .mermaid { margin: 1.5rem 0; }
+  .impl-note { background: #f8f9fa; border: 1px dashed #adb5bd; padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; color: #495057; }
+  .impl-note strong { color: #6c757d; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #6c757d; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<h1>Workflow 2: School Request for Information</h1>
+<p class="subtitle">The Resilience Project &mdash; CRM Workflow Documentation for Dynamics 365 Migration &bull; April 2026</p>
+
+<div class="callout">
+  <strong>Summary:</strong> A school requests more information about our programs. The system captures the contact and organisation, then <strong>branches based on school size</strong>. Large schools (500+ students) enter the sales pipeline directly. Smaller schools enter an automated nurture sequence with timed follow-up emails.
+</div>
+
+<h2>1. Trigger</h2>
+<p>A school submits a "Request for More Information" form on the TRP website.</p>
+
+<h2>2. Data Captured</h2>
+
+<table>
+  <tr><th>Field</th><th>Required</th><th>Notes</th></tr>
+  <tr><td>Email</td><td>Yes</td><td>Unique contact identifier</td></tr>
+  <tr><td>First Name / Last Name</td><td>Yes</td><td></td></tr>
+  <tr><td>Phone</td><td>No</td><td></td></tr>
+  <tr><td>Job Title</td><td>No</td><td></td></tr>
+  <tr><td>School</td><td>Yes</td><td>Select existing school or enter new name</td></tr>
+  <tr><td>State</td><td>No</td><td>Australian state &mdash; drives owner assignment</td></tr>
+  <tr><td>Organisation Sub-Type</td><td>No</td><td>e.g. Primary, Secondary</td></tr>
+  <tr><td>Number of Students</td><td>No</td><td><strong>Critical &mdash; determines which path the school takes</strong></td></tr>
+  <tr><td>Newsletter Opt-in</td><td>No</td><td></td></tr>
+</table>
+
+<h2>3. Business Process</h2>
+
+<h3>3.1 Identify or create the contact and organisation</h3>
+<ul>
+  <li>Same rules as the general enquiry workflow: link to existing org or create new, one active contact per email.</li>
+  <li>Assign ownership using state-based routing (NSW/QLD &rarr; Brendan, others &rarr; Laura; preserve existing dedicated SPMs).</li>
+  <li>Track which forms the contact and organisation have engaged with.</li>
+</ul>
+
+<h3>3.2 Branch based on school size</h3>
+
+<div class="branch">
+  <div class="branch-box branch-a">
+    <h3>Path A: Large School (500+ students)</h3>
+    <p><strong>Outcome: Create a sales opportunity</strong></p>
+    <p>These are high-value prospects. A deal is created so a salesperson can manage the relationship directly.</p>
+    <ul>
+      <li>Deal name: "2027 School Partnership Program"</li>
+      <li>Stage: "New"</li>
+      <li>Pipeline: "New Schools"</li>
+      <li>Expected close: 1 week from submission</li>
+      <li>Only created if the school is new (no existing dedicated SPM)</li>
+    </ul>
+    <p>Follow-up is <strong>manual</strong> &mdash; the assigned salesperson works the deal.</p>
+  </div>
+  <div class="branch-box branch-b">
+    <h3>Path B: Smaller School (under 500 students)</h3>
+    <p><strong>Outcome: Enter automated nurture sequence</strong></p>
+    <p>Smaller schools receive a series of timed follow-up emails to maintain engagement without requiring manual sales effort.</p>
+    <ul>
+      <li>Contact lifecycle stage set to "Lead", status "Hot"</li>
+      <li>Must not create duplicate nurture entries if the same contact submits again</li>
+    </ul>
+    <p>Follow-up is <strong>automated</strong> &mdash; see comms sequence below.</p>
+  </div>
+</div>
+
+<h2>4. Automated Nurture Sequence (Path B)</h2>
+
+<p>Smaller schools receive the following timed communications:</p>
+
+<table>
+  <tr><th>Timing</th><th>Communication</th><th>Condition</th></tr>
+  <tr><td>Immediately</td><td>Confirmation &mdash; "Thanks for your interest in our School Wellbeing Program"</td><td>Always sent</td></tr>
+  <tr><td>1 week later</td><td>Follow-up &mdash; checking in, any questions?</td><td>Only if the school hasn't progressed in the pipeline</td></tr>
+  <tr><td>2 weeks later</td><td>Final follow-up &mdash; "Have more questions about our program?"</td><td>Only if still not progressed. Deal interest is downgraded to "Cold".</td></tr>
+</table>
+
+<p><em>Email content is tailored by school size &mdash; schools under 350 students receive different copy to those with 351+.</em></p>
+
+<div class="callout-green">
+  <strong>Business requirement:</strong> Follow-up emails must automatically stop if the sales team has already advanced the school's opportunity (e.g. the school has progressed to a live info session or a call). Only schools that haven't engaged further should receive the automated nudges.
+</div>
+
+<h2>5. Owner Assignment</h2>
+
+<p>Same rules as Workflow 1 (General Enquiry) for schools:</p>
+<table>
+  <tr><th>Scenario</th><th>Assigned To</th></tr>
+  <tr><td>Organisation has a dedicated SPM</td><td>Keep existing SPM</td></tr>
+  <tr><td>New/unassigned organisation in NSW or QLD</td><td>Brendan</td></tr>
+  <tr><td>New/unassigned organisation in any other state</td><td>Laura</td></tr>
+</table>
+<p>The same owner is also used as the "reply-to" address on automated emails, so responses go to the right person.</p>
+
+<h2>6. Visual Flow</h2>
+
+<div class="mermaid">
+flowchart TD
+    A["'Request for Info'\nform submitted"] --> B["Identify or create\nContact & Organisation"]
+    B --> C["Assign owner\nbased on state"]
+    C --> D{"Number of\nStudents?"}
+    D -->|"≥ 500"| E{"New school?\n(no dedicated SPM)"}
+    D -->|"< 500"| F["Enter automated\nnurture sequence"]
+    E -->|"Yes"| G["Create Deal\nin sales pipeline"]
+    E -->|"No"| H["No action needed\n(SPM already managing)"]
+    G --> I["Salesperson manages\nfollow-up manually"]
+    F --> J["Confirmation email\nsent immediately"]
+    J --> K["Follow-up at\n1 week if no progress"]
+    K --> L["Final follow-up at\n2 weeks, downgrade\nto Cold if no progress"]
+
+    style A fill:#1a56db,color:#fff,stroke:none
+    style D fill:#fff3e0,color:#92400e,stroke:#c05621
+    style E fill:#fff3e0,color:#92400e,stroke:#c05621
+    style I fill:#e8f5e9,color:#065f46,stroke:#0d7a3f
+    style L fill:#e8f5e9,color:#065f46,stroke:#0d7a3f
+</div>
+
+<h2>7. Key Business Rules</h2>
+
+<ol>
+  <li><strong>500-student threshold:</strong> Large schools are high-value and go directly into the sales pipeline. Smaller schools get automated nurture to maintain engagement efficiently.</li>
+  <li><strong>No duplicate contacts:</strong> One active contact per email address.</li>
+  <li><strong>No duplicate nurture entries:</strong> If a contact has already entered the nurture sequence, don't create a second one.</li>
+  <li><strong>Conditional follow-ups:</strong> Automated emails must stop if the school has progressed in the pipeline (e.g. registered for an info session or had a call).</li>
+  <li><strong>Size-tailored messaging:</strong> Smaller schools (under 350) receive different email copy than mid-size schools (351+).</li>
+  <li><strong>No deals for existing partnerships:</strong> If a school already has a dedicated SPM, don't create a new deal.</li>
+</ol>
+
+<h2>8. Current Implementation Notes</h2>
+
+<div class="impl-note">
+  <strong>Note for Dynamics 365 migration:</strong> Our current CRM (Vtiger) does not have a native lead nurture or marketing automation capability. To work around this, we use an <strong>Event Registration</strong> as a proxy &mdash; smaller schools are "registered" to a standing event, and CRM workflow rules trigger timed emails based on the registration date. This is a platform workaround, not a business requirement. In Dynamics 365, this should be replaceable with a proper <strong>marketing automation journey / lead nurture sequence</strong>.
+</div>
+
+<footer>
+  <p>The Resilience Project &mdash; CRM Workflow Documentation &bull; Prepared April 2026</p>
+  <p>For questions, contact the TRP integrations team.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'base', themeVariables:{primaryColor:'#e8f0fe',primaryTextColor:'#212529',primaryBorderColor:'#1a56db',lineColor:'#94a3b8',fontSize:'14px'}});</script>
+</body>
+</html>

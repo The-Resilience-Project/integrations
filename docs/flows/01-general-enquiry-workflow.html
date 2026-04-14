@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRP Workflow: General Enquiry</title>
+<style>
+  :root { --blue: #1a56db; --light-blue: #e8f0fe; --green: #0d7a3f; --orange: #c05621; --grey: #f8f9fa; --border: #dee2e6; --text: #212529; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { color: var(--blue); margin-bottom: 0.25rem; font-size: 1.75rem; }
+  .subtitle { color: #6c757d; margin-bottom: 2rem; font-size: 0.95rem; }
+  h2 { color: var(--blue); margin: 2rem 0 1rem; font-size: 1.3rem; border-bottom: 2px solid var(--light-blue); padding-bottom: 0.3rem; }
+  h3 { margin: 1.25rem 0 0.5rem; font-size: 1.05rem; }
+  p, li { font-size: 0.95rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+  li { margin-bottom: 0.3rem; }
+  .callout { background: var(--light-blue); border-left: 4px solid var(--blue); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .callout-orange { background: #fff3e0; border-left: 4px solid var(--orange); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .callout-green { background: #e8f5e9; border-left: 4px solid var(--green); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.6rem 0.75rem; border: 1px solid var(--border); text-align: left; }
+  th { background: var(--grey); font-weight: 600; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.8rem; font-weight: 600; }
+  .tag-school { background: #dbeafe; color: #1e40af; }
+  .tag-workplace { background: #fef3c7; color: #92400e; }
+  .tag-ey { background: #d1fae5; color: #065f46; }
+  .mermaid { margin: 1.5rem 0; }
+  .impl-note { background: #f8f9fa; border: 1px dashed #adb5bd; padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; color: #495057; }
+  .impl-note strong { color: #6c757d; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #6c757d; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<h1>Workflow 1: General Enquiry</h1>
+<p class="subtitle">The Resilience Project &mdash; CRM Workflow Documentation for Dynamics 365 Migration &bull; April 2026</p>
+
+<div class="callout">
+  <strong>Summary:</strong> A school, workplace, or early years service submits a general enquiry via our website. The CRM must capture the contact and organisation, create a sales opportunity, assign ownership to the right staff member, log the enquiry, and send a confirmation email.
+</div>
+
+<h2>1. Trigger</h2>
+<p>A prospective customer submits an enquiry form on the TRP website. The form is used by three service types: <span class="tag tag-school">School</span> <span class="tag tag-workplace">Workplace</span> <span class="tag tag-ey">Early Years</span>.</p>
+
+<h2>2. Data Captured</h2>
+
+<table>
+  <tr><th>Field</th><th>Required</th><th>Notes</th></tr>
+  <tr><td>Email</td><td>Yes</td><td>Used as the unique identifier for the contact</td></tr>
+  <tr><td>First Name / Last Name</td><td>Yes</td><td></td></tr>
+  <tr><td>Phone</td><td>No</td><td></td></tr>
+  <tr><td>Job Title</td><td>No</td><td></td></tr>
+  <tr><td>Organisation</td><td>Yes</td><td>Either select an existing organisation or enter a new name</td></tr>
+  <tr><td>State</td><td>No</td><td>Australian state &mdash; drives owner assignment</td></tr>
+  <tr><td>Organisation Sub-Type</td><td>No</td><td>e.g. Primary, Secondary, Corporate</td></tr>
+  <tr><td>Number of Students / Employees</td><td>No</td><td>Used for opportunity sizing</td></tr>
+  <tr><td>Enquiry Message</td><td>No</td><td>Free-text body of enquiry</td></tr>
+  <tr><td>Service Type</td><td>Auto</td><td>School, Workplace, or Early Years</td></tr>
+  <tr><td>Source Form</td><td>Auto</td><td>Which website form was used</td></tr>
+</table>
+
+<h2>3. Business Process</h2>
+
+<h3>3.1 Identify or create the contact and organisation</h3>
+<ul>
+  <li>If the organisation already exists in the CRM, link the contact to it.</li>
+  <li>If it's a new organisation, create it and link the contact.</li>
+  <li><strong>Business rule:</strong> There must only be one active contact per email address. If the same person submits multiple forms, only the most recent submission should be the active contact record.</li>
+</ul>
+
+<h3>3.2 Track engagement history</h3>
+<ul>
+  <li>The organisation should track which forms/campaigns any of its contacts have engaged with over time.</li>
+  <li>The contact should track which forms they've personally completed.</li>
+</ul>
+
+<h3>3.3 Assign ownership</h3>
+<p>The contact, organisation, and enquiry must be assigned to the correct staff member. The rules differ by service type:</p>
+
+<div class="callout-orange">
+  <strong>Key concept &mdash; New vs. Existing relationships:</strong> Some organisations already have a dedicated relationship manager. These must stay with their existing manager. Organisations that don't yet have a dedicated manager are routed based on state and service type.
+</div>
+
+<h3><span class="tag tag-school">School</span> Assignment</h3>
+<table>
+  <tr><th>Scenario</th><th>Assigned To</th></tr>
+  <tr><td>Organisation already has a dedicated School Partnership Manager</td><td>Keep existing SPM</td></tr>
+  <tr><td>New/unassigned organisation in NSW or QLD</td><td>Brendan</td></tr>
+  <tr><td>New/unassigned organisation in any other state</td><td>Laura</td></tr>
+</table>
+
+<h3><span class="tag tag-workplace">Workplace</span> Assignment</h3>
+<table>
+  <tr><th>Scenario</th><th>Assigned To</th></tr>
+  <tr><td>Organisation has a dedicated manager</td><td>Keep existing manager</td></tr>
+  <tr><td>New/unassigned organisation</td><td>Laura</td></tr>
+</table>
+
+<h3><span class="tag tag-ey">Early Years</span> Assignment</h3>
+<table>
+  <tr><th>Scenario</th><th>Assigned To</th></tr>
+  <tr><td>Organisation has a dedicated manager</td><td>Keep existing manager</td></tr>
+  <tr><td>New/unassigned organisation</td><td>Brendan</td></tr>
+</table>
+
+<h3>3.4 Create a sales opportunity (Deal)</h3>
+
+<table>
+  <tr><th></th><th><span class="tag tag-school">School</span></th><th><span class="tag tag-workplace">Workplace</span></th><th><span class="tag tag-ey">Early Years</span></th></tr>
+  <tr><td><strong>When created</strong></td><td>Only for new schools (no existing SPM)</td><td>Always</td><td>Always</td></tr>
+  <tr><td><strong>Deal name</strong></td><td>2027 School Partnership Program</td><td>Workplace deal</td><td>Early Years deal</td></tr>
+  <tr><td><strong>Stage</strong></td><td>New</td><td>New</td><td>New</td></tr>
+  <tr><td><strong>Pipeline</strong></td><td>New Schools</td><td>Default</td><td>Default</td></tr>
+  <tr><td><strong>Expected close</strong></td><td>+1 week</td><td>+10 days</td><td>+2 weeks</td></tr>
+</table>
+
+<div class="callout-green">
+  <strong>Why no deal for existing schools?</strong> If a school already has a dedicated SPM, they're an existing partner. Creating a new deal would duplicate the existing relationship. The enquiry record alone is sufficient to notify the SPM.
+</div>
+
+<h3>3.5 Log the enquiry</h3>
+<ul>
+  <li>An enquiry record is created capturing the message, service type, and linked to the contact.</li>
+  <li>The enquiry is assigned to the appropriate staff member (same routing rules as above).</li>
+</ul>
+
+<h3>3.6 Send confirmation email</h3>
+<ul>
+  <li>An automated acknowledgement email is sent to the person who submitted the enquiry.</li>
+</ul>
+
+<h2>4. After the Initial Response</h2>
+
+<p>Once the assigned staff member (Laura or Brendan) has responded to the enquiry, the deal progresses based on the school's size:</p>
+
+<div class="callout">
+  <strong>This section applies to schools only.</strong> The post-response lifecycle for Workplace and Early Years follows a different process not covered here.
+</div>
+
+<h3>4.1 Large schools (500+ students) &rarr; Proactive Sales Pipeline</h3>
+<ul>
+  <li>The deal moves into a <strong>proactive nurture pipeline</strong> managed by the sales team.</li>
+  <li>The salesperson actively works the relationship &mdash; calls, emails, follow-ups &mdash; to convert the school into a partner.</li>
+  <li>This is a <strong>manual, high-touch process</strong> because larger schools represent significant partnership value.</li>
+</ul>
+
+<h3>4.2 Smaller schools (under 500 students) &rarr; Automated Nurture</h3>
+<ul>
+  <li>The deal stage moves to <strong>"In Campaign"</strong>.</li>
+  <li>The school enters an automated nurture sequence with <strong>2+ timed communications</strong> designed to encourage them to book a live info session.</li>
+  <li>The goal of these emails is to get the school to take a <strong>call-to-action: register for a live info session</strong> (see Workflow 3).</li>
+</ul>
+
+<table>
+  <tr><th>Timing</th><th>Communication</th><th>Goal</th></tr>
+  <tr><td>After initial response</td><td>First nurture email</td><td>Encourage booking a live info session</td></tr>
+  <tr><td>Follow-up interval</td><td>Second nurture email (and potentially more)</td><td>Re-engage if no action taken</td></tr>
+</table>
+
+<h3>4.3 If the school doesn't take action</h3>
+<ul>
+  <li>If the school doesn't respond to the automated nurture comms (i.e. doesn't book a live info session or otherwise engage), the deal is moved to <strong>"Dormant"</strong>.</li>
+  <li>This signals that the lead has gone cold and is no longer being actively pursued.</li>
+</ul>
+
+<div class="callout-green">
+  <strong>Business requirement:</strong> Automated nurture emails must stop if the school takes action (e.g. books an info session, responds to the salesperson, or progresses in the pipeline). Only schools that remain unresponsive should receive further nudges before being marked Dormant.
+</div>
+
+<h2>5. Deal Lifecycle Summary (Schools)</h2>
+
+<table>
+  <tr><th>Stage</th><th>Trigger</th><th>What happens</th></tr>
+  <tr><td><strong>New</strong></td><td>Enquiry submitted</td><td>Laura/Brendan responds to the enquiry</td></tr>
+  <tr><td><strong>Proactive Pipeline</strong></td><td>Post-response, 500+ students</td><td>Salesperson actively nurtures the relationship</td></tr>
+  <tr><td><strong>In Campaign</strong></td><td>Post-response, under 500 students</td><td>Automated comms try to get them to book an info session</td></tr>
+  <tr><td><strong>In Campaign &rarr; Info Session</strong></td><td>School books a live info session</td><td>Transitions to Workflow 3 (Live Info Session)</td></tr>
+  <tr><td><strong>Dormant</strong></td><td>No response to nurture comms</td><td>Lead is parked &mdash; no further automated outreach</td></tr>
+</table>
+
+<h2>6. Visual Flow</h2>
+
+<div class="mermaid">
+flowchart TD
+    A["Enquiry form submitted\non website"] --> B["Identify or create\nContact & Organisation"]
+    B --> C["Assign owner based on\nservice type & state"]
+    C --> D{"Service Type?"}
+    D -->|"School"| E{"New school?\n(no dedicated SPM)"}
+    D -->|"Workplace / Early Years"| F["Create Deal\n(always)"]
+    E -->|"Yes"| G["Create Deal"]
+    E -->|"No"| H["No deal needed\n(SPM notified via enquiry)"]
+    G --> I["Log Enquiry &\nSend confirmation email"]
+    H --> I
+    F --> I
+    I --> J["Laura / Brendan\nresponds to enquiry"]
+    J --> K{"School size?"}
+    K -->|"500+ students"| L["Proactive sales pipeline\n(manual high-touch nurture)"]
+    K -->|"Under 500"| M["Deal → In Campaign\nAutomated nurture comms"]
+    M --> N{"School books\ninfo session?"}
+    N -->|"Yes"| O["→ Workflow 3:\nLive Info Session"]
+    N -->|"No response"| P["Deal → Dormant"]
+
+    style A fill:#1a56db,color:#fff,stroke:none
+    style D fill:#fff3e0,color:#92400e,stroke:#c05621
+    style E fill:#fff3e0,color:#92400e,stroke:#c05621
+    style K fill:#fff3e0,color:#92400e,stroke:#c05621
+    style N fill:#fff3e0,color:#92400e,stroke:#c05621
+    style L fill:#e8f5e9,color:#065f46,stroke:#0d7a3f
+    style O fill:#dbeafe,color:#1e40af,stroke:#1a56db
+    style P fill:#f8f9fa,color:#6c757d,stroke:#dee2e6
+</div>
+
+<h2>7. CRM Data Model</h2>
+
+<table>
+  <tr><th>Entity</th><th>Purpose</th></tr>
+  <tr><td><strong>Contact</strong></td><td>The person making the enquiry. One active contact per email.</td></tr>
+  <tr><td><strong>Organisation (Account)</strong></td><td>The school, workplace, or early years service. Tracks engagement history and owner.</td></tr>
+  <tr><td><strong>Deal (Opportunity)</strong></td><td>The sales opportunity. Linked to contact and organisation.</td></tr>
+  <tr><td><strong>Enquiry</strong></td><td>The enquiry message itself. Linked to contact. Used to notify the assigned staff member.</td></tr>
+</table>
+
+<h2>8. Key Business Rules</h2>
+
+<ol>
+  <li><strong>No duplicate contacts:</strong> Only one active contact per email address at any time.</li>
+  <li><strong>Preserve existing relationships:</strong> If an organisation already has a dedicated manager, never reassign it.</li>
+  <li><strong>No duplicate deals for existing partnerships:</strong> Schools with a dedicated SPM don't get new deals &mdash; the enquiry alone notifies the SPM.</li>
+  <li><strong>Engagement tracking:</strong> Both the organisation and contact must maintain a history of which forms/campaigns they've engaged with.</li>
+  <li><strong>State-based routing:</strong> NSW and QLD school enquiries route to Brendan; all other states route to Laura. Workplace always routes to Laura. Early Years always routes to Brendan.</li>
+  <li><strong>Size-based post-response path:</strong> After the initial response, schools with 500+ students enter proactive sales nurture; under 500 enter automated campaign nurture.</li>
+  <li><strong>Automated nurture goal:</strong> The purpose of the automated comms for smaller schools is to get them to book a live info session (Workflow 3).</li>
+  <li><strong>Dormant on no response:</strong> If automated nurture comms don't result in engagement, the deal moves to Dormant &mdash; no further automated outreach.</li>
+  <li><strong>Stop comms on action:</strong> Automated nurture emails must stop immediately if the school takes any action (books a session, replies, etc.).</li>
+</ol>
+
+<footer>
+  <p>The Resilience Project &mdash; CRM Workflow Documentation &bull; Prepared April 2026</p>
+  <p>For questions, contact the TRP integrations team.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'base', themeVariables:{primaryColor:'#e8f0fe',primaryTextColor:'#212529',primaryBorderColor:'#1a56db',lineColor:'#94a3b8',fontSize:'14px'}});</script>
+</body>
+</html>

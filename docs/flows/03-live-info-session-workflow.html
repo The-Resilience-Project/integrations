@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRP Workflow: Live Info Session Registration</title>
+<style>
+  :root { --blue: #1a56db; --light-blue: #e8f0fe; --green: #0d7a3f; --orange: #c05621; --purple: #7c3aed; --grey: #f8f9fa; --border: #dee2e6; --text: #212529; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 { color: var(--blue); margin-bottom: 0.25rem; font-size: 1.75rem; }
+  .subtitle { color: #6c757d; margin-bottom: 2rem; font-size: 0.95rem; }
+  h2 { color: var(--blue); margin: 2rem 0 1rem; font-size: 1.3rem; border-bottom: 2px solid var(--light-blue); padding-bottom: 0.3rem; }
+  h3 { margin: 1.25rem 0 0.5rem; font-size: 1.05rem; }
+  p, li { font-size: 0.95rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+  li { margin-bottom: 0.3rem; }
+  .callout { background: var(--light-blue); border-left: 4px solid var(--blue); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .callout-orange { background: #fff3e0; border-left: 4px solid var(--orange); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .callout-green { background: #e8f5e9; border-left: 4px solid var(--green); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  .callout-purple { background: #f3e8ff; border-left: 4px solid var(--purple); padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.6rem 0.75rem; border: 1px solid var(--border); text-align: left; }
+  th { background: var(--grey); font-weight: 600; }
+  .timeline { margin: 1.5rem 0; }
+  .timeline-item { display: flex; gap: 1rem; margin-bottom: 0; }
+  .timeline-line { flex-shrink: 0; width: 3rem; display: flex; flex-direction: column; align-items: center; }
+  .timeline-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+  .timeline-connector { width: 2px; flex: 1; min-height: 1.5rem; }
+  .dot-green { background: var(--green); }
+  .dot-blue { background: var(--blue); }
+  .dot-orange { background: var(--orange); }
+  .dot-purple { background: var(--purple); }
+  .line-grey { background: #cbd5e1; }
+  .timeline-content { flex: 1; padding-bottom: 1.5rem; }
+  .timeline-content strong { font-size: 0.95rem; }
+  .timeline-content p { font-size: 0.9rem; color: #4b5563; margin-top: 0.2rem; }
+  .mermaid { margin: 1.5rem 0; }
+  .impl-note { background: #f8f9fa; border: 1px dashed #adb5bd; padding: 1rem 1.25rem; margin: 1rem 0; border-radius: 6px; font-size: 0.9rem; color: #495057; }
+  .impl-note strong { color: #6c757d; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #6c757d; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<h1>Workflow 3: Live Info Session Registration</h1>
+<p class="subtitle">The Resilience Project &mdash; CRM Workflow Documentation for Dynamics 365 Migration &bull; April 2026</p>
+
+<div class="callout">
+  <strong>Summary:</strong> A school registers for an upcoming live information session (webinar). The CRM must capture the registration, create or update a sales opportunity, and trigger a 6-touch automated communications sequence spanning from registration through to 2 weeks after the event.
+</div>
+
+<h2>1. Trigger</h2>
+<p>A school staff member submits the "Info Session Registration" form on the TRP website, selecting a specific upcoming session date.</p>
+<p>The form supports <strong>pre-filling</strong> &mdash; if the contact arrives via a personalised link (e.g. from a previous email), their details are automatically populated to reduce friction.</p>
+
+<h2>2. Data Captured</h2>
+
+<table>
+  <tr><th>Field</th><th>Required</th><th>Notes</th></tr>
+  <tr><td>Email</td><td>Yes</td><td>Unique contact identifier</td></tr>
+  <tr><td>First Name / Last Name</td><td>Yes</td><td></td></tr>
+  <tr><td>Phone</td><td>No</td><td></td></tr>
+  <tr><td>Job Title</td><td>No</td><td></td></tr>
+  <tr><td>School</td><td>Yes</td><td>Select existing school or enter new name</td></tr>
+  <tr><td>State</td><td>No</td><td>Drives owner assignment</td></tr>
+  <tr><td>Number of Students</td><td>No</td><td></td></tr>
+  <tr><td>Info Session (Event)</td><td>Yes</td><td>Which upcoming session they want to attend</td></tr>
+  <tr><td>Question</td><td>No</td><td>Optional question for the presenters</td></tr>
+</table>
+
+<h2>3. Business Process</h2>
+
+<h3>3.1 Identify or create the contact and organisation</h3>
+<ul>
+  <li>Same rules as other workflows: link to existing org or create new, one active contact per email, assign owner by state.</li>
+</ul>
+
+<h3>3.2 Branch: New school vs. Existing partnership</h3>
+
+<div class="callout-orange">
+  <strong>New schools</strong> (no dedicated SPM) receive the full automated journey: deal creation, event registration, and the 6-touch comms sequence. <strong>Existing schools</strong> (with a dedicated SPM) are handled differently &mdash; the SPM is simply notified and manages follow-up personally.
+</div>
+
+<h3>3.3 New school path (most registrations)</h3>
+
+<ol>
+  <li><strong>Create or update the sales opportunity (Deal)</strong>
+    <ul>
+      <li>Deal stage: "In Campaign" with "Hot" rating &mdash; the school is actively engaging</li>
+      <li>Expected close date: day after the event</li>
+      <li>Track the date of the school's first info session registration on the deal</li>
+    </ul>
+  </li>
+  <li><strong>Suppress previous nurture comms</strong>
+    <ul>
+      <li>If this school previously entered the "Request for Info" nurture sequence (Workflow 2), those automated emails must stop. The school has progressed beyond that stage.</li>
+    </ul>
+  </li>
+  <li><strong>Register for the info session</strong>
+    <ul>
+      <li>The contact is registered for the selected event</li>
+      <li>This triggers the automated communications sequence (see Section 4)</li>
+    </ul>
+  </li>
+</ol>
+
+<h3>3.4 Existing school path</h3>
+<ul>
+  <li>The dedicated SPM is notified that their school has expressed interest in a live info session.</li>
+  <li>No event registration or automated comms &mdash; the SPM manages the relationship directly.</li>
+</ul>
+
+<h2>4. Communications Sequence</h2>
+
+<p>New school registrations trigger a <strong>6-touch automated communications sequence</strong> anchored to the event date:</p>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="timeline-line">
+      <div class="timeline-dot dot-green"></div>
+      <div class="timeline-connector line-grey"></div>
+    </div>
+    <div class="timeline-content">
+      <strong>1. Registration Confirmation</strong>
+      <p><em>Sent immediately</em></p>
+      <p>Thanks the registrant, confirms event details (date, time, video link), sets expectations for the session.</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-line">
+      <div class="timeline-dot dot-blue"></div>
+      <div class="timeline-connector line-grey"></div>
+    </div>
+    <div class="timeline-content">
+      <strong>2. One Week Before</strong>
+      <p><em>7 days before event</em></p>
+      <p>Reminder with session details and video link. Builds anticipation and reduces no-shows.</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-line">
+      <div class="timeline-dot dot-blue"></div>
+      <div class="timeline-connector line-grey"></div>
+    </div>
+    <div class="timeline-content">
+      <strong>3. Day Before</strong>
+      <p><em>1 day before event</em></p>
+      <p>Final reminder with video link and any last-minute details.</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-line">
+      <div class="timeline-dot dot-purple"></div>
+      <div class="timeline-connector line-grey"></div>
+    </div>
+    <div class="timeline-content">
+      <strong>4. Recording Access</strong>
+      <p><em>After the event</em></p>
+      <p>Link to the session recording &mdash; for attendees to revisit and for those who missed the live session.</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-line">
+      <div class="timeline-dot dot-orange"></div>
+      <div class="timeline-connector line-grey"></div>
+    </div>
+    <div class="timeline-content">
+      <strong>5. One Week Post-Event</strong>
+      <p><em>7 days after event</em></p>
+      <p>Follow-up &mdash; checking if they have questions or are ready to take the next step.</p>
+      <p><strong>Condition:</strong> Only sent if the school hasn't already progressed in the sales pipeline.</p>
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-line">
+      <div class="timeline-dot dot-orange"></div>
+      <div class="timeline-connector" style="background: transparent;"></div>
+    </div>
+    <div class="timeline-content">
+      <strong>6. Two Weeks Post-Event</strong>
+      <p><em>14 days after event</em></p>
+      <p>Final automated follow-up. If the school still hasn't progressed, the deal interest level is downgraded to "Cold".</p>
+      <p><strong>Condition:</strong> Only sent if the school hasn't already progressed in the sales pipeline.</p>
+    </div>
+  </div>
+</div>
+
+<div class="callout-green">
+  <strong>Business requirement:</strong> Post-event follow-ups (emails 5 and 6) must automatically stop if the salesperson has already advanced the deal. Only schools that haven't engaged further should receive the automated nudges. All emails should come from (or reply-to) the assigned salesperson, so responses go to the right person.
+</div>
+
+<h2>5. Visual Flow</h2>
+
+<div class="mermaid">
+flowchart TD
+    A["Info Session Registration\nform submitted"] --> B["Identify or create\nContact & Organisation"]
+    B --> C["Assign owner\nbased on state"]
+    C --> D{"New school?\n(no dedicated SPM)"}
+    D -->|"Yes"| E["Create/update Deal\nStage: In Campaign\nRating: Hot"]
+    D -->|"No"| F["Notify dedicated SPM\n(no automated comms)"]
+    E --> G["Suppress any previous\nnurture sequence"]
+    G --> H["Register for\ninfo session"]
+    H --> I["Comms Sequence"]
+    I --> J["1. Confirmation"]
+    I --> K["2. 1 week before"]
+    I --> L["3. Day before"]
+    I --> M["4. Recording access"]
+    I --> N["5. 1 week after\n(if not progressed)"]
+    I --> O["6. 2 weeks after\n(if not progressed,\ndowngrade to Cold)"]
+
+    style A fill:#1a56db,color:#fff,stroke:none
+    style D fill:#fff3e0,color:#92400e,stroke:#c05621
+    style F fill:#f8f9fa,color:#6c757d,stroke:#dee2e6
+    style I fill:#f3e8ff,color:#7c3aed,stroke:#7c3aed
+    style J fill:#f3e8ff,color:#5b21b6,stroke:none
+    style K fill:#f3e8ff,color:#5b21b6,stroke:none
+    style L fill:#f3e8ff,color:#5b21b6,stroke:none
+    style M fill:#f3e8ff,color:#5b21b6,stroke:none
+    style N fill:#f3e8ff,color:#5b21b6,stroke:none
+    style O fill:#f3e8ff,color:#5b21b6,stroke:none
+</div>
+
+<h2>6. Deal Stage Progression</h2>
+
+<p>The info session registration is part of a broader sales pipeline. Here's how the deal progresses across workflows:</p>
+
+<table>
+  <tr><th>Stage</th><th>What triggers it</th><th>Meaning</th></tr>
+  <tr><td><strong>New</strong></td><td>General enquiry or info request (Workflow 1 or 2)</td><td>School has expressed initial interest</td></tr>
+  <tr><td><strong>In Campaign</strong></td><td>Info session registration (this workflow)</td><td>School is actively engaging with content</td></tr>
+  <tr><td><strong>Cold</strong> (rating)</td><td>2 weeks post-event with no further engagement</td><td>Interest appears to have faded</td></tr>
+</table>
+
+<h2>7. Key Business Rules</h2>
+
+<ol>
+  <li><strong>No duplicate contacts:</strong> One active contact per email address.</li>
+  <li><strong>Existing partnerships bypass automation:</strong> Schools with a dedicated SPM are not registered for events or sent automated emails. The SPM is notified and manages follow-up personally.</li>
+  <li><strong>Nurture suppression:</strong> Registering for an info session must stop any "request for info" nurture emails the school was previously receiving.</li>
+  <li><strong>Conditional post-event comms:</strong> Follow-up emails only send if the deal hasn't been manually advanced by the salesperson.</li>
+  <li><strong>Automatic cold rating:</strong> If a school hasn't engaged 2 weeks post-event, the deal is downgraded to "Cold" to reflect diminishing interest.</li>
+  <li><strong>First session tracking:</strong> The deal records which info session the school first registered for, giving the sales team visibility into the engagement timeline.</li>
+  <li><strong>Form pre-fill:</strong> Contacts arriving via personalised links should have their details pre-populated to reduce form friction.</li>
+  <li><strong>Personalised sender:</strong> All automated emails must come from (or reply-to) the assigned salesperson, so responses go to the right person.</li>
+</ol>
+
+<h2>8. CRM Data Model</h2>
+
+<table>
+  <tr><th>Entity</th><th>Purpose</th></tr>
+  <tr><td><strong>Contact</strong></td><td>The school staff member registering.</td></tr>
+  <tr><td><strong>Organisation</strong></td><td>The school. Tracks engagement history and owner.</td></tr>
+  <tr><td><strong>Event / Session</strong></td><td>The live info session. Has a date, time, video link. Multiple sessions may run throughout the year.</td></tr>
+  <tr><td><strong>Registration</strong></td><td>Links a Contact to an Event. Triggers the comms sequence.</td></tr>
+  <tr><td><strong>Deal (Opportunity)</strong></td><td>The sales opportunity. Progresses through stages as the school engages.</td></tr>
+</table>
+
+<footer>
+  <p>The Resilience Project &mdash; CRM Workflow Documentation &bull; Prepared April 2026</p>
+  <p>For questions, contact the TRP integrations team.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'base', themeVariables:{primaryColor:'#e8f0fe',primaryTextColor:'#212529',primaryBorderColor:'#1a56db',lineColor:'#94a3b8',fontSize:'14px'}});</script>
+</body>
+</html>
