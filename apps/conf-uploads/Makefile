@@ -1,4 +1,4 @@
-.PHONY: help setup install prepare run run-file proof test-run test-run-file clean test lint lint-fix format format-fix check fix pre-commit-install pre-commit-run web-install web api
+.PHONY: help setup install prepare prepare-ts-attendee run run-file proof test-run test-run-file clean test lint lint-fix format format-fix check fix pre-commit-install pre-commit-run web-install web api
 
 # Default target
 help:
@@ -10,7 +10,8 @@ help:
 	@echo "  make init       - Setup + install in one command"
 	@echo ""
 	@echo "Data Preparation:"
-	@echo "  make prepare    - Prepare/clean a TSV file (removes unsupported columns)"
+	@echo "  make prepare              - Prepare/clean a TSV file (removes unsupported columns)"
+	@echo "  make prepare-ts-attendee  - Prepare a TS Attendee TSV (looks up num_of_students)"
 	@echo ""
 	@echo "Running:"
 	@echo "  make run        - Run the import script (interactive mode)"
@@ -67,6 +68,11 @@ init: setup install
 prepare:
 	@echo "Starting TSV preparation..."
 	.venv/bin/python3 src/prepare_tsv.py
+
+# Prepare TS Attendee TSV (looks up num_of_students per row)
+prepare-ts-attendee:
+	@echo "Starting TS Attendee TSV preparation..."
+	.venv/bin/python3 src/prepare_ts_attendee.py
 
 # Run the import script
 run:

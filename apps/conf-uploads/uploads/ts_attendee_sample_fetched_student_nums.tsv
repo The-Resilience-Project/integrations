@@ -1,0 +1,6 @@
+first_name	last_name	email	org	state	num_of_students	did_you_mean	distance
+Alice	Nguyen	alice.nguyen@example.com	Springvale Secondary College	VIC	1677	Springside West Secondary College	8
+Ben	Patel	ben.patel@example.com	Strathfield Public School	NSW	508	Strathfield North Public School	6
+Chloe	Roberts	chloe.roberts@example.com	Brisbane State High School	QLD	3594		0
+Dan	Smith	dan.smith@example.com	Bealgrave Hights Christian School	VIC	776	Belgrave Heights Christian School	2
+Eli	Wong	eli.wong@example.com	Definitely Not A Real School Xyz123	NSW		Aspect Western Sydney School, Kemps Creek - Trinity	40

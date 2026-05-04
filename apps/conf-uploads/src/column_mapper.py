@@ -106,6 +106,8 @@ def detect_state(headers: list[str]) -> Optional[int]:
     for i, h in enumerate(normalized):
         if h in ["state", "state/territory", "province", "region"]:
             return i
+        if "state" in h or "territory" in h:
+            return i
     return None
 
 
