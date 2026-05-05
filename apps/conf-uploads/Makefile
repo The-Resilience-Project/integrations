@@ -1,4 +1,4 @@
-.PHONY: help setup install prepare prepare-ts-attendee run run-file proof test-run test-run-file clean test lint lint-fix format format-fix check fix pre-commit-install pre-commit-run web-install web api
+.PHONY: help setup install prepare prepare-ts-attendee run run-file run-ts run-ts-file proof proof-ts test-run test-run-file test-run-ts clean test lint lint-fix format format-fix check fix pre-commit-install pre-commit-run web-install web api
 
 # Default target
 help:
@@ -14,14 +14,18 @@ help:
 	@echo "  make prepare-ts-attendee  - Prepare a TS Attendee TSV (looks up num_of_students)"
 	@echo ""
 	@echo "Running:"
-	@echo "  make run        - Run the import script (interactive mode)"
+	@echo "  make run                   - Run the import script (interactive mode)"
 	@echo "  make run-file FILE=<path>  - Run with specific file"
+	@echo "  make run-ts                - Import TS attendees to v2 endpoint"
+	@echo "  make run-ts-file FILE=<path> - TS import with specific file"
 	@echo ""
 	@echo "Testing & Validation:"
 	@echo "  make proof      - Dry run mode (no API calls, show what would be sent)"
 	@echo "  make proof-file FILE=<path>  - Dry run with specific file"
+	@echo "  make proof-ts [FILE=<path>]  - Dry run for TS attendee importer"
 	@echo "  make test-run [ROWS=n]  - Test mode (upload only first n rows, default=1)"
 	@echo "  make test-run-file FILE=<path> [ROWS=n]  - Test with specific file"
+	@echo "  make test-run-ts [FILE=<path>] [ROWS=n]  - Test mode for TS importer"
 	@echo ""
 	@echo "Testing:"
 	@echo "  make test       - Run unit tests"
@@ -87,6 +91,38 @@ run-file:
 	fi
 	@echo "Importing from $(FILE)..."
 	.venv/bin/python3 src/import_leads.py $(FILE)
+
+# Run the TS attendee importer (v2 endpoint)
+run-ts:
+	@echo "Starting TS Attendee importer..."
+	.venv/bin/python3 src/import_ts_attendees.py
+
+# Run TS importer with a specific file
+run-ts-file:
+	@if [ -z "$(FILE)" ]; then \
+		echo "Error: Please specify a file with FILE=path/to/file.tsv"; \
+		exit 1; \
+	fi
+	@echo "Importing TS attendees from $(FILE)..."
+	.venv/bin/python3 src/import_ts_attendees.py $(FILE)
+
+# Dry run for TS attendee importer
+proof-ts:
+	@echo "Starting DRY RUN mode for TS attendee importer..."
+	@if [ -z "$(FILE)" ]; then \
+		DRY_RUN=true .venv/bin/python3 src/import_ts_attendees.py; \
+	else \
+		DRY_RUN=true .venv/bin/python3 src/import_ts_attendees.py $(FILE); \
+	fi
+
+# Test mode for TS importer (upload only first N rows, default 1)
+test-run-ts:
+	@echo "Starting TEST mode for TS importer ($(or $(ROWS),1) row(s))..."
+	@if [ -z "$(FILE)" ]; then \
+		TEST_MODE=true TEST_LIMIT=$(or $(ROWS),1) .venv/bin/python3 src/import_ts_attendees.py; \
+	else \
+		TEST_MODE=true TEST_LIMIT=$(or $(ROWS),1) .venv/bin/python3 src/import_ts_attendees.py $(FILE); \
+	fi
 
 # Proof mode (dry run) - shows what would be sent without actually sending
 proof:
