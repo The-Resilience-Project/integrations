@@ -16,6 +16,8 @@ writes a `*_fetched_student_nums.tsv` file with these added columns:
 - num_of_students
 - did_you_mean   (populated only when the matched school name differs from input)
 - distance       (Levenshtein distance between input and matched name, lowercased)
+- myschool_id      (myschool SML_ID — useful as a stable key for review)
+- myschool_url   (link to the matched school's myschool.edu.au profile)
 
 Rows whose `distance` exceeds REVIEW_DISTANCE_THRESHOLD are flagged with
 ⚠️ in the console and counted in the summary; review those rows before
@@ -40,6 +42,8 @@ OUTPUT_FIELDS = [
     "num_of_students",
     "did_you_mean",
     "distance",
+    "myschool_id",
+    "myschool_url",
 ]
 
 # Levenshtein distance above this threshold flags the row for manual review.
@@ -113,6 +117,8 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
             num_of_students = ""
             did_you_mean = ""
             distance = ""
+            myschool_id = ""
+            myschool_url = ""
 
             if details is None:
                 no_match_count += 1
@@ -123,6 +129,8 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
                 matched_name = details["matched_name"]
                 d = details["distance"]
                 distance = str(d)
+                myschool_id = details.get("myschool_id") or ""
+                myschool_url = details.get("myschool_url") or ""
 
                 if students is None:
                     no_count_count += 1
@@ -156,6 +164,8 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
                     num_of_students,
                     did_you_mean,
                     distance,
+                    myschool_id,
+                    myschool_url,
                 ]
             )
 

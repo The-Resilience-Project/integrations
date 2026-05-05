@@ -159,6 +159,9 @@ def lookup_school_details(school_name: str, state: str) -> dict | None:
             - matched_name  (str): Name of the matched school.
             - distance      (int): Levenshtein distance between the input
                                    name and the matched name (lowercased).
+            - myschool_id     (str | None): myschool SML_ID, or None if missing.
+            - myschool_url  (str | None): Public myschool.edu.au profile URL,
+                                          or None if no SML_ID.
         Or None if the school could not be matched, the input is invalid,
         or the lookup fails. Errors are logged to stderr; the function
         never raises or exits.
@@ -183,11 +186,14 @@ def lookup_school_details(school_name: str, state: str) -> dict | None:
 
     matched_name = school.get("SchoolName", "")
     students = school.get("Students")
+    myschool_id = school.get("SML_ID")
     return {
         # Sub-campus records report Students == 0 — treat as unavailable.
         "students": None if students in (0, None) else students,
         "matched_name": matched_name,
         "distance": levenshtein(school_name.strip().lower(), matched_name.lower()),
+        "myschool_id": myschool_id,
+        "myschool_url": f"https://myschool.edu.au/school/{myschool_id}" if myschool_id else None,
     }
 
 
@@ -234,11 +240,13 @@ def main() -> int:
     students_str = "n/a (sub-campus)" if students in (0, None) else f"{students:,}"
 
     response["data"] = {
+        "myschool_id": school.get("SML_ID"),
         "school": matched_name,
         "suburb": f"{school.get('Suburb')}, {school.get('State')} {school.get('Postcode')}",
         "sector": school.get("Sector_Desc"),
         "type": school.get("Type_Desc"),
         "students": students_str,
+        "myschool_url": f"https://myschool.edu.au/school/{school.get('SML_ID')}",
     }
     if distance > 0:
         response["distance"] = distance
