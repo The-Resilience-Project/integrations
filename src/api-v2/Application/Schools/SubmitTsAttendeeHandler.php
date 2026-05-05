@@ -5,38 +5,55 @@ declare(strict_types=1);
 namespace ApiV2\Application\Schools;
 
 use ApiV2\Application\CustomerService;
+use ApiV2\Domain\CapturedContact;
+use ApiV2\Domain\Contact;
 use ApiV2\Domain\OrganisationDetails;
+use ApiV2\Domain\Schools\AssigneeRules;
+use ApiV2\Domain\Schools\Deal;
 use ApiV2\Domain\TsAttendeeRequest;
 use ApiV2\Infrastructure\VtigerWebhookClientInterface;
 
 /**
  * Handles a single TS Attendee upload row.
  *
- * Mirrors the standard customer-capture flow used by other v2 endpoints
- * (deactivate → capture → fetch org → update org → update contact), but
- * applies different source-form tags to the contact and organisation:
- *   - Contact `forms_completed`     ← "2026 {STATE} TS Attendee"
- *   - Organisation `salesEvents2025` ← "2027 {STATE} TS Attendee"
- *
- * The tags differ by year because the conference itself runs in 2027 but
- * is being marketed during the 2026 cycle (contacts are tracked against
- * the year they were captured; orgs are tracked against the year of the
- * sales event).
+ * Pipeline:
+ *  1. Standard customer-capture (deactivate → capture → fetch org →
+ *     update org → update contact), with two different tags applied:
+ *       - Contact `forms_completed`     ← "2026 {STATE} TS Attendee"
+ *       - Organisation sales-events list ← "2027 {STATE} TS Attendee"
+ *  2. Branch on `num_of_students`:
+ *       - >= 500 → create a deal for new schools (G&D nurture)
+ *       - <  500 → register the contact for the TS Attendee event and
+ *                  flag them Lead/Hot for the email comms workflow
  */
 class SubmitTsAttendeeHandler
 {
+    /**
+     * Default Vtiger event ID for the TS Attendee event.
+     *
+     * TODO: replace this placeholder once the TS Attendee event is created
+     * in vTiger. Constructor accepts an override so tests and pre-deploy
+     * environments can pass a real ID.
+     */
+    private const DEFAULT_TS_EVENT_ID = '18xPLACEHOLDER';
+
+    private const LARGE_SCHOOL_THRESHOLD = 500;
+
     private VtigerWebhookClientInterface $client;
     private string $contactTagTemplate;
     private string $orgTagTemplate;
+    private string $eventId;
 
     public function __construct(
         VtigerWebhookClientInterface $client,
         string $contactTagTemplate = '2026 {STATE} TS Attendee',
         string $orgTagTemplate = '2027 {STATE} TS Attendee',
+        string $eventId = self::DEFAULT_TS_EVENT_ID,
     ) {
         $this->client = $client;
         $this->contactTagTemplate = $contactTagTemplate;
         $this->orgTagTemplate = $orgTagTemplate;
+        $this->eventId = $eventId;
     }
 
     public function handle(TsAttendeeRequest $request): bool
@@ -50,15 +67,11 @@ class SubmitTsAttendeeHandler
 
         $customerService = new CustomerService($this->client);
 
-        // Same create/update process as every other v2 upload, but
-        // orchestrated step-by-step so contact and org get different tags.
+        // 1–5. Standard create/update flow with separate per-record tags.
         log_info('TS Attendee: deactivating existing contacts', ['email' => $contact->email]);
         $customerService->deactivateExistingContacts($contact->email);
 
         log_info('TS Attendee: capturing contact + organisation');
-        // Pass empty source form to captureContact — the per-record tags
-        // are applied in the subsequent update calls below, so vTiger's
-        // capture step shouldn't auto-tag with anything.
         $captured = $customerService->captureContact($contact, $organisation, '');
 
         log_info('TS Attendee: fetching organisation details', [
@@ -79,11 +92,146 @@ class SubmitTsAttendeeHandler
             $state,
         );
 
-        $this->maybeCreateDeal($request, $orgDetails);
+        // 6. Branch on student count.
+        // Missing num_of_students is treated as 0 (lead-nurture path) — by the
+        // time a row reaches the upload step the prep stage should have filled
+        // it in, but the safer default is the smaller-school path.
+        $studentCount = $request->numOfStudents ?? 0;
+        log_info('TS Attendee: branching on student count', [
+            'studentCount' => $studentCount,
+            'threshold' => self::LARGE_SCHOOL_THRESHOLD,
+        ]);
+
+        if ($studentCount >= self::LARGE_SCHOOL_THRESHOLD) {
+            $this->createDealForLargeSchool($request, $captured, $orgDetails);
+        } else {
+            $this->registerForEventAndMarkLead($contact, $captured, $orgDetails, $contactTag, $state);
+        }
 
         log_info('TS Attendee: all steps complete');
 
         return true;
+    }
+
+    /**
+     * 500+ students path. Creates one deal per school via getOrCreateDeal —
+     * subsequent attendees from the same school hit the existing deal and
+     * don't create duplicates. Skipped when the org already has a dedicated
+     * School Partnership Manager (i.e. isn't a "new school").
+     *
+     * Mirrors the deal-creation step in the More Info handler.
+     */
+    private function createDealForLargeSchool(
+        TsAttendeeRequest $request,
+        CapturedContact $captured,
+        OrganisationDetails $orgDetails,
+    ): void {
+        if (!AssigneeRules::isNewSchool($orgDetails->assignedUserId)) {
+            log_info('TS Attendee: skipping deal — school already has a dedicated SPM', [
+                'orgAssignee' => $orgDetails->assignedUserId,
+            ]);
+
+            return;
+        }
+
+        $deal = Deal::forSchoolEnquiry();
+
+        $dealPayload = [
+            'dealName' => $deal->name,
+            'dealType' => $deal->type,
+            'dealOrgType' => $deal->orgType,
+            'dealStage' => $deal->stage,
+            'dealCloseDate' => $deal->closeDate,
+            'dealPipeline' => $deal->pipeline,
+            'contactId' => $captured->contactId,
+            'organisationId' => $captured->organisationId,
+            'assignee' => AssigneeRules::resolveContactAssignee(
+                $orgDetails->assignedUserId,
+                $request->state,
+            ),
+            'dealState' => $request->state,
+        ];
+
+        if (($request->numOfStudents ?? 0) > 0) {
+            $dealPayload['dealNumOfParticipants'] = (string) $request->numOfStudents;
+        }
+
+        // TBD (Ian/Maddie/G&D): which contact should be linked when multiple
+        // attendees come from the same school. getOrCreateDeal currently
+        // links the contact that triggered creation (first attendee wins);
+        // refine here when the rule is confirmed.
+        log_info('TS Attendee: creating deal for large school (>= 500)', $dealPayload);
+        $this->client->post('getOrCreateDeal', $dealPayload);
+    }
+
+    /**
+     * Sub-500 students path. Registers the contact for the TS Attendee event
+     * and flags them Lead/Hot. The two follow-up emails (Email 1 +1wk,
+     * Email 2 +2wks) and the eventual move to Lead/WARM are driven by
+     * vTiger Process Designer — not this handler.
+     *
+     * Mirrors the event-registration step in the More Info handler.
+     */
+    private function registerForEventAndMarkLead(
+        Contact $contact,
+        CapturedContact $captured,
+        OrganisationDetails $orgDetails,
+        string $contactTag,
+        string $state,
+    ): void {
+        log_info('TS Attendee: registering contact for TS Attendee event');
+        $this->registerContactForEvent($contact, $captured->contactId, $contactTag, $state);
+
+        log_info('TS Attendee: setting contact lifecycle = Lead, status = Hot');
+        $this->client->post('updateContactById', [
+            'contactId' => $captured->contactId,
+            'lifecycleStage' => 'Lead',
+            'contactStatus' => 'Hot',
+        ]);
+    }
+
+    /**
+     * Register a contact for the TS Attendee event. Skips if already
+     * registered. Same approach as SubmitMoreInfoHandler.
+     */
+    private function registerContactForEvent(
+        Contact $contact,
+        string $contactId,
+        string $sourceTag,
+        string $state,
+    ): void {
+        $eventResponse = $this->client->post('getEventDetails', [
+            'eventId' => $this->eventId,
+        ], true);
+        $event = $eventResponse->result[0];
+
+        $checkResponse = $this->client->post('checkContactRegisteredForEvent', [
+            'eventNo' => $event->event_no,
+            'contactId' => $contactId,
+        ]);
+
+        if (!empty($checkResponse->result)) {
+            log_info('TS Attendee: contact already registered for event, skipping');
+
+            return;
+        }
+
+        $eventStartDatetime = $event->date_start.' '.$event->time_start;
+
+        $requestBody = [
+            'eventId' => $this->eventId,
+            'eventNo' => $event->event_no,
+            'eventShortName' => $event->cf_events_shorteventname,
+            'eventStart' => $eventStartDatetime,
+            'eventZoomLink' => $event->cf_events_zoomlink,
+            'registrationName' => $contact->fullName().' | '.$event->event_no,
+            'contactId' => $contactId,
+            'source' => $sourceTag,
+            'replyTo' => AssigneeRules::resolveRegistrationReplyTo($state),
+        ];
+
+        log_info('TS Attendee: registering contact for event', $requestBody);
+        $this->client->post('registerContact', $requestBody);
     }
 
     /**
@@ -92,18 +240,5 @@ class SubmitTsAttendeeHandler
     private function renderTag(string $template, string $state): string
     {
         return str_replace('{STATE}', $state, $template);
-    }
-
-    /**
-     * Optional follow-up: decide whether to create a Deal for this attendee.
-     *
-     * Left intentionally blank for now — pending product decision on whether
-     * TS attendees should always create a deal, only for new schools, or
-     * never. When implemented, this should mirror the existing
-     * `update_or_create_deal` flow used by the school enquiry handler.
-     */
-    private function maybeCreateDeal(TsAttendeeRequest $request, OrganisationDetails $orgDetails): void
-    {
-        // TODO: deal creation logic to be specified.
     }
 }
