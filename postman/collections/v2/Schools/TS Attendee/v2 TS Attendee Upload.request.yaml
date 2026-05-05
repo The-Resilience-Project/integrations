@@ -1,0 +1,18 @@
+$kind: http-request
+name: v2 TS Attendee Upload
+url: "{{base_url}}/api/v2/schools/ts/upload-attendees"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: >-
+    {
+        "contact_email": "{{test_school_1_contact_primary}}",
+        "contact_first_name": "POSTMAN TEST",
+        "contact_last_name": "TS Attendee",
+        "school_name": "POSTMAN TEST - Bayside Primary",
+        "state": "VIC",
+        "num_of_students": "320"
+    }
+order: 1963458797685600
