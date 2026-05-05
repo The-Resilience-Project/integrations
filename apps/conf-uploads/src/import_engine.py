@@ -9,9 +9,15 @@ import time
 import httpx
 
 # API endpoint URLs
+#
+# "TS Attendee" is the v2 endpoint — wire-compatible with TsAttendeeRequest
+# at src/api-v2/Domain/TsAttendeeRequest.php. The other two are v1.
 ENDPOINTS = {
     "Prize Pack": "https://theresilienceproject.com.au/resilience/api/prize_pack.php",
     "Enquiry": "https://theresilienceproject.com.au/resilience/api/enquiry.php",
+    "TS Attendee": (
+        "https://theresilienceproject.com.au/resilience/api/v2/schools/ts/upload-attendees"
+    ),
 }
 
 
@@ -78,6 +84,35 @@ def build_request_body(contact_data, column_mapping, service_type, source_form):
     enquiry = get_field(contact_data, column_mapping.get("enquiry"))
     if enquiry:
         body["enquiry"] = enquiry
+
+    return body
+
+
+def build_ts_attendee_body(contact_data, column_mapping):
+    """Build the POST body for a single TS Attendee row.
+
+    Field names match TsAttendeeRequest::fromFormData() on the server.
+    `org` and `state` are required by the endpoint; everything else is optional.
+    """
+    body = {
+        "contact_email": get_field(contact_data, column_mapping.get("email")),
+        "contact_first_name": get_field(contact_data, column_mapping.get("first_name")),
+        "contact_last_name": get_field(contact_data, column_mapping.get("last_name")),
+        "school_name": get_field(contact_data, column_mapping.get("org")),
+        "state": get_field(contact_data, column_mapping.get("state")),
+    }
+
+    num_of_students = get_field(contact_data, column_mapping.get("num_of_students"))
+    if num_of_students:
+        body["num_of_students"] = num_of_students
+
+    job_title = get_field(contact_data, column_mapping.get("job_title"))
+    if job_title:
+        body["job_title"] = job_title
+
+    phone = get_field(contact_data, column_mapping.get("phone"))
+    if phone:
+        body["contact_phone"] = phone.replace("'", "")
 
     return body
 
