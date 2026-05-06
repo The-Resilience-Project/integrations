@@ -156,7 +156,7 @@ class SubmitTsAttendeeHandler
             $dealPayload['dealNumOfParticipants'] = (string) $request->numOfStudents;
         }
 
-        // TBD (Ian/Maddie/G&D): which contact should be linked when multiple
+        // TBD: which contact should be linked when multiple
         // attendees come from the same school. getOrCreateDeal currently
         // links the contact that triggered creation (first attendee wins);
         // refine here when the rule is confirmed.
