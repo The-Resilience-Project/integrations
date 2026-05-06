@@ -111,6 +111,34 @@ def detect_state(headers: list[str]) -> Optional[int]:
     return None
 
 
+def detect_full_name(headers: list[str]) -> Optional[int]:
+    """Detect a single name column (e.g. 'Attendee Name:', 'Full Name').
+
+    Only used as a fallback for inputs that don't have separate first/last
+    name columns. Skips headers already claimed by detect_first_name,
+    detect_last_name, or detect_organisation.
+    """
+    normalized = [normalize_header(h) for h in headers]
+    for i, h in enumerate(normalized):
+        if any(
+            skip in h
+            for skip in ["first", "last", "surname", "school", "organi", "workplace", "company"]
+        ):
+            continue
+        if "name" in h:
+            return i
+    return None
+
+
+def detect_postcode(headers: list[str]) -> Optional[int]:
+    """Detect the postcode column."""
+    normalized = [normalize_header(h) for h in headers]
+    for i, h in enumerate(normalized):
+        if "postcode" in h or "post code" in h or "postal code" in h or h == "zip":
+            return i
+    return None
+
+
 def detect_enquiry(headers: list[str]) -> Optional[int]:
     """Detect the enquiry/comments column index."""
     normalized = [normalize_header(h) for h in headers]
@@ -153,6 +181,16 @@ def detect_column_mapping_from_headers(headers: list[str]) -> dict[str, int]:
         mapping["state"] = idx
     if (idx := detect_enquiry(headers)) is not None:
         mapping["enquiry"] = idx
+    if (idx := detect_postcode(headers)) is not None:
+        mapping["postcode"] = idx
+    # Only fall back to a single-name column if no separate first/last
+    # were found — otherwise we'd double-detect on a "School Name" column.
+    if (
+        "first_name" not in mapping
+        and "last_name" not in mapping
+        and (idx := detect_full_name(headers)) is not None
+    ):
+        mapping["full_name"] = idx
 
     return mapping
 
@@ -176,6 +214,8 @@ def has_header_row(first_line: str) -> bool:
         "organisation",
         "organization",
         "school",
+        "postcode",
+        "attendee",
     ]
     return any(word in normalized for word in header_indicators)
 
