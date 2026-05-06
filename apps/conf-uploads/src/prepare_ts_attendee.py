@@ -5,19 +5,24 @@ Enriches TSV files for the TS Attendee upload flow with student-count data
 fetched from myschool.edu.au.
 
 Required input columns (header detection is flexible — see column_mapper):
-- first_name
-- last_name
-- email
-- school_name  (mapped to `org`)
-- school_state (mapped to `state`)
+- email                                    (always required)
+- school_name                              (always required, mapped to `org`)
+- first_name + last_name  OR  full_name    (one or the other — full names
+                                            are split on the first space:
+                                            first word → first_name,
+                                            remainder → last_name)
+- school_state  OR  postcode               (one or the other — postcodes are
+                                            mapped to a state code via
+                                            postcode_state.state_for_postcode)
 
 For each row, looks up the school's student count via student_lookup and
 writes a `*_fetched_student_nums.tsv` file with these added columns:
 - num_of_students
 - did_you_mean   (populated only when the matched school name differs from input)
 - distance       (Levenshtein distance between input and matched name, lowercased)
-- myschool_id      (myschool SML_ID — useful as a stable key for review)
+- myschool_id    (myschool SML_ID — useful as a stable key for review)
 - myschool_url   (link to the matched school's myschool.edu.au profile)
+- postcode       (echoed from input when present, for traceability)
 
 Rows whose `distance` exceeds REVIEW_DISTANCE_THRESHOLD are flagged with
 ⚠️ in the console and counted in the summary; review those rows before
@@ -30,15 +35,16 @@ from pathlib import Path
 
 from column_mapper import detect_column_mapping
 from file_handler import list_upload_files, select_file
+from postcode_state import state_for_postcode
 from student_lookup import lookup_school_details
 
-REQUIRED_FIELDS = ["first_name", "last_name", "email", "org", "state"]
 OUTPUT_FIELDS = [
     "first_name",
     "last_name",
     "email",
     "org",
     "state",
+    "postcode",
     "num_of_students",
     "did_you_mean",
     "distance",
@@ -50,6 +56,53 @@ OUTPUT_FIELDS = [
 # Tuned against observed data: typo corrections sit at distance ≤ 2, while
 # wrong-school matches start at distance ≥ 6.
 REVIEW_DISTANCE_THRESHOLD = 5
+
+
+def _validate_required_fields(column_mapping: dict) -> list[str]:
+    """Return a list of human-readable missing-field labels (empty when ok)."""
+    missing = []
+    if "email" not in column_mapping:
+        missing.append("email")
+    if "org" not in column_mapping:
+        missing.append("org (school name)")
+    has_split_name = "first_name" in column_mapping and "last_name" in column_mapping
+    has_full_name = "full_name" in column_mapping
+    if not (has_split_name or has_full_name):
+        missing.append("first_name + last_name OR full_name")
+    has_state = "state" in column_mapping
+    has_postcode = "postcode" in column_mapping
+    if not (has_state or has_postcode):
+        missing.append("state OR postcode")
+    return missing
+
+
+def _resolve_name(row: list[str], column_mapping: dict, get) -> tuple[str, str]:
+    """Pull first/last name from the row.
+
+    Prefers separate first_name/last_name columns; falls back to splitting
+    a single full_name column on the first whitespace (so "Marie-Anne
+    Maakrun" → ("Marie-Anne", "Maakrun") and "TBC" → ("TBC", "")).
+    """
+    if "first_name" in column_mapping or "last_name" in column_mapping:
+        return get(row, "first_name"), get(row, "last_name")
+    full = get(row, "full_name")
+    if not full:
+        return "", ""
+    parts = full.split(maxsplit=1)
+    first = parts[0] if parts else ""
+    last = parts[1] if len(parts) > 1 else ""
+    return first, last
+
+
+def _resolve_state(row: list[str], column_mapping: dict, get, postcode: str) -> str:
+    """Pull state from the row, deriving from postcode when no state column exists."""
+    if "state" in column_mapping:
+        explicit = get(row, "state")
+        if explicit:
+            return explicit
+    if postcode:
+        return state_for_postcode(postcode) or ""
+    return ""
 
 
 def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
@@ -70,10 +123,14 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
             print(f"  Column {idx}: '{header}' → (will be removed)")
     print("-" * 60)
 
-    missing = [f for f in REQUIRED_FIELDS if f not in column_mapping]
+    missing = _validate_required_fields(column_mapping)
     if missing:
         print(f"\n⚠️  Missing required fields: {', '.join(missing)}")
-        print("Required: first_name, last_name, email, " "org (school name), state (school state)")
+        print(
+            "Required: email, org (school name), "
+            "first_name+last_name OR full_name, "
+            "state OR postcode"
+        )
         sys.exit(1)
 
     confirm = input("\nProceed with this mapping? (y/n): ").strip().lower()
@@ -106,11 +163,11 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
             return row[idx].strip()
 
         for i, row in enumerate(rows, 1):
-            first_name = get(row, "first_name")
-            last_name = get(row, "last_name")
+            first_name, last_name = _resolve_name(row, column_mapping, get)
             email = get(row, "email")
             org = get(row, "org")
-            state = get(row, "state")
+            postcode = get(row, "postcode")
+            state = _resolve_state(row, column_mapping, get, postcode)
 
             details = lookup_school_details(org, state)
 
@@ -161,6 +218,7 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
                     email,
                     org,
                     state,
+                    postcode,
                     num_of_students,
                     did_you_mean,
                     distance,

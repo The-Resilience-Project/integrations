@@ -9,9 +9,9 @@ body:
   content: >-
     {
         "contact_email": "{{test_school_1_contact_primary}}",
-        "contact_first_name": "POSTMAN TEST",
+        "contact_first_name": "SHANNON TESTING",
         "contact_last_name": "TS Attendee",
-        "school_name": "POSTMAN TEST - Bayside Primary",
+        "school_name": "SHANNON TESTING - Bayside Primary",
         "state": "VIC",
         "num_of_students": "320"
     }
