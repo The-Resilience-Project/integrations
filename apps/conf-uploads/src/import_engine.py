@@ -93,12 +93,19 @@ def build_ts_attendee_body(contact_data, column_mapping):
 
     Field names match TsAttendeeRequest::fromFormData() on the server.
     `org` and `state` are required by the endpoint; everything else is optional.
+
+    When `did_you_mean` is populated (the prep step found a corrected school
+    name on myschool.edu.au), it wins over `org` — that's the whole point of
+    the manual review step.
     """
+    school_name = get_field(contact_data, column_mapping.get("did_you_mean")) or get_field(
+        contact_data, column_mapping.get("org")
+    )
     body = {
         "contact_email": get_field(contact_data, column_mapping.get("email")),
         "contact_first_name": get_field(contact_data, column_mapping.get("first_name")),
         "contact_last_name": get_field(contact_data, column_mapping.get("last_name")),
-        "school_name": get_field(contact_data, column_mapping.get("org")),
+        "school_name": school_name,
         "state": get_field(contact_data, column_mapping.get("state")),
     }
 

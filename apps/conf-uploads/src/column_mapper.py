@@ -122,7 +122,17 @@ def detect_full_name(headers: list[str]) -> Optional[int]:
     for i, h in enumerate(normalized):
         if any(
             skip in h
-            for skip in ["first", "last", "surname", "school", "organi", "workplace", "company"]
+            for skip in [
+                "first",
+                "last",
+                "surname",
+                "school",
+                "organi",
+                "workplace",
+                "company",
+                "did_you_mean",
+                "did you mean",
+            ]
         ):
             continue
         if "name" in h:
@@ -135,6 +145,20 @@ def detect_postcode(headers: list[str]) -> Optional[int]:
     normalized = [normalize_header(h) for h in headers]
     for i, h in enumerate(normalized):
         if "postcode" in h or "post code" in h or "postal code" in h or h == "zip":
+            return i
+    return None
+
+
+def detect_did_you_mean(headers: list[str]) -> Optional[int]:
+    """Detect the did_you_mean column index.
+
+    Populated by prepare_ts_attendee with the matched myschool.edu.au name
+    when it differs from the input org. The upload step prefers this value
+    over `org` so corrected names land in vTiger.
+    """
+    normalized = [normalize_header(h) for h in headers]
+    for i, h in enumerate(normalized):
+        if h in ["did_you_mean", "did you mean"]:
             return i
     return None
 
@@ -183,6 +207,8 @@ def detect_column_mapping_from_headers(headers: list[str]) -> dict[str, int]:
         mapping["enquiry"] = idx
     if (idx := detect_postcode(headers)) is not None:
         mapping["postcode"] = idx
+    if (idx := detect_did_you_mean(headers)) is not None:
+        mapping["did_you_mean"] = idx
     # Only fall back to a single-name column if no separate first/last
     # were found — otherwise we'd double-detect on a "School Name" column.
     if (
