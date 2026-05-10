@@ -125,6 +125,6 @@ class shipstation
     }
     public function delete($endpoint, $parms = [])
     {
-        return $this->parseReturn($this->query('DELETE',$endpoint,$parms));
+        return $this->parseReturn($this->query('DELETE', $endpoint, $parms));
     }
 }
