@@ -246,6 +246,15 @@ functions:
                 path: /api/v2/schools/enquiry
                 method: POST
 
+    v2_schools_submit_ca_test:
+        handler: src/api-v2/endpoints/schools/submit-ca-test.php
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/submit-ca-test
+                method: POST
+
     v2_schools_more_info:
         handler: src/api-v2/endpoints/schools/more-info.php
         layers:
