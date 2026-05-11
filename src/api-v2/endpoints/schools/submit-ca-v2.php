@@ -1,21 +1,15 @@
 <?php
 
 /**
- * Standalone Culture Assessment submission — capture endpoint.
+ * Standalone Culture Assessment submission.
  *
- * Receives the Gravity Forms webhook payload from the draft form at
- *   https://forms.theresilienceproject.com.au/leading-trp-culture-assessment/
- * (standalone version — culture-assessment section only) and logs the full
- * body to CloudWatch so we can inspect the payload shape while the form is
- * still a draft.
+ * Receives the Gravity Forms webhook payload from the standalone
+ * Culture-Assessment-only version of the LTRP form, creates the
+ * Assessment record in vTiger, and links it to the org's existing SEIP
+ * via the "Wellbeing and Culture Assessments" many-to-many.
  *
- * Once the form is finalised, the next iteration should:
- *   - introduce a CultureAssessmentRequest domain VO with fromFormData()
- *   - move processing into a SubmitCultureAssessmentHandler in Application/
- *   - persist via Vtiger (create record in the assessment module)
- *
- * URL: POST /api/v2/schools/submit-ca-test
- * Auth: none for now — Gravity Forms webhook hits this directly.
+ * URL: POST /api/v2/schools/submit-ca-v2
+ * Auth: none — Gravity Forms webhook hits this directly.
  */
 
 require dirname(__FILE__).'/../../../api/utils.php';
@@ -69,7 +63,7 @@ try {
     $data = get_request_data();
 
     log_info('v2 Standalone CA submission received', [
-        'endpoint' => 'v2/schools/submit-ca-test',
+        'endpoint' => 'v2/schools/submit-ca-v2',
         'field_count' => is_array($data) ? count($data) : 0,
         'payload' => $data,
     ]);
@@ -163,7 +157,7 @@ try {
         'seip_id' => $seipId,
     ]);
 } catch (Exception $e) {
-    log_exception($e, ['endpoint' => 'v2/schools/submit-ca-test']);
+    log_exception($e, ['endpoint' => 'v2/schools/submit-ca-v2']);
     send_response([
         'status' => 'fail',
         'message' => 'Error capturing CA submission: '.$e->getMessage(),
