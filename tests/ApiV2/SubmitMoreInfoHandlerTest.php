@@ -393,7 +393,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $calls = $client->getCallsTo('updateContactById');
         $lastCall = end($calls);
         $this->assertSame('Lead', $lastCall['body']['lifecycleStage']);
-        $this->assertSame('Hot', $lastCall['body']['contactStatus']);
+        $this->assertSame('Warm', $lastCall['body']['contactStatus']);
     }
 
     public function test_does_not_set_lifecycle_stage_for_large_school(): void

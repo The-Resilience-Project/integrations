@@ -10,7 +10,7 @@
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $routes = [
-    // API v2 — Schools
+    // API v2 — Schools (mirror serverless.yml httpApi paths)
     '/api/v2/schools/enquiry' => '/api-v2/endpoints/schools/enquiry.php',
     '/api/v2/schools/submit-ca-v2' => '/api-v2/endpoints/schools/submit-ca-v2.php',
     '/api/v2/schools/prize_pack' => '/api-v2/endpoints/schools/prize_pack.php',

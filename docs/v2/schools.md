@@ -22,6 +22,7 @@ API v2 introduces a schools-specific URL structure with a DDD-lite architecture.
 | School Registration | POST | `/api/v2/schools/registration` | Register for a live info session (new schools get deal + event registration, existing schools get enquiry) |
 | Conference Delegate | POST | `/api/v2/schools/conference-delegate` | Capture a conference delegate's details in CRM |
 | Conference Prize Pack | POST | `/api/v2/schools/conference-prize-pack` | Capture a conference prize pack recipient's details in CRM |
+| TS Attendee Upload | POST | `/api/v2/schools/ts/upload-attendees` | ... |
 
 ---
 
@@ -150,7 +151,7 @@ flowchart TD
     H -->|No| J[Skip deal creation]
 
     G -->|No| K[Register contact for<br/>more-info event]
-    K --> L["updateContactById<br/>lifecycleStage = 'Lead'<br/>contactStatus = 'Hot'"]
+    K --> L["updateContactById<br/>lifecycleStage = 'Lead'<br/>contactStatus = 'Warm'"]
 
     I --> M["Response: {status: success}"]
     J --> M
@@ -174,7 +175,7 @@ or
 ### Scenarios
 
 1. **More info (new school, >= 500 students)** — Deal created with stage "New". → `v2 School More Info (New School - Deal Creation).request.yaml`
-2. **More info (new school, < 500 students)** — Contact registered for more-info event, lifecycle set to Lead/Hot. → `v2 School More Info (New School - Event Registration).request.yaml`
+2. **More info (new school, < 500 students)** — Contact registered for more-info event, lifecycle set to Lead/Warm. → `v2 School More Info (New School - Event Registration).request.yaml`
 3. **More info (existing school)** — Customer info captured and updated, but no deal created regardless of student count.
 
 ---
@@ -361,3 +362,77 @@ or
 
 1. **Existing school prize pack** — Contact captured with existing account number. → `v2 Prize Pack (Existing School).request.yaml`
 2. **New school prize pack** — New school name provided. → `v2 Prize Pack (New School).request.yaml`
+
+---
+
+## POST /api/v2/schools/ts/upload-attendees
+
+Capture a single TS (Teacher Seminar) conference attendee in CRM. Designed to be called once per row by the conf-uploads batch tool after the prep step has fetched student counts.
+
+The handler does two things:
+
+1. **Tag the contact and organisation.** Same customer-capture flow as every other v2 endpoint (deactivate → capture → fetch org → update org → update contact), but with **different tags** applied to the contact and the organisation:
+   - Contact `forms_completed` ← `"2026 {STATE} TS Attendee"` (e.g. `2026 VIC TS Attendee`)
+   - Organisation sales-events list ← `"2027 {STATE} TS Attendee"` (e.g. `2027 VIC TS Attendee`)
+
+   The year difference is intentional: the conference runs in 2027, but attendees are captured during the 2026 cycle.
+
+2. **Branch on student count.**
+   - **>= 500 students** — create a deal for the school (one per school via `getOrCreateDeal`; subsequent attendees from the same school don't duplicate). Deal stage `New`, close date `+1 week`, pipeline `New Schools`. From this point G&D nurtures.
+   - **< 500 students** — register the contact for the TS Attendee event and flag them `lifecycleStage = Lead`, `contactStatus = Hot`. The two follow-up emails (Email 1 +1wk, Email 2 +2wks) and the eventual move to Lead/Warm are driven by vTiger Process Designer — not this handler.
+
+### Request
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `contact_email` | string | Yes | Attendee's email |
+| `contact_first_name` | string | Yes | Attendee's first name |
+| `contact_last_name` | string | Yes | Attendee's last name |
+| `school_name` | string | Yes | School (organisation) name |
+| `state` | string | Yes | Australian state code (VIC, NSW, QLD, SA, WA, TAS, NT, ACT) — substituted into `{STATE}` in the tags |
+| `num_of_students` | integer | No | Student count (typically populated by `prepare_ts_attendee.py`). Drives the branching at step 6 |
+| `contact_phone` | string | No | Contact's phone number |
+| `job_title` | string | No | Contact's job title |
+
+### Control Flow
+
+```mermaid
+flowchart TD
+    A[POST /api/v2/schools/ts/upload-attendees] --> B[Deactivate existing contacts]
+    B --> C[captureCustomerInfo]
+    C --> D[Get organisation details]
+    D --> E["Update org assignee + sales events<br/>(append '2027 STATE TS Attendee')"]
+    E --> F["Update contact assignee + forms completed<br/>(append '2026 STATE TS Attendee')"]
+    F --> G{num_of_students >= 500?}
+
+    G -->|Yes| H{isNewSchool?}
+    H -->|Yes| I["getOrCreateDeal<br/>Stage: 'New'<br/>Close: +1 week<br/>Pipeline: 'New Schools'"]
+    H -->|No - has dedicated SPM| J[Skip deal creation]
+
+    G -->|No| K[Register contact for<br/>TS Attendee event]
+    K --> L["updateContactById<br/>lifecycleStage = 'Lead'<br/>contactStatus = 'Hot'"]
+
+    I --> M["Response: {status: success}"]
+    J --> M
+    L --> M
+
+    style A fill:#4a90d9,color:#fff
+    style I fill:#f5a623,color:#fff
+    style K fill:#7ed321,color:#fff
+```
+
+### Response
+
+```json
+{"status": "success"}
+```
+or
+```json
+{"status": "fail", "message": "Error processing TS Attendee upload: ..."}
+```
+
+### Notes & TBDs
+
+- **TS Attendee event ID** — the handler accepts the event ID as a constructor argument; the endpoint passes it through. Until the event is created in vTiger, the placeholder `18xPLACEHOLDER` is used. Update the constant `DEFAULT_TS_EVENT_ID` (or the endpoint wiring) once the real event exists.
+- **Multi-attendee deal linkage** — when multiple attendees come from the same 500+ school, `getOrCreateDeal` reuses the existing deal but the *first* attendee's contact gets linked. Pending Ian/Maddie/G&D to confirm whether this is the right rule.
+- **Tag template override** — the handler accepts custom contact/org tag templates via constructor args (used in tests, and useful for production smoke-testing with `'SHANNON TEST'` instead of the real tags).

@@ -292,6 +292,15 @@ functions:
                 path: /api/v2/schools/conference-prize-pack
                 method: POST
 
+    v2_schools_ts_upload_attendees:
+        handler: src/api-v2/endpoints/schools/ts/upload-attendees.php
+        layers:
+            - ${bref:layer.php-82-fpm}
+        events:
+            - httpApi:
+                path: /api/v2/schools/ts/upload-attendees
+                method: POST
+
     # Webhook endpoints
     woocommerce_order:
         handler: src/Webhooks/Order.php
