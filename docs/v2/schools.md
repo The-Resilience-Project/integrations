@@ -150,7 +150,7 @@ flowchart TD
     H -->|No| J[Skip deal creation]
 
     G -->|No| K[Register contact for<br/>more-info event]
-    K --> L["updateContactById<br/>lifecycleStage = 'Lead'<br/>contactStatus = 'Hot'"]
+    K --> L["updateContactById<br/>lifecycleStage = 'Lead'<br/>contactStatus = 'Warm'"]
 
     I --> M["Response: {status: success}"]
     J --> M
@@ -174,7 +174,7 @@ or
 ### Scenarios
 
 1. **More info (new school, >= 500 students)** — Deal created with stage "New". → `v2 School More Info (New School - Deal Creation).request.yaml`
-2. **More info (new school, < 500 students)** — Contact registered for more-info event, lifecycle set to Lead/Hot. → `v2 School More Info (New School - Event Registration).request.yaml`
+2. **More info (new school, < 500 students)** — Contact registered for more-info event, lifecycle set to Lead/Warm. → `v2 School More Info (New School - Event Registration).request.yaml`
 3. **More info (existing school)** — Customer info captured and updated, but no deal created regardless of student count.
 
 ---
