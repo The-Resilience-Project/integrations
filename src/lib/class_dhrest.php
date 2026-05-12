@@ -79,6 +79,6 @@ class dhrest
     }
     public static function delete($uri, $parms = [], $auth = false, $timeout = 20)
     {
-        return dhrest::call('DELETE',$uri,$parms,$auth,$timeout);
+        return dhrest::call('DELETE', $uri, $parms, $auth, $timeout);
     }
 }

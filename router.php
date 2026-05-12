@@ -10,11 +10,13 @@
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $routes = [
-    // API v2 — Schools
+    // API v2 — Schools (mirror serverless.yml httpApi paths)
     '/api/v2/schools/enquiry' => '/api-v2/endpoints/schools/enquiry.php',
-    '/api/v2/schools/prize_pack' => '/api-v2/endpoints/schools/prize_pack.php',
-    '/api/v2/schools/event_confirmation' => '/api-v2/endpoints/schools/event_confirmation.php',
-    '/api/v2/schools/info_session_recording' => '/api-v2/endpoints/schools/info_session_recording.php',
+    '/api/v2/schools/more-info' => '/api-v2/endpoints/schools/more-info.php',
+    '/api/v2/schools/registration' => '/api-v2/endpoints/schools/registration.php',
+    '/api/v2/schools/conference-delegate' => '/api-v2/endpoints/schools/conference-delegate.php',
+    '/api/v2/schools/conference-prize-pack' => '/api-v2/endpoints/schools/conference-prize-pack.php',
+    '/api/v2/schools/ts/upload-attendees' => '/api-v2/endpoints/schools/ts/upload-attendees.php',
 
     // API v1
     '/api/enquiry.php' => '/api/enquiry.php',

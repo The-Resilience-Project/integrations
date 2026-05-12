@@ -1,0 +1,24 @@
+first_name	last_name	email	org	state	num_of_students	did_you_mean	distance	myschool_id	myschool_url
+Fiona	Adams	fiona.adams@example.com	Melbourne High School	VIC	1402		0	45423	https://myschool.edu.au/school/45423
+George	Bennett	george.bennett@example.com	Wesley College	VIC	3181		0	46132	https://myschool.edu.au/school/46132
+Hannah	Caldwell	hannah.caldwell@example.com	Box Hill High School	VIC	1547		0	45359	https://myschool.edu.au/school/45359
+Iris	Donaldson	iris.donaldson@example.com	Carey Baptist Grammar School	VIC	2564		0	46186	https://myschool.edu.au/school/46186
+Jack	Ellis	jack.ellis@example.com	Mathodist Ladies' College	VIC	2169	Methodist Ladies' College	1	46144	https://myschool.edu.au/school/46144
+Kara	Fletcher	kara.fletcher@example.com	Notrhcote High School	VIC	1668	Northcote High School	2	45442	https://myschool.edu.au/school/45442
+Liam	Garcia	liam.garcia@example.com	Sydney Grammar School	NSW	1925		0	43785	https://myschool.edu.au/school/43785
+Mia	Hayes	mia.hayes@example.com	North Sydney Boys High School	NSW	933		0	41320	https://myschool.edu.au/school/41320
+Noah	Iverson	noah.iverson@example.com	James Ruse Agricultural High School	NSW	857		0	41811	https://myschool.edu.au/school/41811
+Olivia	Jansen	olivia.jansen@example.com	Crannbrook School	NSW	1693	Cranbrook School	1	43969	https://myschool.edu.au/school/43969
+Patrick	Khoury	patrick.khoury@example.com	Knocks Grammar School	NSW	3345	Knox Grammar School	3	40367	https://myschool.edu.au/school/40367
+Quinn	Lawson	quinn.lawson@example.com	Pimble Ladies College	NSW	2501	Pymble Ladies' College	2	43846	https://myschool.edu.au/school/43846
+Ryan	Mahoney	ryan.mahoney@example.com	Brisbane Grammar School	QLD	1996		0	48033	https://myschool.edu.au/school/48033
+Sara	Novak	sara.novak@example.com	Anglican Church Grammar School	QLD	1901		0	47996	https://myschool.edu.au/school/47996
+Tom	O'Brien	tom.obrien@example.com	Mansfield State High School	QLD	3807		0	47453	https://myschool.edu.au/school/47453
+Uma	Parsons	uma.parsons@example.com	Stuartholm School	QLD	815	Stuartholme School	1	47877	https://myschool.edu.au/school/47877
+Victor	Quinn	victor.quinn@example.com	Adelaide High School	SA	1821		0	49453	https://myschool.edu.au/school/49453
+Willa	Rashid	willa.rashid@example.com	St Peters College	SA	1585	St Peter's College	1	49813	https://myschool.edu.au/school/49813
+Xan	Saunders	xan.saunders@example.com	Perth Modern School	WA	1472		0	48148	https://myschool.edu.au/school/48148
+Yumi	Tanaka	yumi.tanaka@example.com	Christ Church Grammar School	WA	1697		0	49018	https://myschool.edu.au/school/49018
+Zara	Underwood	zara.underwood@example.com	Hutchins School	TAS	986	The Hutchins School	4	40029	https://myschool.edu.au/school/40029
+Adam	Vargas	adam.vargas@example.com	Canberra Grammar School	ACT	2116		0	49990	https://myschool.edu.au/school/49990
+Bella	Whittaker	bella.whittaker@example.com	Imaginary School Of Nowhere	NSW	608	St Therese Catholic Primary School	29	43430	https://myschool.edu.au/school/43430
