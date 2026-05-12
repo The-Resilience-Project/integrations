@@ -129,11 +129,12 @@ trait Assess
             $school_context .= '<b>Which mental health and wellbeing programs are you planning to run alongside The Resilience Project?</b><br/>' . $this->data['alongside_programs']. '<br/><br/>';
         }
 
-
+        // wellbeingCultureAssessmentId (the legacy 1-1 field) is intentionally
+        // omitted — we now use the "Wellbeing and Culture Assessments"
+        // many-to-many related list, linked via add_related below.
         $request_body = [
             'organisationId' => $this->organisation_id,
             'seipName' => $this->seip_name,
-            'wellbeingCultureAssessmentId' => $ca_id,
             'caCompleted' => date('d/m/Y'),
             'schoolContext' => $school_context,
         ];
@@ -143,6 +144,21 @@ trait Assess
         }
 
         $response = $this->post_request_to_vt('createOrUpdateSEIP', $request_body);
+
+        $seip_id = $response->result[0]->id ?? null;
+        if ($seip_id) {
+            log_info('Linking assessment to SEIP via add_related', [
+                'seip_id' => $seip_id,
+                'assessment_id' => $ca_id,
+            ]);
+            global $vtod;
+            $vtod->addRelated($seip_id, $ca_id);
+        } else {
+            log_warning('Could not link assessment to SEIP — no SEIP id in createOrUpdateSEIP response', [
+                'organisation_id' => $this->organisation_id,
+                'assessment_id' => $ca_id,
+            ]);
+        }
     }
 
     protected function get_quote_contact()
