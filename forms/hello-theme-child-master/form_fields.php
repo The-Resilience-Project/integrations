@@ -85,6 +85,15 @@ const FIELD_LTRP_SCORE_FORTNIGHTLY       = 60;
 const FIELD_LTRP_SCORE_EACH_SEMESTER     = 61;
 
 /*--------------------------------------------------------------------------
+ * Form FORM_WELLBEING_CA_2026 — Standalone Wellbeing & Culture Assessment
+ *------------------------------------------------------------------------*/
+// TODO: replace placeholder IDs with the actual GF field IDs.
+const FIELD_CA_ORG_ID            = 70; // hidden, dynamically populated from ?school_id=
+const FIELD_CA_SCHOOL_NAME       = 76; // hidden, stores resolved school name for submission
+const FIELD_CA_WELCOME_HEADING   = 71; // HTML field — "Welcome, {school name}"
+const FIELD_CA_ERROR             = 74; // hidden — 'YES' when school_id is missing or not found, 'NO' otherwise
+
+/*--------------------------------------------------------------------------
  * Form 89 — Curriculum Resource Ordering 2026
  *------------------------------------------------------------------------*/
 const FIELD_CURRIC_SELECT_SCHOOL         = 174;
