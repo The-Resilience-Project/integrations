@@ -9,7 +9,7 @@ require_once __DIR__ . '/form_fields.php';
  * 1. Theme Setup ................. enqueue styles, dashboard, admin (below)
  * 2. Date & Event Forms .......... form-date-event.php
  * 3. Confirmation Forms .......... form-confirmations.php
- * 4. LTRP & Culture Assessment ... form-ltrp.php
+ * 4. LTRP & Culture Assessment ... form-ltrp.php, form-ca.php
  * 5. Curriculum Ordering ......... form-curriculum.php
  * 6. Cross-Form Validation ....... form-validation.php
  * 7. Shared Helpers .............. form-helpers.php
@@ -134,6 +134,7 @@ add_filter('hello_elementor_page_title', 'ele_disable_page_title');
 require_once __DIR__ . '/form-date-event.php';
 require_once __DIR__ . '/form-confirmations.php';
 require_once __DIR__ . '/form-ltrp.php';
+require_once __DIR__ . '/form-ca.php';
 require_once __DIR__ . '/form-curriculum.php';
 require_once __DIR__ . '/form-validation.php';
 require_once __DIR__ . '/form-helpers.php';
