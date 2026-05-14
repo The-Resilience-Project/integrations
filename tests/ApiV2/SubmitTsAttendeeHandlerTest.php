@@ -200,6 +200,65 @@ class SubmitTsAttendeeHandlerTest extends TestCase
         $this->assertFalse($client->wasCalled('getOrCreateDeal'));
     }
 
+    public function test_large_school_first_attendee_links_contact_to_deal(): void
+    {
+        // No prior TS Attendee tag on the org → first attendee → contactId set.
+        $client = $this->makeClient(orgAssigneeAfterUpdate: UserIds::LAURA);
+        $client->setResponse(
+            'getOrgDetails',
+            StubVtigerWebhookClient::makeOrgDetailsResponse(salesEvents: ''),
+        );
+        $handler = $this->makeHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => 800, 'state' => 'VIC']));
+
+        $deal = $client->getFirstCallBody('getOrCreateDeal');
+        $this->assertNotNull($deal);
+        $this->assertArrayHasKey('contactId', $deal);
+        $this->assertNotSame('', $deal['contactId']);
+    }
+
+    public function test_large_school_subsequent_attendee_omits_contact_from_deal(): void
+    {
+        // Org already has the "2027 VIC TS Attendee" tag → a prior attendee
+        // from this school has been processed → no single contact represents
+        // the school, so contactId must be omitted from the deal payload.
+        $client = $this->makeClient(orgAssigneeAfterUpdate: UserIds::LAURA);
+        $client->setResponse(
+            'getOrgDetails',
+            StubVtigerWebhookClient::makeOrgDetailsResponse(
+                salesEvents: '2027 VIC TS Attendee',
+            ),
+        );
+        $handler = $this->makeHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => 800, 'state' => 'VIC']));
+
+        $deal = $client->getFirstCallBody('getOrCreateDeal');
+        $this->assertNotNull($deal);
+        $this->assertArrayNotHasKey('contactId', $deal);
+    }
+
+    public function test_large_school_unrelated_existing_tag_still_links_contact(): void
+    {
+        // Org has a different sales-event tag (not a prior TS Attendee for this
+        // state) → should still be treated as the first attendee.
+        $client = $this->makeClient(orgAssigneeAfterUpdate: UserIds::LAURA);
+        $client->setResponse(
+            'getOrgDetails',
+            StubVtigerWebhookClient::makeOrgDetailsResponse(
+                salesEvents: '2027 NSW TS Attendee |##| 2026 More Info',
+            ),
+        );
+        $handler = $this->makeHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => 800, 'state' => 'VIC']));
+
+        $deal = $client->getFirstCallBody('getOrCreateDeal');
+        $this->assertNotNull($deal);
+        $this->assertArrayHasKey('contactId', $deal);
+    }
+
     public function test_large_school_does_not_register_for_event(): void
     {
         $client = $this->makeClient();

@@ -103,7 +103,7 @@ class SubmitTsAttendeeHandler
         ]);
 
         if ($studentCount >= self::LARGE_SCHOOL_THRESHOLD) {
-            $this->createDealForLargeSchool($request, $captured, $orgDetails);
+            $this->createDealForLargeSchool($request, $captured, $orgDetails, $orgTag);
         } else {
             $this->registerForEventAndMarkLead($contact, $captured, $orgDetails, $contactTag, $state);
         }
@@ -119,12 +119,21 @@ class SubmitTsAttendeeHandler
      * don't create duplicates. Skipped when the org already has a dedicated
      * School Partnership Manager (i.e. isn't a "new school").
      *
+     * Contact-link rule: if this is the first attendee from the school, link
+     * the deal to that attendee (contactId). If a prior attendee from the
+     * same school has already been processed, omit contactId — we can't pick
+     * one attendee to represent the school once multiple have come in.
+     * "Prior attendee" is detected via the org tag (e.g. "2027 VIC TS Attendee")
+     * already being present on the org's salesEvents2025 list at fetch time
+     * (before this submission's tag append).
+     *
      * Mirrors the deal-creation step in the More Info handler.
      */
     private function createDealForLargeSchool(
         TsAttendeeRequest $request,
         CapturedContact $captured,
         OrganisationDetails $orgDetails,
+        string $orgTag,
     ): void {
         if (!AssigneeRules::isNewSchool($orgDetails->assignedUserId)) {
             log_info('TS Attendee: skipping deal — school already has a dedicated SPM', [
@@ -136,6 +145,12 @@ class SubmitTsAttendeeHandler
 
         $deal = Deal::forSchoolEnquiry();
 
+        $existingOrgTags = array_filter(
+            explode(' |##| ', $orgDetails->salesEvents2025),
+            fn ($v) => $v !== '',
+        );
+        $hasPriorAttendee = in_array($orgTag, $existingOrgTags, true);
+
         $dealPayload = [
             'dealName' => $deal->name,
             'dealType' => $deal->type,
@@ -143,7 +158,6 @@ class SubmitTsAttendeeHandler
             'dealStage' => $deal->stage,
             'dealCloseDate' => $deal->closeDate,
             'dealPipeline' => $deal->pipeline,
-            'contactId' => $captured->contactId,
             'organisationId' => $captured->organisationId,
             'assignee' => AssigneeRules::resolveContactAssignee(
                 $orgDetails->assignedUserId,
@@ -152,15 +166,18 @@ class SubmitTsAttendeeHandler
             'dealState' => $request->state,
         ];
 
+        if (!$hasPriorAttendee) {
+            $dealPayload['contactId'] = $captured->contactId;
+        }
+
         if (($request->numOfStudents ?? 0) > 0) {
             $dealPayload['dealNumOfParticipants'] = (string) $request->numOfStudents;
         }
 
-        // TBD: which contact should be linked when multiple
-        // attendees come from the same school. getOrCreateDeal currently
-        // links the contact that triggered creation (first attendee wins);
-        // refine here when the rule is confirmed.
-        log_info('TS Attendee: creating deal for large school (>= 500)', $dealPayload);
+        log_info('TS Attendee: creating deal for large school (>= 500)', [
+            'payload' => $dealPayload,
+            'hasPriorAttendee' => $hasPriorAttendee,
+        ]);
         $this->client->post('getOrCreateDeal', $dealPayload);
     }
 
