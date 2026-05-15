@@ -28,14 +28,7 @@ use ApiV2\Infrastructure\VtigerWebhookClientInterface;
  */
 class SubmitTsAttendeeHandler
 {
-    /**
-     * Default Vtiger event ID for the TS Attendee event.
-     *
-     * TODO: replace this placeholder once the TS Attendee event is created
-     * in vTiger. Constructor accepts an override so tests and pre-deploy
-     * environments can pass a real ID.
-     */
-    private const DEFAULT_TS_EVENT_ID = '18xPLACEHOLDER';
+    private const DEFAULT_TS_EVENT_ID = '18x821531';
 
     private const LARGE_SCHOOL_THRESHOLD = 500;
 
@@ -47,7 +40,7 @@ class SubmitTsAttendeeHandler
     public function __construct(
         VtigerWebhookClientInterface $client,
         string $contactTagTemplate = '2026 {STATE} TS Attendee',
-        string $orgTagTemplate = '2027 {STATE} TS Attendee',
+        string $orgTagTemplate = '2026 {STATE} TS Attendee',
         string $eventId = self::DEFAULT_TS_EVENT_ID,
     ) {
         $this->client = $client;
@@ -178,7 +171,8 @@ class SubmitTsAttendeeHandler
             'payload' => $dealPayload,
             'hasPriorAttendee' => $hasPriorAttendee,
         ]);
-        $this->client->post('getOrCreateDeal', $dealPayload);
+        $response = $this->client->post('getOrCreateDeal', $dealPayload);
+        log_info('TS Attendee: getOrCreateDeal response', ['response' => $response]);
     }
 
     /**
