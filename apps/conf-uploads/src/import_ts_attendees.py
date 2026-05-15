@@ -8,12 +8,12 @@ Pipeline:
     raw TSV
       → prepare_ts_attendee.py (fetches num_of_students from myschool.edu.au)
       → *_fetched_student_nums.tsv
-      → manual review in a spreadsheet (verify did_you_mean rows, prune bad data)
+      → manual review in a spreadsheet (verify myschool_name rows, prune bad data)
       → THIS SCRIPT
       → vTiger (contact + org tagged 2026/2027 {STATE} TS Attendee)
 
 The reviewed file just needs the standard headers (first_name, last_name,
-email, org, state, plus optional num_of_students). did_you_mean and distance
+email, org, state, plus optional num_of_students). myschool_name and distance
 columns are ignored if present.
 
 Modes:
