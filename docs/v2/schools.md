@@ -18,7 +18,7 @@ API v2 introduces a schools-specific URL structure with a DDD-lite architecture.
 | Endpoint | Method | URL | Description |
 |----------|--------|-----|-------------|
 | School Enquiry | POST | `/api/v2/schools/enquiry` | Submit a school enquiry |
-| School More Info | POST | `/api/v2/schools/more-info` | Request more info — registers for event or creates deal based on school size |
+| School More Info | POST | `/api/v2/schools/more-info` | Request more info — new schools get event registration or deal based on size; existing schools get an enquiry routed to their SPM |
 | School Registration | POST | `/api/v2/schools/registration` | Register for a live info session (new schools get deal + event registration, existing schools get enquiry) |
 | Conference Delegate | POST | `/api/v2/schools/conference-delegate` | Capture a conference delegate's details in CRM |
 | Conference Prize Pack | POST | `/api/v2/schools/conference-prize-pack` | Capture a conference prize pack recipient's details in CRM |
@@ -109,9 +109,9 @@ or
 
 ## POST /api/v2/schools/more-info
 
-Request more information about school programs. Captures customer info in CRM, then branches based on student count: large schools (>= 500 students) get a deal created, while smaller schools are registered for a more-info event.
+Request more information about school programs. Captures customer info in CRM, then branches on whether the school is new (no dedicated SPM) or existing. Existing schools get an enquiry routed to their SPM. New schools then branch on student count: large new schools (>= 500 students) get a deal created, while smaller new schools are registered for a more-info event.
 
-> **v1 equivalent:** This endpoint supersedes the v1 Info Session Recording flow (`POST /api/register.php` with `source_form=Info Session Recording`), though the business logic differs.
+> **v1 equivalent:** This endpoint supersedes the v1 Info Session Recording flow (`POST /api/register.php` with `source_form=Info Session Recording`). Mirrors v1's `is_new_school()` gate — existing schools previously received a `createEnquiry` call instead of an event registration.
 
 ### Request
 
@@ -130,10 +130,10 @@ Request more information about school programs. Captures customer info in CRM, t
 | `school_name_other_selected` | string | Conditional | Flag indicating a new school name was entered |
 | `state` | string | No | Australian state for assignee routing |
 | `organisation_sub_type` | string | No | Organisation sub-type |
-| `num_of_students` | integer | No | Number of students — determines branching (>= 500 → deal, < 500 → event registration) |
+| `num_of_students` | integer | No | Number of students — used for new-school branching only (>= 500 → deal, < 500 → event registration). Ignored for existing schools. |
 | `num_of_employees` | integer | No | Number of employees |
 | `contact_lead_source` | string | No | Lead source for the contact |
-| `source_form` | string | No | Name of the originating form. Defaults to `"More Info 2026"` |
+| `source_form` | string | No | Name of the originating form. Defaults to `"More Info 2027"` |
 
 ### Control Flow
 
@@ -144,22 +144,23 @@ flowchart TD
     C --> D[Get organisation details]
     D --> E[Update org assignee + sales events]
     E --> F[Update contact assignee + forms completed]
-    F --> G{num_of_students >= 500?}
+    F --> G{isNewSchool?}
 
-    G -->|Yes| H{isNewSchool?}
+    G -->|No| N["createEnquiry<br/>enquiryType: 'School'<br/>assignee: existing SPM"]
+
+    G -->|Yes| H{num_of_students >= 500?}
     H -->|Yes| I["getOrCreateDeal<br/>Stage: 'New'<br/>Close: +2 weeks"]
-    H -->|No| J[Skip deal creation]
-
-    G -->|No| K[Register contact for<br/>more-info event]
+    H -->|No| K[Register contact for<br/>more-info event]
     K --> L["updateContactById<br/>lifecycleStage = 'Lead'<br/>contactStatus = 'Warm'"]
 
     I --> M["Response: {status: success}"]
-    J --> M
     L --> M
+    N --> M
 
     style A fill:#4a90d9,color:#fff
     style I fill:#f5a623,color:#fff
     style K fill:#7ed321,color:#fff
+    style N fill:#bd10e0,color:#fff
 ```
 
 ### Response
@@ -176,7 +177,7 @@ or
 
 1. **More info (new school, >= 500 students)** — Deal created with stage "New". → `v2 School More Info (New School - Deal Creation).request.yaml`
 2. **More info (new school, < 500 students)** — Contact registered for more-info event, lifecycle set to Lead/Warm. → `v2 School More Info (New School - Event Registration).request.yaml`
-3. **More info (existing school)** — Customer info captured and updated, but no deal created regardless of student count.
+3. **More info (existing school)** — Enquiry created and routed to the school's existing SPM. No event registration, no deal, no lifecycle reset. → `v2 School More Info (Existing School - Enquiry).request.yaml`
 
 ---
 

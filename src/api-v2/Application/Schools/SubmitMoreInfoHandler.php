@@ -39,49 +39,58 @@ class SubmitMoreInfoHandler
         $captured = $result->captured;
         $orgDetails = $result->orgDetails;
 
-        // 6. Branch based on student count
+        // 6. Branch on whether the school is new (no dedicated SPM) or existing.
+        //    Existing schools route to an enquiry for their SPM; new schools fall
+        //    through to the student-count branch (deal vs event registration).
+        if (!AssigneeRules::isNewSchool($orgDetails->assignedUserId)) {
+            log_info('Step 6: Existing school — creating enquiry for SPM');
+            $this->createEnquiryForExistingSchool($contact, $captured->contactId, $orgDetails->name, $sourceForm, $orgDetails->assignedUserId, $request->state);
+            log_info('All steps complete');
+
+            return true;
+        }
+
+        // 7. New school: branch based on student count.
         $studentCount = $request->numOfStudents ?? 0;
-        log_info('Step 6: Branching on student count', ['studentCount' => $studentCount]);
+        log_info('Step 7: New school — branching on student count', ['studentCount' => $studentCount]);
 
         if ($studentCount >= 500) {
-            // 6a. Create deal for large schools
-            log_info('Step 6a: Creating deal for large school (>= 500 students)');
-            if (AssigneeRules::isNewSchool($orgDetails->assignedUserId)) {
-                $deal = Deal::forSchoolEnquiry();
+            // 7a. Create deal for large new schools
+            log_info('Step 7a: Creating deal for large new school (>= 500 students)');
+            $deal = Deal::forSchoolEnquiry();
 
-                $dealPayload = [
-                    'dealName' => $deal->name,
-                    'dealType' => $deal->type,
-                    'dealOrgType' => $deal->orgType,
-                    'dealStage' => $deal->stage,
-                    'dealCloseDate' => $deal->closeDate,
-                    'dealPipeline' => $deal->pipeline,
-                    'contactId' => $captured->contactId,
-                    'organisationId' => $captured->organisationId,
-                    'assignee' => AssigneeRules::resolveContactAssignee(
-                        $orgDetails->assignedUserId,
-                        $request->state,
-                    ),
-                ];
+            $dealPayload = [
+                'dealName' => $deal->name,
+                'dealType' => $deal->type,
+                'dealOrgType' => $deal->orgType,
+                'dealStage' => $deal->stage,
+                'dealCloseDate' => $deal->closeDate,
+                'dealPipeline' => $deal->pipeline,
+                'contactId' => $captured->contactId,
+                'organisationId' => $captured->organisationId,
+                'assignee' => AssigneeRules::resolveContactAssignee(
+                    $orgDetails->assignedUserId,
+                    $request->state,
+                ),
+            ];
 
-                if ($studentCount > 0) {
-                    $dealPayload['dealNumOfParticipants'] = (string) $studentCount;
-                }
-
-                if ($request->state !== null) {
-                    $dealPayload['dealState'] = $request->state;
-                }
-
-                log_info('Step 6a: Creating deal', $dealPayload);
-                $this->client->post('getOrCreateDeal', $dealPayload);
+            if ($studentCount > 0) {
+                $dealPayload['dealNumOfParticipants'] = (string) $studentCount;
             }
+
+            if ($request->state !== null) {
+                $dealPayload['dealState'] = $request->state;
+            }
+
+            log_info('Step 7a: Creating deal', $dealPayload);
+            $this->client->post('getOrCreateDeal', $dealPayload);
         } else {
-            // 6b. Register contact for more-info event
-            log_info('Step 6b: Registering contact for more-info event');
+            // 7b. Register contact for more-info event
+            log_info('Step 7b: Registering contact for more-info event');
             $this->registerContactForEvent($contact, $captured->contactId, $sourceForm, $request->state);
 
-            // 6c. Set contact lifecycle stage to Lead and status to Warm
-            log_info('Step 6c: Updating contact lifecycle stage and status');
+            // 7c. Set contact lifecycle stage to Lead and status to Warm
+            log_info('Step 7c: Updating contact lifecycle stage and status');
             $this->client->post('updateContactById', [
                 'contactId' => $captured->contactId,
                 'lifecycleStage' => 'Lead',
@@ -92,6 +101,37 @@ class SubmitMoreInfoHandler
         log_info('All steps complete');
 
         return true;
+    }
+
+    /**
+     * Create an enquiry for an existing school's SPM rather than registering
+     * the contact for the more-info event. Mirrors v1's behaviour for
+     * `Info Session Registration`/`Info Session Recording` when `is_new_school()`
+     * is false (src/api/classes/school.php).
+     */
+    private function createEnquiryForExistingSchool(
+        \ApiV2\Domain\Contact $contact,
+        string $contactId,
+        string $organisationName,
+        string $sourceForm,
+        ?string $orgAssigneeId,
+        ?string $state,
+    ): void {
+        $enquirySubject = $contact->fullName();
+        if ($organisationName !== '') {
+            $enquirySubject .= ' | '.$organisationName;
+        }
+
+        $payload = [
+            'enquirySubject' => $enquirySubject,
+            'enquiryBody' => 'More Info Request ('.$sourceForm.')',
+            'contactId' => $contactId,
+            'assignee' => AssigneeRules::resolveEnquiryAssignee($orgAssigneeId, $state),
+            'enquiryType' => 'School',
+        ];
+
+        log_info('Creating enquiry for existing school', $payload);
+        $this->client->post('createEnquiry', $payload);
     }
 
     /**

@@ -55,6 +55,12 @@ class SubmitMoreInfoHandlerTest extends TestCase
             (object) ['result' => []],
         );
 
+        // Enquiry creation response (used for existing-school path)
+        $client->setResponse(
+            'createEnquiry',
+            (object) ['result' => []],
+        );
+
         return $client;
     }
 
@@ -413,9 +419,9 @@ class SubmitMoreInfoHandlerTest extends TestCase
         }
     }
 
-    // ── No enquiry record ───────────────────────────────────────────
+    // ── New school: no enquiry record ───────────────────────────────
 
-    public function test_does_not_create_enquiry_for_large_school(): void
+    public function test_does_not_create_enquiry_for_new_school_with_500_or_more_students(): void
     {
         $client = $this->makeClient();
         $client->setResponse(
@@ -429,7 +435,7 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $this->assertFalse($client->wasCalled('createEnquiry'));
     }
 
-    public function test_does_not_create_enquiry_for_small_school(): void
+    public function test_does_not_create_enquiry_for_new_school_with_fewer_than_500_students(): void
     {
         $client = $this->makeClient();
         $handler = new SubmitMoreInfoHandler($client);
@@ -437,5 +443,117 @@ class SubmitMoreInfoHandlerTest extends TestCase
         $handler->handle($this->makeRequest(['num_of_students' => '100']));
 
         $this->assertFalse($client->wasCalled('createEnquiry'));
+    }
+
+    // ── Existing school: enquiry, no event/deal/lifecycle reset ─────
+
+    private function configureExistingSchool(StubVtigerWebhookClient $client, string $assignee = UserIds::EMMA): void
+    {
+        $client->setResponse(
+            'getOrgDetails',
+            StubVtigerWebhookClient::makeOrgDetailsResponse(assignedUserId: $assignee),
+        );
+        $client->setResponse(
+            'updateOrganisation',
+            StubVtigerWebhookClient::makeUpdateOrgResponse($assignee),
+        );
+        $client->setResponse(
+            'captureCustomerInfoWithAccountNo',
+            StubVtigerWebhookClient::makeCaptureResponse(assignedUserId: $assignee),
+        );
+        $client->setResponse(
+            'captureCustomerInfo',
+            StubVtigerWebhookClient::makeCaptureResponse(assignedUserId: $assignee),
+        );
+    }
+
+    public function test_creates_enquiry_for_existing_school_with_fewer_than_500_students(): void
+    {
+        $client = $this->makeClient();
+        $this->configureExistingSchool($client);
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '200']));
+
+        $this->assertTrue($client->wasCalled('createEnquiry'));
+    }
+
+    public function test_creates_enquiry_for_existing_school_with_500_or_more_students(): void
+    {
+        $client = $this->makeClient();
+        $this->configureExistingSchool($client);
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '600']));
+
+        $this->assertTrue($client->wasCalled('createEnquiry'));
+    }
+
+    public function test_does_not_register_existing_school_for_event(): void
+    {
+        $client = $this->makeClient();
+        $this->configureExistingSchool($client);
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '200']));
+
+        $this->assertFalse($client->wasCalled('getEventDetails'));
+        $this->assertFalse($client->wasCalled('checkContactRegisteredForEvent'));
+        $this->assertFalse($client->wasCalled('registerContact'));
+    }
+
+    public function test_does_not_create_deal_for_existing_school_with_fewer_than_500_students(): void
+    {
+        $client = $this->makeClient();
+        $this->configureExistingSchool($client);
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '200']));
+
+        $this->assertFalse($client->wasCalled('getOrCreateDeal'));
+    }
+
+    public function test_does_not_reset_lifecycle_for_existing_school(): void
+    {
+        $client = $this->makeClient();
+        $this->configureExistingSchool($client);
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '200']));
+
+        $calls = $client->getCallsTo('updateContactById');
+        foreach ($calls as $call) {
+            $this->assertArrayNotHasKey('lifecycleStage', $call['body']);
+            $this->assertArrayNotHasKey('contactStatus', $call['body']);
+        }
+    }
+
+    public function test_enquiry_payload_for_existing_school(): void
+    {
+        $client = $this->makeClient();
+        $this->configureExistingSchool($client);
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '200']));
+
+        $enquiryBody = $client->getFirstCallBody('createEnquiry');
+        $this->assertSame('Jane Smith | Test School', $enquiryBody['enquirySubject']);
+        $this->assertStringContainsString('More Info 2027', $enquiryBody['enquiryBody']);
+        $this->assertSame('4x100', $enquiryBody['contactId']);
+        $this->assertSame('School', $enquiryBody['enquiryType']);
+        $this->assertSame(UserIds::EMMA, $enquiryBody['assignee']);
+    }
+
+    public function test_enquiry_assignee_routes_to_existing_spm_not_state_default(): void
+    {
+        $client = $this->makeClient();
+        // School already has a dedicated SPM (ASHLEE) — even with VIC state, enquiry should go to ASHLEE
+        $this->configureExistingSchool($client, UserIds::ASHLEE);
+        $handler = new SubmitMoreInfoHandler($client);
+
+        $handler->handle($this->makeRequest(['num_of_students' => '200', 'state' => 'VIC']));
+
+        $enquiryBody = $client->getFirstCallBody('createEnquiry');
+        $this->assertSame(UserIds::ASHLEE, $enquiryBody['assignee']);
     }
 }
