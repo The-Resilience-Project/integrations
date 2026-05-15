@@ -8,7 +8,6 @@ so the React frontend can drive the same workflow via HTTP.
 import os
 import subprocess
 import sys
-import uuid
 from pathlib import Path
 
 # Ensure src/ is on the import path so sibling modules resolve correctly
@@ -70,14 +69,7 @@ def upload_file():
 def list_files():
     """List existing TSV files in uploads/."""
     files = list_upload_files(str(UPLOADS_DIR))
-    return jsonify(
-        {
-            "files": [
-                {"name": f.name, "path": str(f)}
-                for f in files
-            ]
-        }
-    )
+    return jsonify({"files": [{"name": f.name, "path": str(f)} for f in files]})
 
 
 @app.route("/api/detect", methods=["POST"])
@@ -168,7 +160,14 @@ def proof():
 def import_one():
     """Import a single contact row. Called once per row by the frontend."""
     data = request.get_json()
-    required = ["file_path", "column_mapping", "service_type", "source_form", "endpoint_type", "row"]
+    required = [
+        "file_path",
+        "column_mapping",
+        "service_type",
+        "source_form",
+        "endpoint_type",
+        "row",
+    ]
     missing = [f for f in required if f not in data]
     if missing:
         return jsonify({"error": f"Missing fields: {', '.join(missing)}"}), 400
@@ -187,7 +186,10 @@ def import_one():
     contacts = read_contacts_from_file(file_path)
 
     if row_index >= len(contacts):
-        return jsonify({"error": f"Row {row_index} out of range (file has {len(contacts)} rows)"}), 400
+        return (
+            jsonify({"error": f"Row {row_index} out of range (file has {len(contacts)} rows)"}),
+            400,
+        )
 
     contact_data = contacts[row_index]
     body = build_request_body(
@@ -228,11 +230,17 @@ def vtiger_picklist():
                 values = [p.get("value") for p in picklist if p.get("value")]
                 return jsonify({"module": module, "field": field, "values": values})
 
-        return jsonify(
-            {"error": f"Field '{field}' not found in {module}", "available_fields": [
-                f["name"] for f in fields if f.get("type", {}).get("picklistValues")
-            ]}
-        ), 404
+        return (
+            jsonify(
+                {
+                    "error": f"Field '{field}' not found in {module}",
+                    "available_fields": [
+                        f["name"] for f in fields if f.get("type", {}).get("picklistValues")
+                    ],
+                }
+            ),
+            404,
+        )
     except httpx.HTTPStatusError as exc:
         return jsonify({"error": f"vTiger API error: {exc.response.status_code}"}), 502
     except Exception as exc:
@@ -255,8 +263,9 @@ def vtiger_lookup():
     if not emails:
         return jsonify({"error": "No emails provided"}), 400
 
-    import httpx
     import time as time_mod
+
+    import httpx
 
     max_retries = 5
     base_delay = 2.0
