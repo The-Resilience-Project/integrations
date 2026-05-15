@@ -18,11 +18,16 @@ Required input columns (header detection is flexible — see column_mapper):
 For each row, looks up the school's student count via student_lookup and
 writes a `*_fetched_student_nums.tsv` file with these added columns:
 - num_of_students
-- did_you_mean   (populated only when the matched school name differs from input)
-- distance       (Levenshtein distance between input and matched name, lowercased)
-- myschool_id    (myschool SML_ID — useful as a stable key for review)
-- myschool_url   (link to the matched school's myschool.edu.au profile)
-- postcode       (echoed from input when present, for traceability)
+- myschool_name     (matched myschool.edu.au name — blank when it matches the
+                     input org, so a blank column means "same as org")
+- distance          (Levenshtein distance between input and matched name)
+- myschool_id       (myschool SML_ID — useful as a stable key for review)
+- myschool_url      (link to the matched school's myschool.edu.au profile)
+- vtiger_org_name   (closest vTiger Account name — blank when it matches the
+                     input org, so a blank column means "same as org")
+- vtiger_org_id     (vTiger Account record id)
+- vtiger_org_url    (link to the vTiger Account record)
+- postcode          (echoed from input when present, for traceability)
 
 Rows whose `distance` exceeds REVIEW_DISTANCE_THRESHOLD are flagged with
 ⚠️ in the console and counted in the summary; review those rows before
@@ -37,6 +42,7 @@ from column_mapper import detect_column_mapping
 from file_handler import list_upload_files, select_file
 from postcode_state import state_for_postcode
 from student_lookup import lookup_school_details
+from vtiger_org_lookup import lookup_org
 
 OUTPUT_FIELDS = [
     "first_name",
@@ -46,16 +52,24 @@ OUTPUT_FIELDS = [
     "state",
     "postcode",
     "num_of_students",
-    "did_you_mean",
+    "myschool_name",
     "distance",
     "myschool_id",
     "myschool_url",
+    "vtiger_org_name",
+    "vtiger_org_id",
+    "vtiger_org_url",
 ]
 
 # Levenshtein distance above this threshold flags the row for manual review.
 # Tuned against observed data: typo corrections sit at distance ≤ 2, while
 # wrong-school matches start at distance ≥ 6.
 REVIEW_DISTANCE_THRESHOLD = 5
+
+
+def _same_org(a: str, b: str) -> bool:
+    """Case- and whitespace-insensitive name equality."""
+    return " ".join(a.lower().split()) == " ".join(b.lower().split())
 
 
 def _validate_required_fields(column_mapping: dict) -> list[str]:
@@ -172,10 +186,13 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
             details = lookup_school_details(org, state)
 
             num_of_students = ""
-            did_you_mean = ""
+            myschool_name = ""
             distance = ""
             myschool_id = ""
             myschool_url = ""
+            vtiger_org_name = ""
+            vtiger_org_id = ""
+            vtiger_org_url = ""
 
             if details is None:
                 no_match_count += 1
@@ -203,13 +220,34 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
                 review_marker = " ⚠️  REVIEW" if is_review else ""
                 if d > 0:
                     mismatch_count += 1
-                    did_you_mean = matched_name
+                    # Blank when the myschool name matches the input org —
+                    # a blank column means "same as org".
+                    if not _same_org(matched_name, org):
+                        myschool_name = matched_name
                     print(
                         f"  [{i}/{total}] {org!r} ({state}) → {students_str} "
                         f"(did you mean: {matched_name!r}, distance={d}){review_marker}"
                     )
                 else:
                     print(f"  [{i}/{total}] {org!r} ({state}) → {students_str}")
+
+                # vTiger Account lookup against the canonical (myschool-matched)
+                # name, falling back to the input org if no myschool match.
+                vt = lookup_org(matched_name or org)
+                if vt is not None:
+                    vtiger_org_id = vt["org_id"]
+                    vtiger_org_url = vt["org_url"]
+                    # Blank the name when it matches the input org — a blank
+                    # column means "same as org". id/url are kept regardless
+                    # so the reviewer always has a link to the record.
+                    if not _same_org(vt["org_name"], org):
+                        vtiger_org_name = vt["org_name"]
+                    print(
+                        f"           vtiger: {vt['org_name']!r} "
+                        f"(id={vt['org_id']}, distance={vt['distance']})"
+                    )
+                else:
+                    print("           vtiger: no match")
 
             writer.writerow(
                 [
@@ -220,10 +258,13 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
                     state,
                     postcode,
                     num_of_students,
-                    did_you_mean,
+                    myschool_name,
                     distance,
                     myschool_id,
                     myschool_url,
+                    vtiger_org_name,
+                    vtiger_org_id,
+                    vtiger_org_url,
                 ]
             )
 
@@ -231,7 +272,7 @@ def prepare_ts_attendee(input_file: Path, output_file: Path) -> None:
     print(f"   Rows processed: {total}")
     print(f"   Matched: {matched_count}")
     if mismatch_count:
-        print(f"   Of those, name mismatches (see did_you_mean): {mismatch_count}")
+        print(f"   Of those, name mismatches (see myschool_name): {mismatch_count}")
     if review_count:
         print(
             f"   ⚠️  Flagged for review (distance > {REVIEW_DISTANCE_THRESHOLD}): " f"{review_count}"

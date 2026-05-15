@@ -94,11 +94,13 @@ def build_ts_attendee_body(contact_data, column_mapping):
     Field names match TsAttendeeRequest::fromFormData() on the server.
     `org` and `state` are required by the endpoint; everything else is optional.
 
-    When `did_you_mean` is populated (the prep step found a corrected school
-    name on myschool.edu.au), it wins over `org` — that's the whole point of
-    the manual review step.
+    When `vtiger_org_name` is populated (the prep step found a closer-matching
+    vTiger Account whose name differs from the input org), it wins over `org`
+    so captureCustomerInfo matches the existing record instead of creating a
+    duplicate. A blank `vtiger_org_name` means either the vTiger match equalled
+    the input org or there was no vTiger match — in both cases `org` is right.
     """
-    school_name = get_field(contact_data, column_mapping.get("did_you_mean")) or get_field(
+    school_name = get_field(contact_data, column_mapping.get("vtiger_org_name")) or get_field(
         contact_data, column_mapping.get("org")
     )
     body = {

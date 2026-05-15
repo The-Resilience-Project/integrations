@@ -130,8 +130,8 @@ def detect_full_name(headers: list[str]) -> Optional[int]:
                 "organi",
                 "workplace",
                 "company",
-                "did_you_mean",
-                "did you mean",
+                "myschool_name",
+                "myschool name",
             ]
         ):
             continue
@@ -149,16 +149,29 @@ def detect_postcode(headers: list[str]) -> Optional[int]:
     return None
 
 
-def detect_did_you_mean(headers: list[str]) -> Optional[int]:
-    """Detect the did_you_mean column index.
+def detect_myschool_name(headers: list[str]) -> Optional[int]:
+    """Detect the myschool_name column index.
 
     Populated by prepare_ts_attendee with the matched myschool.edu.au name
-    when it differs from the input org. The upload step prefers this value
-    over `org` so corrected names land in vTiger.
+    when it differs from the input org. Carried for manual review only.
     """
     normalized = [normalize_header(h) for h in headers]
     for i, h in enumerate(normalized):
-        if h in ["did_you_mean", "did you mean"]:
+        if h in ["myschool_name", "myschool name"]:
+            return i
+    return None
+
+
+def detect_vtiger_org_name(headers: list[str]) -> Optional[int]:
+    """Detect the vtiger_org_name column index.
+
+    Populated by prepare_ts_attendee with the closest-matching vTiger Account
+    name when it differs from the input org. The upload step prefers this
+    value over `org` so captureCustomerInfo matches the existing record.
+    """
+    normalized = [normalize_header(h) for h in headers]
+    for i, h in enumerate(normalized):
+        if h in ["vtiger_org_name", "vtiger org name"]:
             return i
     return None
 
@@ -207,8 +220,10 @@ def detect_column_mapping_from_headers(headers: list[str]) -> dict[str, int]:
         mapping["enquiry"] = idx
     if (idx := detect_postcode(headers)) is not None:
         mapping["postcode"] = idx
-    if (idx := detect_did_you_mean(headers)) is not None:
-        mapping["did_you_mean"] = idx
+    if (idx := detect_myschool_name(headers)) is not None:
+        mapping["myschool_name"] = idx
+    if (idx := detect_vtiger_org_name(headers)) is not None:
+        mapping["vtiger_org_name"] = idx
     # Only fall back to a single-name column if no separate first/last
     # were found — otherwise we'd double-detect on a "School Name" column.
     if (
